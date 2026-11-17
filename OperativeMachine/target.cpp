@@ -447,8 +447,8 @@ void CTarget::DethHuman(void)
 	//パーティクル
 	CParticle::CreateModel(CParticle::TYPE_DETH_HUMAN2, m_pos, 0, 1);
 
-		//SE再生
-		//CSound::PlaySound_(CSound::SOUND_LABEL_HUMAN_DETH);
+	//SE再生
+	//CSound::PlaySound_(CSound::SOUND_LABEL_HUMAN_DETH);
 	//}
 	//else if (m_type == TYPE_HUMAN2)
 	//{
@@ -461,7 +461,7 @@ void CTarget::DethHuman(void)
 }
 
 //=============================================================================
-//ポジション設定
+//弾との当たり判定
 bool CTarget::CollisionBullet(const D3DXVECTOR3& start, const D3DXVECTOR3& end, float radius) const
 {
     if (!m_bEnable || radius < 0.0f)
@@ -473,6 +473,7 @@ bool CTarget::CollisionBullet(const D3DXVECTOR3& start, const D3DXVECTOR3& end, 
     D3DXMatrixRotationYawPitchRoll(&rotation, m_rot.y, m_rot.x, m_rot.z);
     D3DXMatrixTranslation(&translation, m_pos.x, m_pos.y, m_pos.z);
     D3DXMatrixMultiply(&world, &rotation, &translation);
+
     if (D3DXMatrixInverse(&inverseWorld, NULL, &world) == NULL)
     {
         return false;
@@ -520,6 +521,9 @@ bool CTarget::CollisionBullet(const D3DXVECTOR3& start, const D3DXVECTOR3& end, 
 
     return true;
 }
+
+//=============================================================================
+//影の描画
 void CTarget::DrawShadow(void)
 {
 	if (!m_bEnable)
@@ -546,7 +550,7 @@ void CTarget::DrawShadow(void)
 		planeNormal = pField->GetPlaneNormal();
 	}
 
-	//影行列の生成(※webサイト:〇×の深度バッファシャドウ忘れたら見る)
+	//影行列の生成(※webサイト:〇×の深度バッファシャドウ。忘れたら見る)
 	D3DXPLANE plane;
 	D3DXPlaneFromPointNormal(&plane, &planePoint, &planeNormal);
 
@@ -606,7 +610,7 @@ void CTarget::DrawShadow(void)
 }
 
 //=============================================================================
-//プレイヤーとの当たり判定	****(斜めの時当たり判定が逆向きになってるかも)****
+//プレイヤーとの当たり判定
 bool CTarget::CollisionPlayer(void)
 {
 	//プレイヤーとシーンの取得
@@ -630,7 +634,7 @@ bool CTarget::CollisionPlayer(void)
 	//プレイヤーの座標
 	D3DXVECTOR3 pos = pPlayer->GetPosition();
 
-	//プレイヤーが壁の高さの範囲内にいるか
+	//プレイヤーが高さの範囲内にいるか
 	float wallMinY = m_pos.y + m_vtxMin.y;
 	float wallMaxY = m_pos.y + m_vtxMax.y;
 	if (pos.y < wallMinY || pos.y > wallMaxY)

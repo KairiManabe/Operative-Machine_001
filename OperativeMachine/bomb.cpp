@@ -25,7 +25,7 @@ CBomb::CBomb(int nPriority) : CObject(nPriority)
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_fCurrentRadius = 0.0f;
 	m_fMaxRadius = 0.0f;
-	m_fExpandSpeed = 0.0f; // 速度を調整することで連鎖破棄のテンポが変わる
+	m_fExpandSpeed = 0.0f; //速度を調整することで連鎖破棄のテンポが変わる
 }
 
 //=============================================================================

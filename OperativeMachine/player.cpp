@@ -715,7 +715,7 @@ void CPlayer::Update(void)
 		m_rot.x = 1.57f;
 		m_bLand = false;
 	}
-	else
+	else if(m_Mode != MODE_CANNON)
 	{
 		m_move.y -= 0.5f;
 		m_rot.x = 0.0f;

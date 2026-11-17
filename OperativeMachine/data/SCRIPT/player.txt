@@ -1,0 +1,147 @@
+#==============================================================================
+#
+# player情報 [player.txt]
+# Author : KAIRI MANABE
+#
+#==============================================================================
+SCRIPT			# この行は絶対消さないこと！
+
+#------------------------------------------------------------------------------
+# モデル数
+#------------------------------------------------------------------------------
+NUM_MODEL = 15
+
+#------------------------------------------------------------------------------
+# モデルファイル名
+MODEL_FILENAME = data/MODEL/Original/body001.x		# [0]体
+MODEL_FILENAME = data/MODEL/Original/kosi.x			# [1]腰
+MODEL_FILENAME = data/MODEL/Player/head000.x			# [2]頭
+MODEL_FILENAME = data/MODEL/Original/right_arm1.x	# [3]右肩腕
+MODEL_FILENAME = data/MODEL/Original/right_arm2.x	# [4]右腕
+MODEL_FILENAME = data/MODEL/Original/right_hand.x	# [5]右手
+MODEL_FILENAME = data/MODEL/Original/left_arm1.x	# [6]左肩腕
+MODEL_FILENAME = data/MODEL/Original/left_arm2.x	# [7]左腕
+MODEL_FILENAME = data/MODEL/Original/left_hand.x	# [8]左手
+MODEL_FILENAME = data/MODEL/Original/right_reg1.x	# [9]右大腿
+MODEL_FILENAME = data/MODEL/Original/right_reg2.x	# [10]右足
+MODEL_FILENAME = data/MODEL/Original/right_shoes.x	# [11]右靴
+MODEL_FILENAME = data/MODEL/Original/left_reg1.x	# [12]左大腿
+MODEL_FILENAME = data/MODEL/Original/left_reg2.x	# [13]左足
+MODEL_FILENAME = data/MODEL/Original/left_shoes.x	# [14]左靴
+
+#------------------------------------------------------------------------------
+# キャラクター情報
+#------------------------------------------------------------------------------
+CHARACTERSET
+	NUM_PARTS = 15					# パーツ数
+	MOVE = 3.0						# 移動量
+	JUMP = 12.25					# ジャンプ量
+
+	PARTSSET
+		INDEX = 0					# 体
+		PARENT = -1					# (親)NULL
+		POS = 0.0 50.0 0.0
+		ROT = 0.0 0.0 0.0
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 1					# 腰
+		PARENT = 0					# (親)体
+		POS = 0.0 0.0 0.0
+		ROT = 0.0 0.0 3.14
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 2					# 頭
+		PARENT = 0					# (親)体
+		POS = 0.0 19.0 0.0
+		ROT = 0.5  0.0  0.0
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 3					# 右肩腕
+		PARENT = 0					# (親)体
+		POS = -9.5 15.0 0.0
+		ROT = 0.0 0.0 1.6
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 4					# 右腕
+		PARENT = 3					# (親)右肩腕
+		POS = 0.0 15.5 0.0 
+		ROT = 0.0  0.0 0.0
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 5					# 右手
+		PARENT = 4					# (親)右腕
+		POS = 0.2 13.0 0.0
+		ROT = 0.0 0.0 0.0
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 6					# 左肩腕
+		PARENT = 0					# (親)体
+		POS = 9.5 15.0 0.0
+		ROT = 0.0 0.0 -1.6
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 7					# 左腕
+		PARENT = 6					# (親)左肩腕
+		POS = 0.0 15.5 0.0
+		ROT = 0.0 0.0 0.0
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 8					#左手
+		PARENT = 7					# (親)左腕
+		POS = -0.3 13.0 0.0
+		ROT = 0.0 0.0 0.0
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 9					# 右大腿
+		PARENT = 1					# (親)腰
+		POS = 4.8 7.5 0.0
+		ROT = 0.0 0.0 0.0
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 10					# 右足
+		PARENT = 9					# (親)右大腿
+		POS = 0.0 18.2 0.0
+		ROT = 0.0 0.0 0.0
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 11					# 右靴
+		PARENT = 10					# (親)右足
+		POS = 0.0 18.4 0.0
+		ROT = 0.0 0.0 0.0
+	END_PARTSSET
+	
+	PARTSSET
+		INDEX = 12					# 左大腿
+		PARENT = 1					# (親)腰
+		POS = -4.8 7.5 0.0
+		ROT = 0.0 0.0 0.0
+	END_PARTSSET
+	
+	PARTSSET
+		INDEX = 13					# 左足
+		PARENT = 12					# (親)左大腿
+		POS = 0.0 18.2 0.0
+		ROT = 0.0 0.0 0.0
+	END_PARTSSET
+	
+	PARTSSET
+		INDEX = 14					# 左靴
+		PARENT = 13					# (親)左足
+		POS = 0.0 18.4 0.0
+		ROT = 0.0 0.0 0.0
+	END_PARTSSET
+
+END_CHARACTERSET
+
+END_SCRIPT		# この行は絶対消さないこと！

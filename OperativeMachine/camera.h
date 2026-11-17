@@ -29,7 +29,6 @@ public:
 	void Init(void);
 	void Uninit(void);
 	void Update(void);
-	
 	void SetCamera(void);
 
 	D3DXVECTOR3 GetPositionV(void) { return m_posV; }

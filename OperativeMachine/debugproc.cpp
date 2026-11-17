@@ -8,10 +8,10 @@
 
 //インクルードファイル---------------------------------------------------------
 #include "debugproc.h"
+
+#include "manager.h"
 #include "renderer.h"
 #include "input.h"
-#include "manager.h"
-#include "bullet.h"
 #include "color.h"
 
 //=============================================================================

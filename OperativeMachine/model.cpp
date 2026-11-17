@@ -7,11 +7,12 @@
 
 //インクルード-----------------------------------------------------------------
 #include "model.h"
-#include "renderer.h"
+
 #include "manager.h"
+#include "renderer.h"
+#include "ModelManager.h"
 #include "debugproc.h"
 #include "texture.h"
-#include "ModelManager.h"
 
 //静的メンバ変数宣言-----------------------------------------------------------
 int CModel::m_nParentModel = 0;

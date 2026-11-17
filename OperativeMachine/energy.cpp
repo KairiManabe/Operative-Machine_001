@@ -7,16 +7,21 @@
 //=============================================================================
 
 //インクルードファイル---------------------------------------------------------
-#include "game.h"
-#include "tutorial.h"
-#include "player.h"
 #include "energy.h"
+
 #include "manager.h"
-#include "texture.h"
-#include "debugproc.h"
 #include "renderer.h"
+#include "debugproc.h"
+
+#include "tutorial.h"
+#include "game.h"
+
+#include "player.h"
 #include "particle.h"
 #include "effect.h"
+
+#include "texture.h"
+#include "textureUI.h"
 #include "color.h"
 
 //=============================================================================
@@ -114,6 +119,9 @@ HRESULT CEnergy::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 
 	//頂点バッファのアンロック
 	m_pVtxBuff->Unlock();
+
+	CTextureUI::Create("data\\TEXTURE\\UI\\energy000.png", D3DXVECTOR3(19.0f, 3.0f, 0.0f), D3DXVECTOR3(322.0f, 40.0f, 0.0f), COLOR_CYAN);
+
 	return S_OK;
 }
 

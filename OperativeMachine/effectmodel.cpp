@@ -8,19 +8,22 @@
 
 //インクルードファイル---------------------------------------------------------
 #include "effectmodel.h"
-#include "ModelManager.h"
-#include "player.h"
-#include "renderer.h"
+
 #include "manager.h"
-#include "game.h"
-#include "tutorial.h"
-#include "number.h"
-#include "input.h"
+#include "renderer.h"
 #include "debugproc.h"
-#include "camera.h"
+#include "input.h"
 #include "texture.h"
-#include "particle.h"
+#include "ModelManager.h"
 #include "color.h"
+
+#include "tutorial.h"
+#include "game.h"
+
+#include "player.h"
+#include "number.h"
+#include "camera.h"
+#include "particle.h"
 #include "field.h"
 #include "wall.h"
 

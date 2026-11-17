@@ -8,7 +8,15 @@
 
 //インクルードファイル---------------------------------------------------------
 #include "player.h"
+
 #include "manager.h"
+#include "renderer.h"
+#include "debugproc.h"
+#include "input.h"
+#include "texture.h"
+#include "ModelManager.h"
+#include "color.h"
+#include "sound.h"
 
 //シーン
 #include "scene.h"
@@ -19,21 +27,14 @@
 #include "fail.h"
 #include "result.h"
 
-#include "input.h"
-#include "renderer.h"
-#include "debugproc.h"
-#include "texture.h"
 #include "model.h"
 #include "camera.h"
 #include "meshfield.h"
 #include "objectX.h"
 #include "particle.h"
 #include "bullet.h"
-#include "color.h"
 #include "effect.h"
-#include "sound.h"
 #include "field.h"
-#include "ModelManager.h"
 
 //マクロ定義-------------------------------------------------------------------
 #define NO_USE

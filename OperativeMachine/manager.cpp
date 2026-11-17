@@ -8,19 +8,20 @@
 
 //インクルードファイル---------------------------------------------------------
 #include "manager.h"
-#include "game.h"
+
 #include "renderer.h"
 #include "fade.h"
-#include "object.h"
 #include "input.h"
 #include "debugproc.h"
-#include "color.h"
-#include "sound.h"
-#include "camera.h"
-#include "light.h"
 #include "texture.h"
-#include "pause.h"
 #include "ModelManager.h"
+#include "sound.h"
+#include "pause.h"
+
+#include "light.h"
+#include "camera.h"
+#include "object.h"
+#include "color.h"
 
 //静的メンバ変数宣言-----------------------------------------------------------
 //システム系

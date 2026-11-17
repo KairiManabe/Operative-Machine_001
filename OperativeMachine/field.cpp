@@ -7,18 +7,19 @@
 //=============================================================================
 
 //インクルードファイル---------------------------------------------------------
-#include "player.h"
-#include "color.h"
+#include "field.h"
+
 #include "manager.h"
 #include "renderer.h"
 #include "debugproc.h"
 #include "input.h"
 #include "texture.h"
+#include "color.h"
 
-//シーン
-#include "game.h"
 #include "tutorial.h"
-#include "field.h"
+#include "game.h"
+
+#include "player.h"
 #include "number.h"
 
 //静的メンバ変数宣言-----------------------------------------------------------

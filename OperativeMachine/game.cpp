@@ -8,29 +8,30 @@
 //インクルードファイル---------------------------------------------------------
 #include "game.h"
 
-#include "color.h"
 #include "manager.h"
 #include "renderer.h"
 #include "input.h"
-#include "camera.h"
+#include "color.h"
 #include "fade.h"
 #include "pause.h"
 #include "sound.h"
+#include "load.h"
 
-#include "timer.h"
+#include "camera.h"
 #include "number.h"
+#include "timer.h"
+#include "score.h"
+
 #include "player.h"
 #include "enemy.h"
 #include "textureUI.h"
 #include "energy.h"
-#include "score.h"
-#include "effect.h"
 #include "particle.h"
+#include "effect.h"
 #include "object2D.h"
 #include "object3D.h"
 #include "objectX.h"
 #include "meshfield.h"
-#include "load.h"
 #include "billboard.h"
 #include "range.h"
 #include "particle.h"
@@ -110,7 +111,6 @@ void CGame::Init(void)
 	CSound::PlaySound(CSound::SOUND_LABEL_GAMEBGM);
 
 	//UI・タイマー（3分 = 180秒）
-	CTextureUI::Create("data\\TEXTURE\\UI\\energy000.png", D3DXVECTOR3(19.0f, 3.0f, 0.0f), D3DXVECTOR3(322.0f, 40.0f, 0.0f), COLOR_CYAN);
 	m_pEnergy = CEnergy::Create("data\\TEXTURE\\UI\\energy001.png", D3DXVECTOR3(20.0f, 3.0f, 0.0f), D3DXVECTOR3(MAX_ENERGY, 40.0f, 0.0f), COLOR_NONE);
 	CTextureUI::Create("data\\TEXTURE\\UI\\timer001.png", D3DXVECTOR3(1020.0f, 0.0f, 0.0f), D3DXVECTOR3(120.0f, 60.0f, 0.0f), COLOR_RED);
 	m_pTimer = CTimer::Create(D3DXVECTOR3(1240.0f, 0.0f, 0.0f), D3DXVECTOR3(30.0f, 60.0f, 0.0f), COLOR_NONE, 30, 4, 180);

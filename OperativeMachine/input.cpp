@@ -7,8 +7,9 @@
 
 //インクルードファイル---------------------------------------------------------
 #include "input.h"
-#include "debugproc.h"
+
 #include "manager.h"
+#include "debugproc.h"
 
 //静的メンバ変数宣言-----------------------------------------------------------
 LPDIRECTINPUT8 CInput::m_pInput = NULL;

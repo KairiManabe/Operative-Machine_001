@@ -7,9 +7,12 @@
 
 //インクルードファイル---------------------------------------------------------
 #include "camera.h"
-#include "manager.h"
 
-//シーン
+#include "manager.h"
+#include "renderer.h"
+#include "debugproc.h"
+#include "input.h"
+
 #include "scene.h"
 #include "title.h"
 #include "tutorial.h"
@@ -19,20 +22,17 @@
 #include "result.h"
 
 #include "player.h"
-#include "input.h"
-#include "renderer.h"
-#include "debugproc.h"
 #include "objectX.h"
 
 //マクロ定義 ------------------------------------------------------------------
-#define CAMERA_HUMAN_DIST    (CAMERA_ANGLE_PZ)  // 人型時の距離
-#define CAMERA_HUMAN_AT_Y    (70.0f)            // 人型時の注視点高さ
+#define CAMERA_HUMAN_DIST    (CAMERA_ANGLE_PZ)  //人型時の距離
+#define CAMERA_HUMAN_AT_Y    (70.0f)            //人型時の注視点高さ
 
-#define CAMERA_SPIDER_DIST   (100.0f)           // クモ型時の距離
-#define CAMERA_SPIDER_AT_Y   (15.0f)            // クモ型時の注視点高さ
+#define CAMERA_SPIDER_DIST   (100.0f)           //クモ型時の距離
+#define CAMERA_SPIDER_AT_Y   (15.0f)            //クモ型時の注視点高さ
 
-#define CAMERA_CANNON_DIST   (80.0f)           // 銃型時の距離
-#define CAMERA_CANNON_AT_Y   (15.0f)            // 銃型時の注視点高さ
+#define CAMERA_CANNON_DIST   (80.0f)            //銃型時の距離
+#define CAMERA_CANNON_AT_Y   (15.0f)            //銃型時の注視点高さ
 
 //=============================================================================
 //コンストラクタ

@@ -8,6 +8,7 @@
 
 //インクルードファイル---------------------------------------------------------
 #include "crosshair.h"
+
 #include "manager.h"
 #include "debugproc.h"
 #include "renderer.h"

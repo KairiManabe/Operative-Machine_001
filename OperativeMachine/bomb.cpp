@@ -7,10 +7,13 @@
 
 //インクルードファイル---------------------------------------------------------
 #include "bomb.h"
+
+#include "sound.h"
+
 #include "game.h"
+
 #include "objectX.h"
 #include "particle.h"
-#include "sound.h"
 
 //静的メンバ変数宣言-----------------------------------------------------------
 bool CBomb::m_bBombEnd = false;

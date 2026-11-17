@@ -7,10 +7,12 @@
 
 //インクルードファイル---------------------------------------------------------
 #include "fade.h"
+
 #include "manager.h"
 #include "renderer.h"
 #include "input.h"
 #include "debugproc.h"
+
 #include "camera.h"
 
 //静的メンバ変数宣言-----------------------------------------------------------

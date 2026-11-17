@@ -8,13 +8,16 @@
 
 //インクルードファイル---------------------------------------------------------
 #include "bullet.h"
+
+#include "manager.h"
+#include "renderer.h"
+#include "input.h"
+#include "texture.h"
+
 #include "game.h"
 #include "tutorial.h"
-#include "manager.h"
-#include "input.h"
-#include "renderer.h"
+
 #include "score.h"
-#include "texture.h"
 #include "target.h"
 
 //静的メンバ変数宣言-----------------------------------------------------------

@@ -8,9 +8,13 @@
 
 //インクルードファイル---------------------------------------------------------
 #include "enemy.h"
-#include "manager.h"
 
-//シーン
+#include "manager.h"
+#include "renderer.h"
+#include "debugproc.h"
+#include "texture.h"
+#include "input.h"
+
 #include "scene.h"
 #include "title.h"
 #include "game.h"
@@ -18,15 +22,11 @@
 #include "fail.h"
 #include "result.h"
 
+#include "camera.h"
 #include "range.h"
 #include "player.h"
-#include "input.h"
 #include "bullet.h"
-#include "renderer.h"
-#include "debugproc.h"
-#include "texture.h"
 #include "model.h"
-#include "camera.h"
 #include "meshfield.h"
 #include "objectX.h"
 #include "motion.h"

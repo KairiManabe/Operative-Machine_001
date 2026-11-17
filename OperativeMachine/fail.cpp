@@ -8,12 +8,12 @@
 //インクルードファイル---------------------------------------------------------
 #include "fail.h"
 
-#include "renderer.h"
 #include "manager.h"
-#include "color.h"
+#include "renderer.h"
 #include "debugproc.h"
 #include "input.h"
 #include "fade.h"
+#include "color.h"
 
 #include "camera.h"
 #include "textureUI.h"

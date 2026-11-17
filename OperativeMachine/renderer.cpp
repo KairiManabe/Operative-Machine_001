@@ -8,17 +8,19 @@
 
 //インクルードファイル---------------------------------------------------------
 #include "renderer.h"
+
 #include "manager.h"
 #include "scene.h"
 #include "title.h"
 #include "tutorial.h"
 #include "game.h"
-#include "object.h"
-#include "number.h"
-#include "bg.h"
 #include "fade.h"
 #include "debugproc.h"
 #include "pause.h"
+
+#include "object.h"
+#include "number.h"
+#include "bg.h"
 
 //静的メンバ変数宣言-----------------------------------------------------------
 CBG* CRenderer::m_pBG = NULL;

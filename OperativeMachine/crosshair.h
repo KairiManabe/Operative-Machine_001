@@ -14,6 +14,8 @@
 
 //マクロ定義-------------------------------------------------------------------
 #define CENTER_2DPOS	(D3DXVECTOR3(640.0f, 320.0f, 0.0f))
+#define CROSSHAIR_OFFSET_X (0.0f)
+#define CROSSHAIR_OFFSET_Y (0.0f)
 
 //プレイヤークラス-------------------------------------------------------------
 class CCrosshair :public CObject
@@ -30,6 +32,7 @@ public:
 	void Update(void);
 	void Draw(void);
 	void SetPosition(const D3DXVECTOR3 pos) { m_pos = pos; }
+	void SetPoint(const D3DXVECTOR3 pos);
 	void SetColor(D3DXCOLOR col) { m_col = col; }
 	static void SetDisp(bool bDisp);
 

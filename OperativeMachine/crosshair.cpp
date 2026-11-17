@@ -55,7 +55,7 @@ CCrosshair* CCrosshair::Create(D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXCOLOR col)
 		if (pCrosshair != NULL)
 		{
 			//各種代入
-			pCrosshair->m_pos = pos;
+			pCrosshair->m_pos = pos + D3DXVECTOR3(CROSSHAIR_OFFSET_X, CROSSHAIR_OFFSET_Y, 0.0f);
 			pCrosshair->m_size = size;
 			pCrosshair->m_col = col;
 
@@ -174,6 +174,9 @@ void CCrosshair::Update(void)
 
 	//頂点バッファのアンロック
 	m_pVtxBuff->Unlock();
+
+	//デバッグ表示
+	CManager::GetDebugproc()->PrintDebugProc("\n+++クロスヘアのpos[X:%.2f | Y:%.2f | Z:%.2f]+++\n", m_pos.x, m_pos.y, m_pos.z);
 }
 
 //=============================================================================
@@ -206,4 +209,24 @@ void CCrosshair::SetDisp(bool bDisp)
 	{//表示
 		pCrosshair->SetColor(COLOR_NORMAL);
 	}
+}
+
+//=============================================================================
+//注視点にクロスヘアの座標を移動
+void CCrosshair::SetPoint(D3DXVECTOR3 pos)
+{
+	m_pos = pos;
+	VERTEX_2D* pVtx;		//頂点情報へのポインタ
+
+		//頂点バッファをロックし、頂点情報へのポインタを取得
+	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+
+	//頂点情報の設定(初期化)
+	pVtx[0].pos = D3DXVECTOR3(m_pos.x - m_size.x, m_pos.y - m_size.y, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(m_pos.x + m_size.x, m_pos.y - m_size.y, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(m_pos.x - m_size.x, m_pos.y + m_size.y, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(m_pos.x + m_size.x, m_pos.y + m_size.y, 0.0f);
+
+	//頂点バッファのアンロック
+	m_pVtxBuff->Unlock();
 }

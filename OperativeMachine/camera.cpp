@@ -31,8 +31,8 @@
 #define CAMERA_SPIDER_DIST   (100.0f)           //クモ型時の距離
 #define CAMERA_SPIDER_AT_Y   (15.0f)            //クモ型時の注視点高さ
 
-#define CAMERA_CANNON_DIST   (80.0f)            //銃型時の距離
-#define CAMERA_CANNON_AT_Y   (15.0f)            //銃型時の注視点高さ
+#define CAMERA_CANNON_DIST   (20.0f)            //銃型時の距離
+#define CAMERA_CANNON_AT_Y   (20.0f)            //銃型時の注視点高さ
 
 //=============================================================================
 //コンストラクタ
@@ -155,12 +155,12 @@ void CCamera::Update(void)
 	float fHeightOffset = (pPlayer && (pPlayer->GetMode() == CPlayer::MODE_SPIDER || pPlayer->GetMode() == CPlayer::MODE_CANNON)) ? 10.0f : 30.0f;
 
 	//キーボード操作-------------------------
-	if (pInputKey->GetPress(DIK_UP) == true)
+	if (pInputKey->GetPress(DIK_DOWN) == true)
 	{
 		m_rot.x += 2.0f; //Rキーでカメラ位置を低く 
 		if (m_rot.x > 100.0f) m_rot.x = 100.0f;		//下限制限
 	}
-	if (pInputKey->GetPress(DIK_DOWN) == true)
+	if (pInputKey->GetPress(DIK_UP) == true)
 	{
 		m_rot.x -= 2.0f; // Fキーでカメラ位置を高く
 		if (m_rot.x < -50.0f) m_rot.x = -70.0f;		//上限制限
@@ -343,6 +343,11 @@ void CCamera::Update(void)
 			}
 		}
 
+		if (pPlayer->GetMode() == CPlayer::MODE_CANNON)
+		{
+			m_rot.x += 2.0f;
+		}
+
 		if (bHitAny == true)
 		{
 			//壁とカメラの間のマージンを小さくして、極端に近づきすぎるのを防止
@@ -426,6 +431,27 @@ void CCamera::SetCamera(void)
 
 //=============================================================================
 //全設定(初期化)
+D3DXVECTOR3 CCamera::GetRayDirection(float screenX, float screenY)
+{
+    D3DXMATRIX view, projection, world;
+    D3DXVECTOR3 nearPoint(screenX, screenY, 0.0f);
+    D3DXVECTOR3 farPoint(screenX, screenY, 1.0f);
+    D3DVIEWPORT9 viewport = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, 1.0f };
+
+    D3DXMatrixLookAtLH(&view, &m_posV, &m_posR, &m_posU);
+    D3DXMatrixPerspectiveFovLH(&projection, D3DXToRadian(60.0f),
+        (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 10.0f, 5000.0f);
+    D3DXMatrixIdentity(&world);
+    D3DXVec3Unproject(&nearPoint, &nearPoint, &viewport, &projection, &view, &world);
+    D3DXVec3Unproject(&farPoint, &farPoint, &viewport, &projection, &view, &world);
+
+    D3DXVECTOR3 direction = farPoint - nearPoint;
+    if (D3DXVec3LengthSq(&direction) > 0.0001f)
+    {
+        D3DXVec3Normalize(&direction, &direction);
+    }
+    return direction;
+}
 void CCamera::SetAll(D3DXVECTOR3 posV, D3DXVECTOR3 posR, D3DXVECTOR3 posU, D3DXVECTOR3 rot)
 {
 	m_posV = posV;

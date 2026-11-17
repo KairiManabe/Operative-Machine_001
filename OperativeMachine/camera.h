@@ -36,6 +36,7 @@ public:
 	D3DXVECTOR3 GetPositionU(void) { return m_posU; }
 	D3DXVECTOR3 GetRotation(void) { return m_rot; }
 	D3DXVECTOR3 GetAngle(void) { return m_angle; }
+	D3DXVECTOR3 GetRayDirection(float screenX, float screenY);
 
 	void SetPositionV(D3DXVECTOR3 posV) { m_posV = posV; }
 	void SetRotation(D3DXVECTOR3 rot) { m_rot = rot; }

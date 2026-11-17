@@ -1,12 +1,12 @@
-ï»¿//=============================================================================
+//=============================================================================
 //
-// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼[player.cpp]
+// ƒvƒŒƒCƒ„[[player.cpp]
 // 
-// Author : çœé‹å¿«é™¸
+// Author : áÁ“ç‰õ—¤
 // 
 //=============================================================================
 
-//ã‚¤ãƒ³ã‚¯ãƒ«ãƒ¼ãƒ‰ãƒ•ã‚¡ã‚¤ãƒ«---------------------------------------------------------
+//ƒCƒ“ƒNƒ‹[ƒhƒtƒ@ƒCƒ‹---------------------------------------------------------
 #include "player.h"
 
 #include "manager.h"
@@ -18,7 +18,7 @@
 #include "color.h"
 #include "sound.h"
 
-//ã‚·ãƒ¼ãƒ³
+//ƒV[ƒ“
 #include "scene.h"
 #include "title.h"
 #include "tutorial.h"
@@ -37,7 +37,7 @@
 #include "field.h"
 #include "crosshair.h"
 
-//ãƒã‚¯ãƒ­å®šç¾©-------------------------------------------------------------------
+//ƒ}ƒNƒ’è‹`-------------------------------------------------------------------
 #define NO_USE
 //#undef NO_USE
 
@@ -48,27 +48,27 @@
 #define MOTION_SPIDER	"data/Motion/motion_spider.txt"
 #define MOTION_CANNON	"data/Motion/motion.txt"
 
-// å½¢æ…‹ã”ã¨ã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿å®šç¾©
-#define HUMAN_SPEED     (1.0f)   // äººå‹ã®ç§»å‹•é€Ÿåº¦
-#define SPIDER_SPEED    (0.3f)   // ã‚¯ãƒ¢å‹ã®ç§»å‹•é€Ÿåº¦ï¼ˆé€šå¸¸ã‚ˆã‚Šä¸‹ãŒã‚‹ï¼‰
-#define CANNON_SPEED    (0.0f)   // éŠƒå‹ã®ç§»å‹•é€Ÿåº¦ï¼ˆç§»å‹•ä¸å¯ã«ã™ã‚‹ï¼‰
+// Œ`‘Ô‚²‚Æ‚Ìƒpƒ‰ƒ[ƒ^’è‹`
+#define HUMAN_SPEED     (1.0f)   // lŒ^‚ÌˆÚ“®‘¬“x
+#define SPIDER_SPEED    (0.3f)   // ƒNƒ‚Œ^‚ÌˆÚ“®‘¬“xi’Êí‚æ‚è‰º‚ª‚éj
+#define CANNON_SPEED    (0.0f)   // eŒ^‚ÌˆÚ“®‘¬“xiˆÚ“®•s‰Â‚É‚·‚éj
 
-#define JUMP_POWER      (8.0f)   // ã‚¸ãƒ£ãƒ³ãƒ—åŠ›
-#define GRAVITY         (0.5f)   // é‡åŠ›
-#define JETT	        (D3DXVECTOR3(2.0f,2.0f,0.0f)) //ãƒ‘ãƒ¼ãƒ†ã‚£ã‚¯ãƒ«jettã®æ‹¡æ•£å¹…ãªã©
-#define JETT_NUM	    (5) //ãƒ‘ãƒ¼ãƒ†ã‚£ã‚¯ãƒ«jettã®é‡
+#define JUMP_POWER      (8.0f)   // ƒWƒƒƒ“ƒv—Í
+#define GRAVITY         (0.5f)   // d—Í
+#define JETT	        (D3DXVECTOR3(2.0f,2.0f,0.0f)) //ƒp[ƒeƒBƒNƒ‹jett‚ÌŠgU•‚È‚Ç
+#define JETT_NUM	    (5) //ƒp[ƒeƒBƒNƒ‹jett‚Ì—Ê
 
-//é™çš„ãƒ¡ãƒ³ãƒå¤‰æ•°å®£è¨€-----------------------------------------------------------
+//Ã“Iƒƒ“ƒo•Ï”éŒ¾-----------------------------------------------------------
 CPlayer::MODEL_INFO CPlayer::m_aModelInfo[50];
 CMotion::INFO CPlayer::m_aMotionInfo[MOTIONTYPE_MAX];
 CPlayer::MODE CPlayer::m_Mode = CPlayer::MODE_HUMAN;
 bool CPlayer::m_bChangeMode = false;
 
 //=============================================================================
-//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 CPlayer::CPlayer(int nPriority) :CObject(nPriority)
 {
-	//å€¤ã‚’ã‚¯ãƒªã‚¢(åˆæœŸåŒ–)
+	//’l‚ğƒNƒŠƒA(‰Šú‰»)
 	memset(&m_apModel[0], NULL, sizeof(m_apModel));
 	for (int nModelInfo = 0; nModelInfo < sizeof(m_aModelInfo) / sizeof(m_aModelInfo[0]); ++nModelInfo)
 	{
@@ -84,7 +84,7 @@ CPlayer::CPlayer(int nPriority) :CObject(nPriority)
 	m_bLand = false;
 	m_pMotion = NULL;
 	m_nNumModel = 0;
-	m_fModelChange = 1.0f;		//ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆãŒ1.0få€
+	m_fModelChange = 1.0f;		//ƒfƒtƒHƒ‹ƒg‚ª1.0f”{
 	m_fCollisionSize = 25.0f;
 
 	m_bClimbingWall = false;
@@ -92,21 +92,21 @@ CPlayer::CPlayer(int nPriority) :CObject(nPriority)
 }
 
 //=============================================================================
-//ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+//ƒfƒXƒgƒ‰ƒNƒ^
 CPlayer::~CPlayer()
 {
 }
 
 //=============================================================================
-//ç”Ÿæˆå‡¦ç†
+//¶¬ˆ—
 CPlayer* CPlayer::Create(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 {
-	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼
+	//ƒvƒŒƒCƒ„[
 	CPlayer* pPlayer = NULL;
 
 	if (pPlayer == NULL)
 	{
-		//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ç”Ÿæˆ
+		//ƒvƒŒƒCƒ„[¶¬
 		pPlayer = new CPlayer;
 
 		if (pPlayer != NULL)
@@ -115,7 +115,7 @@ CPlayer* CPlayer::Create(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 
 			pPlayer->m_size = size;
 
-			//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼åˆæœŸåŒ–ã«å¤±æ•—ã—ãŸã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¯è¿”ã•ãªã„
+			//ƒvƒŒƒCƒ„[‰Šú‰»‚É¸”s‚µ‚½ƒIƒuƒWƒFƒNƒg‚Í•Ô‚³‚È‚¢
 			if (FAILED(pPlayer->Init(pPlayer->m_pos, pPlayer->m_size)))
 			{
 				delete pPlayer;
@@ -127,11 +127,11 @@ CPlayer* CPlayer::Create(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 }
 
 //=============================================================================
-//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®åˆæœŸåŒ–
+//ƒvƒŒƒCƒ„[‚Ì‰Šú‰»
 HRESULT CPlayer::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 {
 	if (m_pMotion == NULL)
-	{//ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã‚’ç”Ÿæˆ
+	{//ƒ‚[ƒVƒ‡ƒ“‚ğ¶¬
 		m_pMotion = new CMotion;
 	}
 	else
@@ -139,13 +139,13 @@ HRESULT CPlayer::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 		return E_FAIL;
 	}
 
-	//éšå±¤æ§‹é€ ã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«åã‚’å–å¾—
+	//ŠK‘w\‘¢‚ÌƒvƒŒƒCƒ„[ƒ‚ƒfƒ‹ƒtƒ@ƒCƒ‹–¼‚ğæ“¾
 	LoadParentModel(OFSET_HUMAN);
 	LoadMotionInfo(MOTION_HUMAN);
 
 	for (int nCntModel = 0; nCntModel < m_nNumModel; nCntModel++)
 	{
-		//ãƒ¢ãƒ‡ãƒ«ã®ç”Ÿæˆ[0]ä½“
+		//ƒ‚ƒfƒ‹‚Ì¶¬[0]‘Ì
 		m_apModel[nCntModel] = CModel::Create(m_aModelInfo[nCntModel].FileName, m_aModelInfo[nCntModel].pos,m_aModelInfo[nCntModel].rot);
 		if (m_apModel[nCntModel] == NULL)
 		{
@@ -155,37 +155,37 @@ HRESULT CPlayer::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 		const int parentIndex = m_aModelInfo[nCntModel].nIdxParent;
 		if (parentIndex < 0 || parentIndex >= nCntModel || m_apModel[parentIndex] == NULL)
 		{
-			//è¦ªãƒ¢ãƒ‡ãƒ«ã®è¨­å®š
+			//eƒ‚ƒfƒ‹‚Ìİ’è
 			m_apModel[nCntModel]->SetParent(NULL);
 		}
 		else
 		{
-			//è¦ªãƒ¢ãƒ‡ãƒ«ã®è¨­å®š
+			//eƒ‚ƒfƒ‹‚Ìİ’è
 			m_apModel[nCntModel]->SetParent(m_apModel[parentIndex]);
 		}
 	}
 
 	if (m_pMotion != NULL)
-	{//ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã«å¿…è¦ãªãƒ¢ãƒ‡ãƒ«ã®è¨­å®š
+	{//ƒ‚[ƒVƒ‡ƒ“‚É•K—v‚Èƒ‚ƒfƒ‹‚Ìİ’è
 		m_pMotion->SetModel(m_apModel, m_nNumModel);
 	}
 
 	for (int nCntInfo = 0; nCntInfo < MOTIONTYPE_MAX; nCntInfo++)
-	{//èª­ã¿è¾¼ã‚“ã ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã‚’ä»£å…¥
+	{//“Ç‚İ‚ñ‚¾ƒ‚[ƒVƒ‡ƒ“‚ğ‘ã“ü
 		m_pMotion->SetInfo(m_aMotionInfo[nCntInfo]);
 	}
 
-	//ãƒ‹ãƒ¥ãƒ¼ãƒˆãƒ©ãƒ«ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³
+	//ƒjƒ…[ƒgƒ‰ƒ‹ƒ‚[ƒVƒ‡ƒ“
 	m_pMotion->Set(MOTIONTYPE_NEUTRAL,3);
 
-	//ç¨®é¡ã®è¨­å®š
+	//í—Ş‚Ìİ’è
 	SetType(TYPE_PLAYER);
 
 	return S_OK;
 }
 
 //=============================================================================
-//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®çµ‚äº†
+//ƒvƒŒƒCƒ„[‚ÌI—¹
 void CPlayer::Uninit(void)
 {
 	for (int nCntModel = 0; nCntModel < m_nNumModel; nCntModel++)
@@ -205,76 +205,76 @@ void CPlayer::Uninit(void)
 		m_pMotion = NULL;
 	}
 
-	// äººå‹ã®ãƒ¢ãƒ¼ãƒ‰ã«æˆ»ã™
+	// lŒ^‚Ìƒ‚[ƒh‚É–ß‚·
 	m_Mode = MODE_HUMAN;
 
-	// ç ´æ£„
+	// ”jŠü
 	CObject::Release();
 }
 
 //=============================================================================
-//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æç”»
+//ƒvƒŒƒCƒ„[‚Ì•`‰æ
 void CPlayer::Draw(void)
 {
 	/*LPDIRECT3DSURFACE9 pRenderDef, pZBuffDef;
 	D3DVIEWPORT9 viewport;
 	D3DXMATRIX mtxViewDef, mtxProjectionDef;*/
-	D3DXMATRIX mtxRot, mtxTrans;			//è¨ˆç®—ç”¨ãƒãƒˆãƒªãƒƒã‚¯ã‚¹
+	D3DXMATRIX mtxRot, mtxTrans;			//ŒvZ—pƒ}ƒgƒŠƒbƒNƒX
 
-	//ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
+	//ƒfƒoƒCƒX‚Ìæ“¾
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
 
 #ifndef NO_USE
 
-	//ç¾åœ¨ã®ãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚’å–å¾—(ä¿å­˜)
+	//Œ»İ‚ÌƒŒƒ“ƒ_ƒŠƒ“ƒOƒ^[ƒQƒbƒg‚ğæ“¾(•Û‘¶)
 	pDevice->GetRenderTarget(0, &pRenderDef);
 
-	//ç¾åœ¨ã®Zãƒãƒƒãƒ•ã‚¡ã‚’å–å¾—(ä¿å­˜)
+	//Œ»İ‚ÌZƒoƒbƒtƒ@‚ğæ“¾(•Û‘¶)
 	pDevice->GetDepthStencilSurface(&pZBuffDef);
 
-	//ç¾åœ¨ã®ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆã‚’å–å¾—(ä¿å­˜)
+	//Œ»İ‚Ìƒrƒ…[ƒ|[ƒg‚ğæ“¾(•Û‘¶)
 	pDevice->GetViewport(&viewport);
 
-	//ç¾åœ¨ã®ãƒ“ãƒ¥ãƒ¼ãƒãƒˆãƒªãƒƒã‚¯ã‚¹ã‚’å–å¾—(ä¿å­˜)
+	//Œ»İ‚Ìƒrƒ…[ƒ}ƒgƒŠƒbƒNƒX‚ğæ“¾(•Û‘¶)
 	pDevice->GetTransform(D3DTS_VIEW, &mtxViewDef);
 
-	//ç¾åœ¨ã®ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³ãƒãƒˆãƒªãƒƒã‚¯ã‚¹ã‚’å–å¾—(ä¿å­˜)
+	//Œ»İ‚ÌƒvƒƒWƒFƒNƒVƒ‡ƒ“ƒ}ƒgƒŠƒbƒNƒX‚ğæ“¾(•Û‘¶)
 	pDevice->GetTransform(D3DTS_PROJECTION, &mtxProjectionDef);
 
-	//ãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®å¤‰æ›´
+	//ƒŒƒ“ƒ_ƒŠƒ“ƒOƒ^[ƒQƒbƒg‚Ì•ÏX
 	CManager::GetRenderer()->ChangeTarget(CManager::GetCamera()->GetPositionV(),
 		CManager::GetCamera()->GetPositionR(),
 		CManager::GetCamera()->GetPositionU());
 
-	//ãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°ã‚¿ãƒ¼ã‚²ãƒƒãƒˆç”¨ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚¯ãƒªã‚¢
+	//ƒŒƒ“ƒ_ƒŠƒ“ƒOƒ^[ƒQƒbƒg—pƒeƒNƒXƒ`ƒƒ‚ÌƒNƒŠƒA
 	pDevice->Clear(0, NULL,
 		(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER),
 		D3DCOLOR_RGBA(0, 0, 0, 0), 1.0f, 0);
 	
 #endif // DEBUG
 
-	//ãƒ¯ãƒ¼ãƒ«ãƒ‰ãƒãƒˆãƒªãƒƒã‚¯ã‚¹ã®åˆæœŸåŒ–
+	//ƒ[ƒ‹ƒhƒ}ƒgƒŠƒbƒNƒX‚Ì‰Šú‰»
 	D3DXMatrixIdentity(&m_mtxWorld);
 
-	//å‘ãã‚’åæ˜ 
+	//Œü‚«‚ğ”½‰f
 	D3DXMatrixRotationYawPitchRoll(&mtxRot,
 		m_rot.y, m_rot.x, m_rot.z);
 
 	D3DXMatrixMultiply(&m_mtxWorld, &m_mtxWorld, &mtxRot);
 
-	//ä½ç½®ã‚’åæ˜ 
+	//ˆÊ’u‚ğ”½‰f
 	D3DXMatrixTranslation(&mtxTrans,
 		m_pos.x, m_pos.y, m_pos.z);
 
 	D3DXMatrixMultiply(&m_mtxWorld, &m_mtxWorld, &mtxTrans);
 
-	//ãƒ¯ãƒ¼ãƒ«ãƒ‰ãƒãƒˆãƒªãƒƒã‚¯ã‚¹ã®è¨­å®š
+	//ƒ[ƒ‹ƒhƒ}ƒgƒŠƒbƒNƒX‚Ìİ’è
 	pDevice->SetTransform(D3DTS_WORLD, &m_mtxWorld);
 
-	//ã‚·ãƒ£ãƒ‰ãƒ¼ãƒãƒˆãƒªãƒƒã‚¯ã‚¹ã®æç”»
+	//ƒVƒƒƒh[ƒ}ƒgƒŠƒbƒNƒX‚Ì•`‰æ
 	DrawShadow();
 
-	//ãƒ¢ãƒ‡ãƒ«ã®æç”»(å…¨ãƒ‘ãƒ¼ãƒ„)
+	//ƒ‚ƒfƒ‹‚Ì•`‰æ(‘Sƒp[ƒc)
 	for (int nCntModel = 0; nCntModel < m_nNumModel; nCntModel++)
 	{
 		if (m_apModel[nCntModel] != NULL)
@@ -284,26 +284,26 @@ void CPlayer::Draw(void)
 	}
 
 #ifndef NO_USE
-	//ãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°ã‚¿ãƒ¼ã‚²ãƒƒãƒˆç”¨ã®ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’å…ƒã«æˆ»ã™
+	//ƒŒƒ“ƒ_ƒŠƒ“ƒOƒ^[ƒQƒbƒg—p‚ÌƒeƒNƒXƒ`ƒƒ‚ğŒ³‚É–ß‚·
 	pDevice->SetRenderTarget(0, pRenderDef);
 
-	//Zãƒãƒƒãƒ•ã‚¡ã‚’å…ƒã«æˆ»ã™
+	//Zƒoƒbƒtƒ@‚ğŒ³‚É–ß‚·
 	pDevice->SetDepthStencilSurface(pZBuffDef);
 #endif
 }
 
 //=============================================================================
-//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æ›´æ–°
+//ƒvƒŒƒCƒ„[‚ÌXV
 void CPlayer::Update(void)
 {
 	m_posOld = m_pos;
 
-	//å–å¾—
+	//æ“¾
 	CScene* pScene = CManager::GetScene();
 	CCamera* pCamera = CManager::GetCamera();
 	CDebugproc* pDebug = CManager::GetDebugproc();
 
-	//å…¥åŠ›ç³»ã®å–å¾—
+	//“ü—ÍŒn‚Ìæ“¾
 	CInputKeyboard* pInputKeyboard = CManager::GetInputKeyboard();
 	CInputJoypad* pInputJoypad = CManager::GetInputJoypad();
 
@@ -314,13 +314,13 @@ void CPlayer::Update(void)
 		return;
 	}
 
-	//ã‚«ãƒ¡ãƒ©ã®å‘ãã‚’å–å¾—
+	//ƒJƒƒ‰‚ÌŒü‚«‚ğæ“¾
 	D3DXVECTOR3 rotCamera = pCamera->GetRotation();
 
-	//ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ3Dã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	//ƒIƒuƒWƒFƒNƒg3D‚Ö‚Ìƒ|ƒCƒ“ƒ^
 	CObject3D** pObj3D = NULL;
 
-	//å„ã‚·ãƒ¼ãƒ³ã®ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—ã™ã‚‹
+	//ŠeƒV[ƒ“‚Ìƒf[ƒ^‚ğæ“¾‚·‚é
 	if (pScene->GetMode() == CScene::MODE_GAME)
 	{
 		pObj3D = CGame::GetObject3D();
@@ -349,7 +349,7 @@ void CPlayer::Update(void)
 	D3DXVECTOR3 CameraAngle = pCamera->GetAngle();
 	bool bStickMoving = false;
 
-	//å½¢æ…‹ã”ã¨ã®é€Ÿåº¦æ±ºå®š
+	//Œ`‘Ô‚²‚Æ‚Ì‘¬“xŒˆ’è
 	float fSpeed = HUMAN_SPEED;
 
 	switch (m_Mode)
@@ -363,12 +363,12 @@ void CPlayer::Update(void)
 		if (CCrosshair::GetDisp() == true)CCrosshair::SetDisp(false);
 		break;
 	case MODE_CANNON:
-		fSpeed = CANNON_SPEED; //å‹•ã‘ãªã„ã‚ˆã†ã«ã™ã‚‹
+		fSpeed = CANNON_SPEED; //“®‚¯‚È‚¢‚æ‚¤‚É‚·‚é
 		if (CCrosshair::GetDisp() == false)CCrosshair::SetDisp(true);
 		break;
 	}
 
-	//ã‚¯ãƒ¢å‹ã«å¤‰å½¢=============================================================
+	//ƒNƒ‚Œ^‚É•ÏŒ`=============================================================
 	if (m_bChangeMode == true && m_Mode == MODE_SPIDER)
 	{
 		m_fModelChange -= 0.007f;
@@ -397,7 +397,7 @@ void CPlayer::Update(void)
 		}
 	}
 
-	//äººå‹ã«å¤‰å½¢===============================================================
+	//lŒ^‚É•ÏŒ`===============================================================
 	if (m_bChangeMode == true && m_Mode == MODE_HUMAN)
 	{
 		m_fModelChange += 0.007f;
@@ -413,83 +413,92 @@ void CPlayer::Update(void)
 	if (pObj3D != NULL && m_bChangeMode == false)
 	{
 		if (pInputKeyboard->GetTrigger(DIK_Q) == true && m_Mode == MODE_HUMAN)
-		{//ã‚¯ãƒ¢å‹ã«å¤‰å½¢
+		{//ƒNƒ‚Œ^‚É•ÏŒ`
 			CParticle::Create(CEffect::TEX_NONE, CParticle::TYPE_GATE, D3DXVECTOR3(m_pos.x, 10.0f, m_pos.z), D3DXVECTOR3(2.0f, 2.0f, 0.0f), COLOR_GREEN, 40, 1);
 			CParticle::Create(CEffect::TEX_NONE, CParticle::TYPE_GATE, D3DXVECTOR3(m_pos.x, 10.0f, m_pos.z), D3DXVECTOR3(3.0f, 3.0f, 0.0f), COLOR_BLUE, 40, 1);
 			SetMode(MODE_SPIDER);
 		}
 		else if (pInputKeyboard->GetTrigger(DIK_Q) == true && m_Mode == MODE_SPIDER)
-		{//äººå‹ã«å¤‰å½¢
+		{//lŒ^‚É•ÏŒ`
 			CParticle::Create(CEffect::TEX_NONE, CParticle::TYPE_GATE, D3DXVECTOR3(m_pos.x, 50.0f, m_pos.z), D3DXVECTOR3(3.0f, 3.0f, 0.0f), COLOR_GREEN, 40, 1);
 			CParticle::Create(CEffect::TEX_NONE, CParticle::TYPE_GATE, D3DXVECTOR3(m_pos.x, 50.0f, m_pos.z), D3DXVECTOR3(4.0f, 4.0f, 0.0f), COLOR_BLUE, 40, 1);
 			SetMode(MODE_HUMAN);
 		}
 
 		if (pInputKeyboard->GetTrigger(DIK_E) == true && m_Mode == MODE_HUMAN)
-		{//éŠƒå‹ã«å¤‰å½¢
+		{//eŒ^‚É•ÏŒ`
 			CParticle::Create(CEffect::TEX_NONE, CParticle::TYPE_GATE, D3DXVECTOR3(m_pos.x, 50.0f, m_pos.z), D3DXVECTOR3(3.0f, 3.0f, 0.0f), COLOR_GREEN, 40, 1);
 			CParticle::Create(CEffect::TEX_NONE, CParticle::TYPE_GATE, D3DXVECTOR3(m_pos.x, 50.0f, m_pos.z), D3DXVECTOR3(4.0f, 4.0f, 0.0f), COLOR_BLUE, 40, 1);
 			SetMode(MODE_CANNON);
 		}
 		else if (pInputKeyboard->GetTrigger(DIK_E) == true && m_Mode == MODE_CANNON)
-		{//äººå‹ã«å¤‰å½¢
+		{//lŒ^‚É•ÏŒ`
 			CParticle::Create(CEffect::TEX_NONE, CParticle::TYPE_GATE, D3DXVECTOR3(m_pos.x, 50.0f, m_pos.z), D3DXVECTOR3(3.0f, 3.0f, 0.0f), COLOR_GREEN, 40, 1);
 			CParticle::Create(CEffect::TEX_NONE, CParticle::TYPE_GATE, D3DXVECTOR3(m_pos.x, 50.0f, m_pos.z), D3DXVECTOR3(4.0f, 4.0f, 0.0f), COLOR_BLUE, 40, 1);
 			SetMode(MODE_HUMAN);
 		}
 
 		if (pInputJoypad->GetTrigger(JOYKEY_X) && m_Mode == MODE_HUMAN)
-		{//ã‚¯ãƒ¢å‹ã«å¤‰å½¢
+		{//ƒNƒ‚Œ^‚É•ÏŒ`
 			CParticle::Create(CEffect::TEX_NONE, CParticle::TYPE_GATE, D3DXVECTOR3(m_pos.x, 10.0f, m_pos.z), D3DXVECTOR3(2.0f, 2.0f, 0.0f), COLOR_GREEN, 40, 1);
 			CParticle::Create(CEffect::TEX_NONE, CParticle::TYPE_GATE, D3DXVECTOR3(m_pos.x, 10.0f, m_pos.z), D3DXVECTOR3(3.0f, 3.0f, 0.0f), COLOR_BLUE, 40, 1);
 			SetMode(MODE_SPIDER);
 		}
 		else if (pInputJoypad->GetTrigger(JOYKEY_X) && m_Mode == MODE_SPIDER)
-		{//äººå‹ã«å¤‰å½¢
+		{//lŒ^‚É•ÏŒ`
 			CParticle::Create(CEffect::TEX_NONE, CParticle::TYPE_GATE, D3DXVECTOR3(m_pos.x, 50.0f, m_pos.z), D3DXVECTOR3(3.0f, 3.0f, 0.0f), COLOR_GREEN, 40, 1);
 			CParticle::Create(CEffect::TEX_NONE, CParticle::TYPE_GATE, D3DXVECTOR3(m_pos.x, 50.0f, m_pos.z), D3DXVECTOR3(4.0f, 4.0f, 0.0f), COLOR_BLUE, 40, 1);
 			SetMode(MODE_HUMAN);
 		}
 		
 		if (pInputJoypad->GetTrigger(JOYKEY_B) == true && m_Mode == MODE_HUMAN)
-		{//éŠƒå‹ã«å¤‰å½¢
+		{//eŒ^‚É•ÏŒ`
 			CParticle::Create(CEffect::TEX_NONE, CParticle::TYPE_GATE, D3DXVECTOR3(m_pos.x, 50.0f, m_pos.z), D3DXVECTOR3(3.0f, 3.0f, 0.0f), COLOR_GREEN, 40, 1);
 			CParticle::Create(CEffect::TEX_NONE, CParticle::TYPE_GATE, D3DXVECTOR3(m_pos.x, 50.0f, m_pos.z), D3DXVECTOR3(4.0f, 4.0f, 0.0f), COLOR_BLUE, 40, 1);
 			SetMode(MODE_CANNON);
 		}
 		else if (pInputJoypad->GetTrigger(JOYKEY_B) == true && m_Mode == MODE_CANNON)
-		{//äººå‹ã«å¤‰å½¢
+		{//lŒ^‚É•ÏŒ`
 			CParticle::Create(CEffect::TEX_NONE, CParticle::TYPE_GATE, D3DXVECTOR3(m_pos.x, 50.0f, m_pos.z), D3DXVECTOR3(3.0f, 3.0f, 0.0f), COLOR_GREEN, 40, 1);
 			CParticle::Create(CEffect::TEX_NONE, CParticle::TYPE_GATE, D3DXVECTOR3(m_pos.x, 50.0f, m_pos.z), D3DXVECTOR3(4.0f, 4.0f, 0.0f), COLOR_BLUE, 40, 1);
 			SetMode(MODE_HUMAN);
 		}
 
-		//éŠƒå½¢æ…‹ã®æ™‚å¼¾ã‚’ç™ºå°„ã§ãã‚‹
+		//eŒ`‘Ô‚Ì’e‚ğ”­Ë‚Å‚«‚é
 		if (CCrosshair::GetDisp() == true)
 		{
 			if (m_Mode == MODE_CANNON && (pScene->GetMode() == CScene::MODE_GAME || pScene->GetMode() == CScene::MODE_TUTORIAL))
 			{
 				CInputMouse* pInputMouse = CManager::GetInputMouse();
-				if (pInputMouse != NULL && pInputMouse->GetTrigger(0) || pInputJoypad->GetTrigger(JOYKEY_RB))
+				if (pInputMouse != NULL && pInputKeyboard->GetTrigger(DIK_SPACE) || pInputJoypad->GetTrigger(JOYKEY_RB))
 				{
-					D3DXVECTOR3 direction = pCamera->GetPositionR() - pCamera->GetPositionV();
-					if (D3DXVec3LengthSq(&direction) > 0.0001f)
+					CCrosshair* pCrosshair = (pScene->GetMode() == CScene::MODE_GAME)
+						? CGame::GetCrosshair() : CTutorial::GetCrosshair();
+					D3DXVECTOR3 crosshairPos = pCrosshair != NULL
+						? pCrosshair->GetPosition() : CENTER_2DPOS;
+					D3DXVECTOR3 aimRay = pCamera->GetRayDirection(crosshairPos.x, crosshairPos.y);
+					if (D3DXVec3LengthSq(&aimRay) > 0.0001f)
 					{
-						D3DXVec3Normalize(&direction, &direction);
-						D3DXVECTOR3 bulletPos = m_pos + direction * 35.0f;
+						D3DXVECTOR3 cameraForward = pCamera->GetPositionR() - pCamera->GetPositionV();
+						D3DXVec3Normalize(&cameraForward, &cameraForward);
+						D3DXVECTOR3 bulletPos = m_pos + cameraForward * 35.0f;
 						bulletPos.y += 45.0f;
+						D3DXVECTOR3 aimPoint = pCamera->GetPositionV() + aimRay * 1000.0f;
+						D3DXVECTOR3 direction = aimPoint - bulletPos;
+						D3DXVec3Normalize(&direction, &direction);
+
 						CBullet::Create(bulletPos, D3DXVECTOR3(8.0f, 8.0f, 0.0f), direction * 25.0f, 120);
 					}
 				}
 			}
 		}
-		float rotSpeed = 0.15f; //æŒ¯ã‚Šå‘ãé€Ÿåº¦ï¼ˆæ•°å€¤ãŒå¤§ãã„ã»ã©æ—©ã„ï¼‰
+		float rotSpeed = 0.15f; //U‚èŒü‚«‘¬“xi”’l‚ª‘å‚«‚¢‚Ù‚Ç‘‚¢j
 
-		//ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰å…¥åŠ›(ç§»å‹•åˆ¤å®š)+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		//ƒL[ƒ{[ƒh“ü—Í(ˆÚ“®”»’è)+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		if (m_Mode != MODE_CANNON &&
 			(pScene->GetMode() == CScene::MODE_GAME || pScene->GetMode() == CScene::MODE_TUTORIAL))
 		{
-			//æ–œã‚ç§»å‹•ï¼ˆW + Aï¼‰
+			//Î‚ßˆÚ“®iW + Aj
 			if ((pInputKeyboard->GetPress(DIK_W) && pInputKeyboard->GetPress(DIK_A)) || (pInputJoypad->GetPress(JOYKEY_UP) && pInputJoypad->GetPress(JOYKEY_LEFT)))
 			{
 				m_move.x -= fSpeed * (sinf(D3DX_PI + rotCamera.y - D3DX_PI / 4));
@@ -500,15 +509,15 @@ void CPlayer::Update(void)
 
 				if (m_Mode == MODE_HUMAN)
 				{
-					//æ¯ãƒ•ãƒ¬ãƒ¼ãƒ ã¾ãŸã¯ã‚¸ãƒ£ãƒ³ãƒ—/ç§»å‹•æ™‚ã«å‘¼ã³å‡ºã—
-					D3DXVECTOR3 footPos = m_pos; // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®
+					//–ˆƒtƒŒ[ƒ€‚Ü‚½‚ÍƒWƒƒƒ“ƒv/ˆÚ“®‚ÉŒÄ‚Ño‚µ
+					D3DXVECTOR3 footPos = m_pos; // ƒvƒŒƒCƒ„[‚ÌˆÊ’u
 
-					//è¶³å…ƒã‹ã‚‰ã‚¸ã‚§ãƒƒãƒˆã‚’å™´å°„
+					//‘«Œ³‚©‚çƒWƒFƒbƒg‚ğ•¬Ë
 					CParticle::Create(CEffect::TEX_CIRCLE, CParticle::TYPE_JETT,
 						D3DXVECTOR3(footPos.x, footPos.y + 10.0f, footPos.z), JETT, D3DXCOLOR(1.0f, 0.4f, 0.1f, 1.0f), 3, JETT_NUM);
 				}
 			}
-			//æ–œã‚ç§»å‹•ï¼ˆW + Dï¼‰
+			//Î‚ßˆÚ“®iW + Dj
 			else if ((pInputKeyboard->GetPress(DIK_W) && pInputKeyboard->GetPress(DIK_D)) || (pInputJoypad->GetPress(JOYKEY_UP) && pInputJoypad->GetPress(JOYKEY_RIGHT)))
 			{
 				m_move.x -= fSpeed * (sinf(D3DX_PI + rotCamera.y + D3DX_PI / 4));
@@ -519,15 +528,15 @@ void CPlayer::Update(void)
 
 				if (m_Mode == MODE_HUMAN)
 				{
-					//æ¯ãƒ•ãƒ¬ãƒ¼ãƒ ã¾ãŸã¯ã‚¸ãƒ£ãƒ³ãƒ—/ç§»å‹•æ™‚ã«å‘¼ã³å‡ºã—
-					D3DXVECTOR3 footPos = m_pos; // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®
+					//–ˆƒtƒŒ[ƒ€‚Ü‚½‚ÍƒWƒƒƒ“ƒv/ˆÚ“®‚ÉŒÄ‚Ño‚µ
+					D3DXVECTOR3 footPos = m_pos; // ƒvƒŒƒCƒ„[‚ÌˆÊ’u
 
-					//è¶³å…ƒã‹ã‚‰ã‚¸ã‚§ãƒƒãƒˆã‚’å™´å°„
+					//‘«Œ³‚©‚çƒWƒFƒbƒg‚ğ•¬Ë
 					CParticle::Create(CEffect::TEX_CIRCLE, CParticle::TYPE_JETT,
 						D3DXVECTOR3(footPos.x, footPos.y + 10.0f, footPos.z), JETT, D3DXCOLOR(1.0f, 0.4f, 0.1f, 1.0f), 3, JETT_NUM);
 				}
 			}
-			//æ–œã‚ç§»å‹•ï¼ˆS + Aï¼‰
+			//Î‚ßˆÚ“®iS + Aj
 			else if ((pInputKeyboard->GetPress(DIK_S) && pInputKeyboard->GetPress(DIK_A)) || (pInputJoypad->GetPress(JOYKEY_DOWN) && pInputJoypad->GetPress(JOYKEY_LEFT)))
 			{
 				m_move.x -= fSpeed * (sinf(D3DX_PI + rotCamera.y - (D3DX_PI / 2 + D3DX_PI / 4)));
@@ -538,15 +547,15 @@ void CPlayer::Update(void)
 
 				if (m_Mode == MODE_HUMAN)
 				{
-					//æ¯ãƒ•ãƒ¬ãƒ¼ãƒ ã¾ãŸã¯ã‚¸ãƒ£ãƒ³ãƒ—/ç§»å‹•æ™‚ã«å‘¼ã³å‡ºã—
-					D3DXVECTOR3 footPos = m_pos; // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®
+					//–ˆƒtƒŒ[ƒ€‚Ü‚½‚ÍƒWƒƒƒ“ƒv/ˆÚ“®‚ÉŒÄ‚Ño‚µ
+					D3DXVECTOR3 footPos = m_pos; // ƒvƒŒƒCƒ„[‚ÌˆÊ’u
 
-					//è¶³å…ƒã‹ã‚‰ã‚¸ã‚§ãƒƒãƒˆã‚’å™´å°„
+					//‘«Œ³‚©‚çƒWƒFƒbƒg‚ğ•¬Ë
 					CParticle::Create(CEffect::TEX_CIRCLE, CParticle::TYPE_JETT,
 						D3DXVECTOR3(footPos.x, footPos.y + 10.0f, footPos.z), JETT, D3DXCOLOR(1.0f, 0.4f, 0.1f, 1.0f), 3, JETT_NUM);
 				}
 			}
-			//æ–œã‚ç§»å‹•ï¼ˆS + Dï¼‰
+			//Î‚ßˆÚ“®iS + Dj
 			else if ((pInputKeyboard->GetPress(DIK_S) && pInputKeyboard->GetPress(DIK_D)) || (pInputJoypad->GetPress(JOYKEY_DOWN) && pInputJoypad->GetPress(JOYKEY_RIGHT)))
 			{
 				m_move.x -= fSpeed * (sinf(D3DX_PI + rotCamera.y + (D3DX_PI / 2 + D3DX_PI / 4)));
@@ -557,15 +566,15 @@ void CPlayer::Update(void)
 
 				if (m_Mode == MODE_HUMAN)
 				{
-					//æ¯ãƒ•ãƒ¬ãƒ¼ãƒ ã¾ãŸã¯ã‚¸ãƒ£ãƒ³ãƒ—/ç§»å‹•æ™‚ã«å‘¼ã³å‡ºã—
-					D3DXVECTOR3 footPos = m_pos; // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®
+					//–ˆƒtƒŒ[ƒ€‚Ü‚½‚ÍƒWƒƒƒ“ƒv/ˆÚ“®‚ÉŒÄ‚Ño‚µ
+					D3DXVECTOR3 footPos = m_pos; // ƒvƒŒƒCƒ„[‚ÌˆÊ’u
 
-					//è¶³å…ƒã‹ã‚‰ã‚¸ã‚§ãƒƒãƒˆã‚’å™´å°„
+					//‘«Œ³‚©‚çƒWƒFƒbƒg‚ğ•¬Ë
 					CParticle::Create(CEffect::TEX_CIRCLE, CParticle::TYPE_JETT,
 						D3DXVECTOR3(footPos.x, footPos.y + 10.0f, footPos.z), JETT, D3DXCOLOR(1.0f, 0.4f, 0.1f, 1.0f), 3, JETT_NUM);
 				}
 			}
-			//å‰é€²ï¼ˆWï¼‰
+			//‘OiiWj
 			else if (pInputKeyboard->GetPress(DIK_W) || pInputJoypad->GetPress(JOYKEY_UP))
 			{
 				m_move.x -= fSpeed * (sinf(D3DX_PI + rotCamera.y));
@@ -576,15 +585,15 @@ void CPlayer::Update(void)
 
 				if (m_Mode == MODE_HUMAN)
 				{
-					//æ¯ãƒ•ãƒ¬ãƒ¼ãƒ ã¾ãŸã¯ã‚¸ãƒ£ãƒ³ãƒ—/ç§»å‹•æ™‚ã«å‘¼ã³å‡ºã—
-					D3DXVECTOR3 footPos = m_pos; //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®
+					//–ˆƒtƒŒ[ƒ€‚Ü‚½‚ÍƒWƒƒƒ“ƒv/ˆÚ“®‚ÉŒÄ‚Ño‚µ
+					D3DXVECTOR3 footPos = m_pos; //ƒvƒŒƒCƒ„[‚ÌˆÊ’u
 
-					//è¶³å…ƒã‹ã‚‰ã‚¸ã‚§ãƒƒãƒˆã‚’å™´å°„
+					//‘«Œ³‚©‚çƒWƒFƒbƒg‚ğ•¬Ë
 					CParticle::Create(CEffect::TEX_CIRCLE, CParticle::TYPE_JETT,
 						D3DXVECTOR3(footPos.x, footPos.y + 10.0f, footPos.z), JETT, D3DXCOLOR(1.0f, 0.4f, 0.1f, 1.0f), 3, JETT_NUM);
 				}
 			}
-			//å¾Œé€€ï¼ˆSï¼‰
+			//Œã‘ŞiSj
 			else if (pInputKeyboard->GetPress(DIK_S) || pInputJoypad->GetPress(JOYKEY_DOWN))
 			{
 				m_move.x -= fSpeed * (sinf(rotCamera.y));
@@ -595,15 +604,15 @@ void CPlayer::Update(void)
 
 				if (m_Mode == MODE_HUMAN)
 				{
-					//æ¯ãƒ•ãƒ¬ãƒ¼ãƒ ã¾ãŸã¯ã‚¸ãƒ£ãƒ³ãƒ—/ç§»å‹•æ™‚ã«å‘¼ã³å‡ºã—
-					D3DXVECTOR3 footPos = m_pos; //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®
+					//–ˆƒtƒŒ[ƒ€‚Ü‚½‚ÍƒWƒƒƒ“ƒv/ˆÚ“®‚ÉŒÄ‚Ño‚µ
+					D3DXVECTOR3 footPos = m_pos; //ƒvƒŒƒCƒ„[‚ÌˆÊ’u
 
-					//è¶³å…ƒã‹ã‚‰ã‚¸ã‚§ãƒƒãƒˆã‚’å™´å°„
+					//‘«Œ³‚©‚çƒWƒFƒbƒg‚ğ•¬Ë
 					CParticle::Create(CEffect::TEX_CIRCLE, CParticle::TYPE_JETT,
 						D3DXVECTOR3(footPos.x, footPos.y + 10.0f, footPos.z), JETT, D3DXCOLOR(1.0f, 0.4f, 0.1f, 1.0f), 3, JETT_NUM);
 				}
 			}
-			//å·¦ç§»å‹•ï¼ˆAï¼‰
+			//¶ˆÚ“®iAj
 			else if (pInputKeyboard->GetPress(DIK_A) || pInputJoypad->GetPress(JOYKEY_LEFT))
 			{
 				m_move.x -= fSpeed * (sinf(D3DX_PI + rotCamera.y - D3DX_PI / 2));
@@ -614,15 +623,15 @@ void CPlayer::Update(void)
 
 				if (m_Mode == MODE_HUMAN)
 				{
-					//æ¯ãƒ•ãƒ¬ãƒ¼ãƒ ã¾ãŸã¯ã‚¸ãƒ£ãƒ³ãƒ—/ç§»å‹•æ™‚ã«å‘¼ã³å‡ºã—
-					D3DXVECTOR3 footPos = m_pos; // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®
+					//–ˆƒtƒŒ[ƒ€‚Ü‚½‚ÍƒWƒƒƒ“ƒv/ˆÚ“®‚ÉŒÄ‚Ño‚µ
+					D3DXVECTOR3 footPos = m_pos; // ƒvƒŒƒCƒ„[‚ÌˆÊ’u
 
-					//è¶³å…ƒã‹ã‚‰ã‚¸ã‚§ãƒƒãƒˆã‚’å™´å°„
+					//‘«Œ³‚©‚çƒWƒFƒbƒg‚ğ•¬Ë
 					CParticle::Create(CEffect::TEX_CIRCLE, CParticle::TYPE_JETT,
 						D3DXVECTOR3(footPos.x, footPos.y + 10.0f, footPos.z), JETT, D3DXCOLOR(1.0f, 0.4f, 0.1f, 1.0f), 3, JETT_NUM);
 				}
 			}
-			//å³ç§»å‹•ï¼ˆDï¼‰
+			//‰EˆÚ“®iDj
 			else if (pInputKeyboard->GetPress(DIK_D) || pInputJoypad->GetPress(JOYKEY_RIGHT))
 			{
 				m_move.x -= fSpeed * (sinf(D3DX_PI + rotCamera.y + D3DX_PI / 2));
@@ -633,17 +642,17 @@ void CPlayer::Update(void)
 
 				if (m_Mode == MODE_HUMAN)
 				{
-					//æ¯ãƒ•ãƒ¬ãƒ¼ãƒ ã¾ãŸã¯ã‚¸ãƒ£ãƒ³ãƒ—/ç§»å‹•æ™‚ã«å‘¼ã³å‡ºã—
-					D3DXVECTOR3 footPos = m_pos; //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®
+					//–ˆƒtƒŒ[ƒ€‚Ü‚½‚ÍƒWƒƒƒ“ƒv/ˆÚ“®‚ÉŒÄ‚Ño‚µ
+					D3DXVECTOR3 footPos = m_pos; //ƒvƒŒƒCƒ„[‚ÌˆÊ’u
 
-					//è¶³å…ƒã‹ã‚‰ã‚¸ã‚§ãƒƒãƒˆã‚’å™´å°„
+					//‘«Œ³‚©‚çƒWƒFƒbƒg‚ğ•¬Ë
 					CParticle::Create(CEffect::TEX_CIRCLE, CParticle::TYPE_JETT,
 						D3DXVECTOR3(footPos.x, footPos.y + 10.0f, footPos.z), JETT, D3DXCOLOR(1.0f, 0.4f, 0.1f, 1.0f), 3, JETT_NUM);
 				}
 			}
 		}
 
-		// å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã¯ãƒ‡ã‚¸ã‚¿ãƒ«æ–¹å‘ã‚­ãƒ¼ã¨é‡ã­ãšã€å¼·ã•ã‚’ä¿ã£ã¦ã‚«ãƒ¡ãƒ©åŸºæº–ã§ç§»å‹•ã™ã‚‹ã€‚
+		// ¶ƒXƒeƒBƒbƒN‚ÍƒfƒWƒ^ƒ‹•ûŒüƒL[‚Æd‚Ë‚¸A‹­‚³‚ğ•Û‚Á‚ÄƒJƒƒ‰Šî€‚ÅˆÚ“®‚·‚éB
 		const bool bDigitalMove =
 			pInputKeyboard->GetPress(DIK_W) || pInputKeyboard->GetPress(DIK_A) ||
 			pInputKeyboard->GetPress(DIK_S) || pInputKeyboard->GetPress(DIK_D) ||
@@ -684,7 +693,7 @@ void CPlayer::Update(void)
 			}
 		}
 
-		//ã‚¸ãƒ£ãƒ³ãƒ—åˆ¤å®š
+		//ƒWƒƒƒ“ƒv”»’è
 		if (m_Mode != MODE_CANNON)
 		{
 			if ((pInputKeyboard->GetTrigger(DIK_SPACE) == true && m_bLand == false) || (pInputJoypad->GetTrigger(JOYKEY_A) && m_bLand == false))
@@ -695,13 +704,13 @@ void CPlayer::Update(void)
 		}
 	}
 
-	//ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ï¼ã‚¢ã‚¯ã‚·ãƒ§ãƒ³åˆ¤å®š
+	//ƒ‚[ƒVƒ‡ƒ“^ƒAƒNƒVƒ‡ƒ“”»’è
 	if (m_bLand == true)
 	{
 		m_pMotion->Set(MOTIONTYPE_JUMP, 0);
 	}
 
-	//ç§»å‹•é‡ã®é©ç”¨ã¨é‡åŠ›å‡¦ç†
+	//ˆÚ“®—Ê‚Ì“K—p‚Æd—Íˆ—
 	if (m_bClimbingWall)
 	{
 		m_rot.x = 1.57f;
@@ -713,10 +722,10 @@ void CPlayer::Update(void)
 		m_rot.x = 0.0f;
 	}
 
-	//å®Ÿéš›ã®åº§æ¨™æ›´æ–°
+	//ÀÛ‚ÌÀ•WXV
 	m_pos += m_move;
 
-	//ãƒªã‚»ãƒƒãƒˆ
+	//ƒŠƒZƒbƒg
 	m_bClimbingWall = false;
 
 	if (pScene->GetMode() != CScene::MODE_GAME)
@@ -748,9 +757,14 @@ void CPlayer::Update(void)
 		}
 	}
 
-	//ç§»å‹•é‡ã®æ¸›è¡°
+	//ˆÚ“®—Ê‚ÌŒ¸Š
 	m_move.x += (0.0f - m_move.x) * 0.08f;
 	m_move.z += (0.0f - m_move.z) * 0.08f;
+
+	if (m_Mode == MODE_CANNON)
+	{
+		m_rot = pCamera->GetRotation();
+	}
 
 	if (pInputKeyboard->GetPress(DIK_W) == false &&
 		pInputKeyboard->GetPress(DIK_A) == false &&
@@ -766,44 +780,44 @@ void CPlayer::Update(void)
 		m_pMotion->Set(MOTIONTYPE_NEUTRAL, 20);
 	}
 
-	//ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã®æ›´æ–°å‡¦ç†
+	//ƒ‚[ƒVƒ‡ƒ“‚ÌXVˆ—
 	m_pMotion->Update();
 
 	if (pDebug != NULL)
 	{
-		pDebug->PrintDebugProc("ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ãƒ¢ãƒ¼ãƒ‰å¤‰æ›´\n++äººå‹æ™‚[1:ã‚¯ãƒ¢å‹ã«å¤‰å½¢]++\n++ã‚¯ãƒ¢å‹æ™‚[1:äººå‹ã«å¤‰å½¢]++\n");
+		pDebug->PrintDebugProc("ƒvƒŒƒCƒ„[‚Ìƒ‚[ƒh•ÏX\n++lŒ^[1:ƒNƒ‚Œ^‚É•ÏŒ`]++\n++ƒNƒ‚Œ^[1:lŒ^‚É•ÏŒ`]++\n");
 
 		if (m_Mode == MODE_HUMAN)
 		{
-			pDebug->PrintDebugProc("[äººå‹]\n");
+			pDebug->PrintDebugProc("[lŒ^]\n");
 		}
 		else if (m_Mode == MODE_SPIDER)
 		{
-			pDebug->PrintDebugProc("[ã‚¯ãƒ¢å‹]\n");
+			pDebug->PrintDebugProc("[ƒNƒ‚Œ^]\n");
 		}
 		else if (m_Mode == MODE_CANNON)
 		{
-			pDebug->PrintDebugProc("[éŠƒå‹]\n");
+			pDebug->PrintDebugProc("[eŒ^]\n");
 		}
 
-		pDebug->PrintDebugProc("ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®åº§æ¨™[X:%.1f,|Y:%.1f|%.1f]\n", m_pos.x, m_pos.y, m_pos.z);
-		pDebug->PrintDebugProc("ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å‘ã[X:%.2f,|Y:%.2f|%.2f]\n", m_rot.x, m_rot.y, m_rot.z);
-		pDebug->PrintDebugProc("ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãƒ¢ãƒ‡ãƒ«æ•°:%d\n", m_nNumModel);
-		pDebug->PrintDebugProc("ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ç·æ•°:%d\n", CEffect::GetNumAll());
+		pDebug->PrintDebugProc("ƒvƒŒƒCƒ„[‚ÌÀ•W[X:%.1f,|Y:%.1f|%.1f]\n", m_pos.x, m_pos.y, m_pos.z);
+		pDebug->PrintDebugProc("ƒvƒŒƒCƒ„[‚ÌŒü‚«[X:%.2f,|Y:%.2f|%.2f]\n", m_rot.x, m_rot.y, m_rot.z);
+		pDebug->PrintDebugProc("ƒvƒŒƒCƒ„[ƒ‚ƒfƒ‹”:%d\n", m_nNumModel);
+		pDebug->PrintDebugProc("ƒGƒtƒFƒNƒg‚Ì‘”:%d\n", CEffect::GetNumAll());
 	}
 }
 
 //=============================================================================
-//ãƒ¢ãƒ¼ãƒ‰ã®è¨­å®š
+//ƒ‚[ƒh‚Ìİ’è
 void CPlayer::SetMode(const MODE mode)
 {
 	m_Mode = mode;
 	m_bChangeMode = true;
 
-	//ä¸€å¿œå¤‰å‹éŸ³
+	//ˆê‰•ÏŒ^‰¹
 	CSound::PlaySound(CSound::SOUND_LASBEL_TRANS000);
 
-	//æ—¢å­˜ã®ãƒ¢ãƒ‡ãƒ«ã‚’å®‰å…¨ã«ç ´æ£„
+	//Šù‘¶‚Ìƒ‚ƒfƒ‹‚ğˆÀ‘S‚É”jŠü
 	for (int nCntModel = 0; nCntModel < m_nNumModel; nCntModel++)
 	{
 		if (m_apModel[nCntModel] != NULL)
@@ -813,21 +827,21 @@ void CPlayer::SetMode(const MODE mode)
 			m_apModel[nCntModel] = NULL;
 		}
 	}
-	m_nNumModel = 0; //è§£æ”¾å¾Œã«ãƒ¢ãƒ‡ãƒ«æ•°ã‚’ãƒªã‚»ãƒƒãƒˆ
+	m_nNumModel = 0; //‰ğ•úŒã‚Éƒ‚ƒfƒ‹”‚ğƒŠƒZƒbƒg
 	memset(m_apModel, 0, sizeof(m_apModel));
 	for (int nModelInfo = 0; nModelInfo < sizeof(m_aModelInfo) / sizeof(m_aModelInfo[0]); ++nModelInfo)
 	{
 		m_aModelInfo[nModelInfo] = MODEL_INFO{};
 	}
 
-	//æ—¢å­˜ã®ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã‚’ç ´æ£„
+	//Šù‘¶‚Ìƒ‚[ƒVƒ‡ƒ“‚ğ”jŠü
 	if (m_pMotion != NULL)
 	{
 		delete m_pMotion;
 		m_pMotion = NULL;
 	}
 
-	//ãƒ¢ãƒ¼ãƒ‰ã«å¿œã˜ãŸã‚¹ã‚¯ãƒªãƒ—ãƒˆãƒ»ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³æƒ…å ±ã®èª­ã¿è¾¼ã¿
+	//ƒ‚[ƒh‚É‰‚¶‚½ƒXƒNƒŠƒvƒgEƒ‚[ƒVƒ‡ƒ“î•ñ‚Ì“Ç‚İ‚İ
 	switch (mode)
 	{
 	case MODE_HUMAN:
@@ -846,7 +860,7 @@ void CPlayer::SetMode(const MODE mode)
 		break;
 	}
 
-	//æ–°ã—ã„ãƒ¢ãƒ‡ãƒ«ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ç”Ÿæˆã¨éšå±¤æ§‹é€ 
+	//V‚µ‚¢ƒ‚ƒfƒ‹‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚Ì¶¬‚ÆŠK‘w\‘¢
 	for (int nCntModel = 0; nCntModel < m_nNumModel; nCntModel++)
 	{
 		m_apModel[nCntModel] = CModel::Create(
@@ -870,11 +884,11 @@ void CPlayer::SetMode(const MODE mode)
 		}
 	}
 
-	//ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã®å†è¨­å®šã¨ãƒ¢ãƒ‡ãƒ«è¨­å®š
+	//ƒ‚[ƒVƒ‡ƒ“‚ÌÄİ’è‚Æƒ‚ƒfƒ‹İ’è
 	m_pMotion = new CMotion;
 
 	if (m_pMotion != NULL)
-	{//ãƒ¢ãƒ‡ãƒ«ã‚’è¨­å®š
+	{//ƒ‚ƒfƒ‹‚ğİ’è
 		m_pMotion->SetModel(m_apModel, m_nNumModel);
 
 		for (int nCntInfo = 0; nCntInfo < MOTIONTYPE_MAX; nCntInfo++)
@@ -882,13 +896,13 @@ void CPlayer::SetMode(const MODE mode)
 			m_pMotion->SetInfo(m_aMotionInfo[nCntInfo]);
 		}
 
-		//ãƒ‹ãƒ¥ãƒ¼ãƒˆãƒ©ãƒ«ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã®ã‚»ãƒƒãƒˆ
+		//ƒjƒ…[ƒgƒ‰ƒ‹ƒ‚[ƒVƒ‡ƒ“‚ÌƒZƒbƒg
 		m_pMotion->Set(MOTIONTYPE_NEUTRAL, 3);
 	}
 }
 
 //=============================================================================
-//å½±ã®æç”»
+//‰e‚Ì•`‰æ
 void CPlayer::DrawShadow(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
@@ -906,7 +920,7 @@ void CPlayer::DrawShadow(void)
 	pDevice->GetRenderState(D3DRS_DEPTHBIAS, &oldDepthBias);
 	pDevice->GetRenderState(D3DRS_SLOPESCALEDEPTHBIAS, &oldSlopeScaleDepthBias);
 
-	//æ¸›ç®—åˆæˆ(å¤§äº‹)
+	//Œ¸Z‡¬(‘å–)
 	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_REVSUBTRACT);
 	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
 
@@ -981,34 +995,34 @@ void CPlayer::DrawShadow(void)
 	pDevice->SetRenderState(D3DRS_DEPTHBIAS, oldDepthBias);
 	pDevice->SetRenderState(D3DRS_SLOPESCALEDEPTHBIAS, oldSlopeScaleDepthBias);
 
-	//æ¸›ç®—åˆæˆã‚’ãƒªã‚»ãƒƒãƒˆ
+	//Œ¸Z‡¬‚ğƒŠƒZƒbƒg
 	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 }
 
 //=============================================================================
-//å£ç™»ã‚Šä¸­ã®Yè»¸ç§»å‹•é€Ÿåº¦ã‚’è¨­å®šã™ã‚‹é–¢æ•°
+//•Ç“o‚è’†‚ÌY²ˆÚ“®‘¬“x‚ğİ’è‚·‚éŠÖ”
 void CPlayer::ClimbUp(float speed)
 {
 	if (m_pos.y <= 560.0f)
 	{
-		m_bClimbingWall = true;		//å£ç™»ã‚ŠçŠ¶æ…‹ã«ã™ã‚‹
-		m_move.y = speed;			//Yè»¸ç§»å‹•é‡(é€Ÿåº¦)ã‚’ç›´æ¥ã‚»ãƒƒãƒˆ
+		m_bClimbingWall = true;		//•Ç“o‚èó‘Ô‚É‚·‚é
+		m_move.y = speed;			//Y²ˆÚ“®—Ê(‘¬“x)‚ğ’¼ÚƒZƒbƒg
 	}
 	else
-	{//560.0fã‚’è¶…ãˆãŸã‚‰é€Ÿåº¦ã‚’0ã«ã—ã¦ä¸Šé™ã§ã‚¹ãƒˆãƒƒãƒ—ã•ã›ã‚‹
+	{//560.0f‚ğ’´‚¦‚½‚ç‘¬“x‚ğ0‚É‚µ‚ÄãŒÀ‚ÅƒXƒgƒbƒv‚³‚¹‚é
 		m_pos.y = 560.0f;
 		m_move.y = 0.0f;
 	}
 }
 
 //=============================================================================
-// ç›®æ¨™ã®è§’åº¦ã¸å‘ã‹ã£ã¦æ…£æ€§å›è»¢ã•ã›ã‚‹é–¢æ•°
+// –Ú•W‚ÌŠp“x‚ÖŒü‚©‚Á‚ÄŠµ«‰ñ“]‚³‚¹‚éŠÖ”
 void CPlayer::RotateTarget(float& currentRotY, float targetRotY, float speed)
 {
 	float diff = targetRotY - currentRotY;
 
-	//-PIï½PIã«æ­£è¦åŒ–
+	//-PI`PI‚É³‹K‰»
 	while (diff > D3DX_PI)
 	{
 		diff -= D3DX_PI * 2.0f;
@@ -1020,7 +1034,7 @@ void CPlayer::RotateTarget(float& currentRotY, float targetRotY, float speed)
 
 	currentRotY += diff * speed;
 
-	// ç¯„å›²ã‚’ä¿®æ­£
+	// ”ÍˆÍ‚ğC³
 	if (currentRotY > D3DX_PI)
 	{
 		currentRotY -= D3DX_PI * 2.0f;
@@ -1032,53 +1046,53 @@ void CPlayer::RotateTarget(float& currentRotY, float targetRotY, float speed)
 }
 
 //=============================================================================
-//éšå±¤æ§‹é€ ãƒ¢ãƒ‡ãƒ«èª­ã¿è¾¼ã¿å‡¦ç†
+//ŠK‘w\‘¢ƒ‚ƒfƒ‹“Ç‚İ‚İˆ—
 HRESULT CPlayer::LoadParentModel(const std::string& fileName)
 {
 	FILE* pFile = fopen(fileName.c_str(), "r");
 
 	if (pFile == NULL)
-	{// èª­ã¿è¾¼ã¿å¤±æ•—
+	{// “Ç‚İ‚İ¸”s
 		return E_FAIL;
 	}
 
-	static char aStr[MAX_STRING] = {};		    // æ–‡å­—åˆ—èª­ã¿è¾¼ã¿
-	static char aStrCpy[MAX_STRING] = {};	    // æ–‡å­—åˆ—è¤‡è£½(æ•´ç†)
-	static char* pStart = NULL;				    // æ–‡å­—åˆ—é–‹å§‹ä½ç½®
-	static char aModelPath[FILE_MAX] = {};		// ãƒ¢ãƒ‡ãƒ«ã®ãƒ•ã‚¡ã‚¤ãƒ«åèª­ã¿è¾¼ã¿
-	int nIdx = 0;								// ãƒ¢ãƒ‡ãƒ«ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹èª­ã¿è¾¼ã¿
-	int nParent = 0;							// ãƒ¢ãƒ‡ãƒ«ã®è¦ªã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹èª­ã¿è¾¼ã¿
-	D3DXVECTOR3 pos = {};						// ä½ç½®èª­ã¿è¾¼ã¿
-	D3DXVECTOR3 rot = {};						// å‘ãèª­ã¿è¾¼ã¿
-	int nCntParts = 0;							// ãƒ‘ãƒ¼ãƒ„æ•°ã‚«ã‚¦ãƒ³ãƒˆ
-	int nCntFileName = 0;						// ãƒ•ã‚¡ã‚¤ãƒ«åã‚«ã‚¦ãƒ³ãƒˆ
-	int nCntModel = 0;							// ãƒ¢ãƒ‡ãƒ«æ•°
+	static char aStr[MAX_STRING] = {};		    // •¶š—ñ“Ç‚İ‚İ
+	static char aStrCpy[MAX_STRING] = {};	    // •¶š—ñ•¡»(®—)
+	static char* pStart = NULL;				    // •¶š—ñŠJnˆÊ’u
+	static char aModelPath[FILE_MAX] = {};		// ƒ‚ƒfƒ‹‚Ìƒtƒ@ƒCƒ‹–¼“Ç‚İ‚İ
+	int nIdx = 0;								// ƒ‚ƒfƒ‹‚ÌƒCƒ“ƒfƒbƒNƒX“Ç‚İ‚İ
+	int nParent = 0;							// ƒ‚ƒfƒ‹‚ÌeƒCƒ“ƒfƒbƒNƒX“Ç‚İ‚İ
+	D3DXVECTOR3 pos = {};						// ˆÊ’u“Ç‚İ‚İ
+	D3DXVECTOR3 rot = {};						// Œü‚«“Ç‚İ‚İ
+	int nCntParts = 0;							// ƒp[ƒc”ƒJƒEƒ“ƒg
+	int nCntFileName = 0;						// ƒtƒ@ƒCƒ‹–¼ƒJƒEƒ“ƒg
+	int nCntModel = 0;							// ƒ‚ƒfƒ‹”
 
 	while (true)
 	{
-		memset(aStr, 0, sizeof(aStr));			// æ–‡å­—åˆ—ã‚¯ãƒªã‚¢
-		(void)fgets(aStr, sizeof(aStr), pFile);	// ä¸€åˆ—èª­ã¿è¾¼ã¿
+		memset(aStr, 0, sizeof(aStr));			// •¶š—ñƒNƒŠƒA
+		(void)fgets(aStr, sizeof(aStr), pFile);	// ˆê—ñ“Ç‚İ‚İ
 
 		if (strstr(aStr, LOAD_START) != NULL)
-		{// LOAD_STARTã‚’èª­ã¿è¾¼ã‚ã°èª­ã¿è¾¼ã¿é–‹å§‹
+		{// LOAD_START‚ğ“Ç‚İ‚ß‚Î“Ç‚İ‚İŠJn
 			break;
 		}
 
 		if (feof(pFile) != NULL)
-		{// èª­ã¿è¾¼ã¿å¤±æ•—
+		{// “Ç‚İ‚İ¸”s
 			return E_FAIL;
 		}
 	}
 
 	while (true)
 	{
-		memset(aStr, 0, sizeof(aStr));				// æ–‡å­—åˆ—ã‚¯ãƒªã‚¢
-		memset(aStrCpy, 0, sizeof(aStrCpy));		// ã‚³ãƒ”ãƒ¼ã‚‚ã‚¯ãƒªã‚¢
-		(void)fgets(aStr, sizeof(aStr), pFile);		// ä¸€åˆ—èª­ã¿è¾¼ã¿
-		LoadEnableString(&aStrCpy[0], &aStr[0]);	// æœ‰åŠ¹æ–‡å­—ã ã‘æŠœãå–ã£ã¦è¤‡è£½
+		memset(aStr, 0, sizeof(aStr));				// •¶š—ñƒNƒŠƒA
+		memset(aStrCpy, 0, sizeof(aStrCpy));		// ƒRƒs[‚àƒNƒŠƒA
+		(void)fgets(aStr, sizeof(aStr), pFile);		// ˆê—ñ“Ç‚İ‚İ
+		LoadEnableString(&aStrCpy[0], &aStr[0]);	// —LŒø•¶š‚¾‚¯”²‚«æ‚Á‚Ä•¡»
 
 		if (strstr(aStr, LOAD_NUMMODEL))
-		{// NUM_MODELã‚’èª­ã¿è¾¼ã‚“ã 
+		{// NUM_MODEL‚ğ“Ç‚İ‚ñ‚¾
 			if ((pStart = strchr(aStr, '=')) == NULL)
 			{
 				continue;
@@ -1088,7 +1102,7 @@ HRESULT CPlayer::LoadParentModel(const std::string& fileName)
 		}
 
 		if (strstr(aStr, LOAD_MODEL))
-		{// MODEL_FILENAMEã‚’èª­ã¿è¾¼ã‚“ã 
+		{// MODEL_FILENAME‚ğ“Ç‚İ‚ñ‚¾
 
 			if ((pStart = strchr(aStr, '=')) == NULL)
 			{
@@ -1102,16 +1116,16 @@ HRESULT CPlayer::LoadParentModel(const std::string& fileName)
 		}
 
 		if (strstr(aStr, LOAD_PLAYER))
-		{// CHARACTERSETã‚’èª­ã¿è¾¼ã‚“ã 
+		{// CHARACTERSET‚ğ“Ç‚İ‚ñ‚¾
 			while (true)
 			{
-				memset(aStr, 0, sizeof(aStr));				// æ–‡å­—åˆ—ã‚¯ãƒªã‚¢
-				memset(aStrCpy, 0, sizeof(aStrCpy));		// ã‚³ãƒ”ãƒ¼ã‚‚ã‚¯ãƒªã‚¢
-				(void)fgets(aStr, sizeof(aStr), pFile);		// ä¸€åˆ—èª­ã¿è¾¼ã¿
-				LoadEnableString(&aStrCpy[0], &aStr[0]);	// æœ‰åŠ¹æ–‡å­—ã ã‘æŠœãå–ã£ã¦è¤‡è£½
+				memset(aStr, 0, sizeof(aStr));				// •¶š—ñƒNƒŠƒA
+				memset(aStrCpy, 0, sizeof(aStrCpy));		// ƒRƒs[‚àƒNƒŠƒA
+				(void)fgets(aStr, sizeof(aStr), pFile);		// ˆê—ñ“Ç‚İ‚İ
+				LoadEnableString(&aStrCpy[0], &aStr[0]);	// —LŒø•¶š‚¾‚¯”²‚«æ‚Á‚Ä•¡»
 
 				if (strcmp(aStrCpy, LOAD_PARTS) == 0)
-				{// PARTSSETã‚’èª­ã¿è¾¼ã‚“ã 
+				{// PARTSSET‚ğ“Ç‚İ‚ñ‚¾
 					while (true)
 					{
 						memset(aStr, 0, sizeof(aStr));
@@ -1120,7 +1134,7 @@ HRESULT CPlayer::LoadParentModel(const std::string& fileName)
 						LoadEnableString(&aStrCpy[0], &aStr[0]);
 
 						if (strstr(aStr, LOAD_INDEX))
-						{// INDEXã‚’èª­ã¿è¾¼ã‚“ã 
+						{// INDEX‚ğ“Ç‚İ‚ñ‚¾
 							if ((pStart = strchr(aStr, '=')) == NULL)
 							{
 								continue;
@@ -1131,7 +1145,7 @@ HRESULT CPlayer::LoadParentModel(const std::string& fileName)
 						}
 
 						if (strstr(aStr, LOAD_PARENT))
-						{// PARENTã‚’èª­ã¿è¾¼ã‚“ã 
+						{// PARENT‚ğ“Ç‚İ‚ñ‚¾
 							if ((pStart = strchr(aStr, '=')) == NULL)
 							{
 								continue;
@@ -1142,7 +1156,7 @@ HRESULT CPlayer::LoadParentModel(const std::string& fileName)
 						}
 
 						if (strstr(aStr, LOAD_POS))
-						{// POSã‚’èª­ã¿è¾¼ã‚“ã 
+						{// POS‚ğ“Ç‚İ‚ñ‚¾
 							if ((pStart = strchr(aStr, '=')) == NULL)
 							{
 								continue;
@@ -1153,7 +1167,7 @@ HRESULT CPlayer::LoadParentModel(const std::string& fileName)
 						}
 
 						if (strstr(aStr, LOAD_ROT))
-						{// ROTã‚’èª­ã¿è¾¼ã‚“ã 
+						{// ROT‚ğ“Ç‚İ‚ñ‚¾
 							if ((pStart = strchr(aStr, '=')) == NULL)
 							{
 								continue;
@@ -1164,11 +1178,11 @@ HRESULT CPlayer::LoadParentModel(const std::string& fileName)
 						}
 
 						if (strcmp(aStrCpy, LOAD_ENDPARTS) == 0)
-						{// END_PARTSSETã‚’èª­ã¿è¾¼ã‚“ã 
+						{// END_PARTSSET‚ğ“Ç‚İ‚ñ‚¾
 							LoadOffSet(pos, rot, nParent, nIdx);
 							nCntParts++;
 
-							//å€¤ã‚’ã‚¯ãƒªã‚¢
+							//’l‚ğƒNƒŠƒA
 							memset(&pos, NULL, sizeof(D3DXVECTOR3));
 							memset(&rot, NULL, sizeof(D3DXVECTOR3));
 							nIdx = 0;
@@ -1179,7 +1193,7 @@ HRESULT CPlayer::LoadParentModel(const std::string& fileName)
 				}
 
 				if (strcmp(aStrCpy, LOAD_ENDPLAYER) == 0)
-				{// END_CHARACTERSETã‚’èª­ã¿è¾¼ã‚“ã 
+				{// END_CHARACTERSET‚ğ“Ç‚İ‚ñ‚¾
 					nCntParts = 0;
 					break;
 				}
@@ -1187,8 +1201,8 @@ HRESULT CPlayer::LoadParentModel(const std::string& fileName)
 		}
 
 		if (strcmp(aStrCpy, LOAD_END) == 0)
-		{// END_SCRIPTã‚’èª­ã¿è¾¼ã‚“ã 
-			// èª­ã¿è¾¼ã¿çµ‚äº†
+		{// END_SCRIPT‚ğ“Ç‚İ‚ñ‚¾
+			// “Ç‚İ‚İI—¹
 			fclose(pFile);
 			break;
 		}
@@ -1198,7 +1212,7 @@ HRESULT CPlayer::LoadParentModel(const std::string& fileName)
 }
 
 //=============================================================================
-//éšå±¤æ§‹é€ ã®ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ãƒ­ãƒ¼ãƒ‰
+//ŠK‘w\‘¢‚Ìƒ‚ƒfƒ‹ƒtƒ@ƒCƒ‹‚ğƒ[ƒh
 void CPlayer::LoadParentFile(const std::string& fileName, int nIdxFile, int nMaxModel)
 {
 	if (nIdxFile < nMaxModel)
@@ -1208,7 +1222,7 @@ void CPlayer::LoadParentFile(const std::string& fileName, int nIdxFile, int nMax
 }
 
 //=============================================================================
-//ã‚ªãƒ•ã‚»ãƒƒãƒˆèª­ã¿è¾¼ã¿å‡¦ç†
+//ƒIƒtƒZƒbƒg“Ç‚İ‚İˆ—
 void CPlayer::LoadOffSet(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int nIdxParent, int nIdxModel)
 {
 	const int modelCapacity = sizeof(m_aModelInfo) / sizeof(m_aModelInfo[0]);
@@ -1228,44 +1242,44 @@ void CPlayer::LoadOffSet(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int nIdxParent, int n
 }
 
 //=============================================================================
-//ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³æƒ…å ±èª­ã¿è¾¼ã¿å‡¦ç†
+//ƒ‚[ƒVƒ‡ƒ“î•ñ“Ç‚İ‚İˆ—
 HRESULT CPlayer::LoadMotionInfo(const std::string& fileName)
 {
 	FILE* pMotionFile = fopen(fileName.c_str(), "r");
 
 	if (pMotionFile == NULL)
-	{// èª­ã¿è¾¼ã¿å¤±æ•—
+	{// “Ç‚İ‚İ¸”s
 		return E_FAIL;
 	}
 
-	static char aStr[MAX_STRING] = {};					// æ–‡å­—åˆ—èª­ã¿è¾¼ã¿
-	static char aStrCpy[MAX_STRING] = {};				// æ–‡å­—åˆ—è¤‡è£½(æ•´ç†)
-	static char* pStart = NULL;						// æ–‡å­—åˆ—é–‹å§‹ä½ç½®
-	static char aModelPath[FILE_MAX] = {};			// ãƒ¢ãƒ‡ãƒ«ã®ãƒ•ã‚¡ã‚¤ãƒ«åèª­ã¿è¾¼ã¿
-	int nIdx = 0;								// ãƒ¢ãƒ‡ãƒ«ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹èª­ã¿è¾¼ã¿
-	int nParent = 0;							// ãƒ¢ãƒ‡ãƒ«ã®è¦ªã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹èª­ã¿è¾¼ã¿
-	D3DXVECTOR3 pos = {};						// ä½ç½®èª­ã¿è¾¼ã¿
-	D3DXVECTOR3 rot = {};						// å‘ãèª­ã¿è¾¼ã¿
-	int nNumModel = 0;							// ãƒ¢ãƒ‡ãƒ«æ•°èª­ã¿è¾¼ã¿
-	int nCntMotion = 0;							// ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³æ•°ã‚«ã‚¦ãƒ³ãƒˆ
-	int bLoop = false;							// ãƒ«ãƒ¼ãƒ—ã™ã‚‹ã‹ã©ã†ã‹èª­ã¿è¾¼ã¿
-	int nNumKey = 0;							// ã‚­ãƒ¼æ•°èª­ã¿è¾¼ã¿
-	static CMotion::KEY_INFO KeyInfo[MAX_KEY] = {};	// ã‚­ãƒ¼æƒ…å ±èª­ã¿è¾¼ã¿
-	int nCntKey = 0;							// ã‚­ãƒ¼æ•°ã‚«ã‚¦ãƒ³ãƒˆ
-	int nCntParts = 0;							// ãƒ‘ãƒ¼ãƒ„æ•°ã‚«ã‚¦ãƒ³ãƒˆ
+	static char aStr[MAX_STRING] = {};					// •¶š—ñ“Ç‚İ‚İ
+	static char aStrCpy[MAX_STRING] = {};				// •¶š—ñ•¡»(®—)
+	static char* pStart = NULL;						// •¶š—ñŠJnˆÊ’u
+	static char aModelPath[FILE_MAX] = {};			// ƒ‚ƒfƒ‹‚Ìƒtƒ@ƒCƒ‹–¼“Ç‚İ‚İ
+	int nIdx = 0;								// ƒ‚ƒfƒ‹‚ÌƒCƒ“ƒfƒbƒNƒX“Ç‚İ‚İ
+	int nParent = 0;							// ƒ‚ƒfƒ‹‚ÌeƒCƒ“ƒfƒbƒNƒX“Ç‚İ‚İ
+	D3DXVECTOR3 pos = {};						// ˆÊ’u“Ç‚İ‚İ
+	D3DXVECTOR3 rot = {};						// Œü‚«“Ç‚İ‚İ
+	int nNumModel = 0;							// ƒ‚ƒfƒ‹”“Ç‚İ‚İ
+	int nCntMotion = 0;							// ƒ‚[ƒVƒ‡ƒ“”ƒJƒEƒ“ƒg
+	int bLoop = false;							// ƒ‹[ƒv‚·‚é‚©‚Ç‚¤‚©“Ç‚İ‚İ
+	int nNumKey = 0;							// ƒL[”“Ç‚İ‚İ
+	static CMotion::KEY_INFO KeyInfo[MAX_KEY] = {};	// ƒL[î•ñ“Ç‚İ‚İ
+	int nCntKey = 0;							// ƒL[”ƒJƒEƒ“ƒg
+	int nCntParts = 0;							// ƒp[ƒc”ƒJƒEƒ“ƒg
 
 	while (true)
 	{
-		memset(aStr, NULL, sizeof(aStr));				// æ–‡å­—åˆ—ã‚¯ãƒªã‚¢
-		(void)fgets(aStr, sizeof(aStr), pMotionFile);	// ä¸€åˆ—èª­ã¿è¾¼ã¿
+		memset(aStr, NULL, sizeof(aStr));				// •¶š—ñƒNƒŠƒA
+		(void)fgets(aStr, sizeof(aStr), pMotionFile);	// ˆê—ñ“Ç‚İ‚İ
 
 		if (strstr(aStr, LOAD_START) != NULL)
-		{// LOAD_STARTã‚’èª­ã¿è¾¼ã‚ã°èª­ã¿è¾¼ã¿é–‹å§‹
+		{// LOAD_START‚ğ“Ç‚İ‚ß‚Î“Ç‚İ‚İŠJn
 			break;
 		}
 
 		if (feof(pMotionFile) != NULL)
-		{// èª­ã¿è¾¼ã¿å¤±æ•—
+		{// “Ç‚İ‚İ¸”s
 			return E_FAIL;
 		}
 	}
@@ -1278,7 +1292,7 @@ HRESULT CPlayer::LoadMotionInfo(const std::string& fileName)
 		LoadEnableString(&aStrCpy[0], &aStr[0]);
 
 		if (strcmp(aStrCpy, LOAD_MOTIONINFO) == 0)
-		{// MOTIONSETã‚’èª­ã¿è¾¼ã‚“ã 
+		{// MOTIONSET‚ğ“Ç‚İ‚ñ‚¾
 			while (true)
 			{
 				memset(aStr, NULL, sizeof(aStr));
@@ -1287,7 +1301,7 @@ HRESULT CPlayer::LoadMotionInfo(const std::string& fileName)
 				LoadEnableString(&aStrCpy[0], &aStr[0]);
 
 				if (strstr(aStr, LOAD_MOTIONLOOP))
-				{// LOOPã‚’èª­ã¿è¾¼ã‚“ã 
+				{// LOOP‚ğ“Ç‚İ‚ñ‚¾
 					if ((pStart = strchr(aStr, '=')) == NULL)
 					{
 						continue;
@@ -1298,7 +1312,7 @@ HRESULT CPlayer::LoadMotionInfo(const std::string& fileName)
 				}
 
 				if (strstr(aStr, LOAD_NUMKEY))
-				{// NUM_KEYã‚’èª­ã¿è¾¼ã‚“ã 
+				{// NUM_KEY‚ğ“Ç‚İ‚ñ‚¾
 					if ((pStart = strchr(aStr, '=')) == NULL)
 					{
 						continue;
@@ -1309,7 +1323,7 @@ HRESULT CPlayer::LoadMotionInfo(const std::string& fileName)
 				}
 
 				if (strcmp(aStrCpy, LOAD_KEYSET) == 0)
-				{// KEYSETã‚’èª­ã¿è¾¼ã‚“ã 
+				{// KEYSET‚ğ“Ç‚İ‚ñ‚¾
 					while (true)
 					{
 						memset(aStr, NULL, sizeof(aStr));
@@ -1318,7 +1332,7 @@ HRESULT CPlayer::LoadMotionInfo(const std::string& fileName)
 						LoadEnableString(&aStrCpy[0], &aStr[0]);
 
 						if (strstr(aStr, LOAD_FRAME))
-						{// FRAMEã‚’èª­ã¿è¾¼ã‚“ã 
+						{// FRAME‚ğ“Ç‚İ‚ñ‚¾
 							if ((pStart = strchr(aStr, '=')) == NULL)
 							{
 								continue;
@@ -1329,7 +1343,7 @@ HRESULT CPlayer::LoadMotionInfo(const std::string& fileName)
 						}
 
 						if (strcmp(aStrCpy, LOAD_KEY) == 0)
-						{// KEYã‚’èª­ã¿è¾¼ã‚“ã 
+						{// KEY‚ğ“Ç‚İ‚ñ‚¾
 							while (true)
 							{
 								memset(aStr, NULL, sizeof(aStr));
@@ -1338,7 +1352,7 @@ HRESULT CPlayer::LoadMotionInfo(const std::string& fileName)
 								LoadEnableString(&aStrCpy[0], &aStr[0]);
 
 								if (strstr(aStr, LOAD_POS))
-								{// POSã‚’èª­ã¿è¾¼ã‚“ã 
+								{// POS‚ğ“Ç‚İ‚ñ‚¾
 									if ((pStart = strchr(aStr, '=')) == NULL)
 									{
 										continue;
@@ -1349,7 +1363,7 @@ HRESULT CPlayer::LoadMotionInfo(const std::string& fileName)
 								}
 
 								if (strstr(aStr, LOAD_ROT))
-								{// ROTã‚’èª­ã¿è¾¼ã‚“ã 
+								{// ROT‚ğ“Ç‚İ‚ñ‚¾
 									if ((pStart = strchr(aStr, '=')) == NULL)
 									{
 										continue;
@@ -1360,7 +1374,7 @@ HRESULT CPlayer::LoadMotionInfo(const std::string& fileName)
 								}
 
 								if (strcmp(aStrCpy, LOAD_ENDKEY) == 0)
-								{// END_KEYã‚’èª­ã¿è¾¼ã‚“ã 
+								{// END_KEY‚ğ“Ç‚İ‚ñ‚¾
 									nCntParts++;
 									break;
 								}
@@ -1377,11 +1391,11 @@ HRESULT CPlayer::LoadMotionInfo(const std::string& fileName)
 				}
 
 				if (strcmp(aStrCpy, LOAD_ENDMOTIONINFO) == 0)
-				{// END_MOTIONSETã‚’èª­ã¿è¾¼ã‚“ã 
+				{// END_MOTIONSET‚ğ“Ç‚İ‚ñ‚¾
 					LoadMotion(bLoop, nNumKey, &KeyInfo[0], nCntMotion);
 					nCntMotion++;
 
-					// å„ç¨®å¤‰æ•°åˆæœŸåŒ–
+					// Šeí•Ï”‰Šú‰»
 					memset(&KeyInfo, NULL, sizeof(CMotion::KEY_INFO));
 					bLoop = false;
 					nNumKey = 0;
@@ -1392,8 +1406,8 @@ HRESULT CPlayer::LoadMotionInfo(const std::string& fileName)
 		}
 
 		if (strcmp(aStrCpy, LOAD_END) == 0)
-		{// END_SCRIPTã‚’èª­ã¿è¾¼ã‚“ã 
-			// èª­ã¿è¾¼ã¿çµ‚äº†
+		{// END_SCRIPT‚ğ“Ç‚İ‚ñ‚¾
+			// “Ç‚İ‚İI—¹
 			fclose(pMotionFile);
 			break;
 		}
@@ -1402,7 +1416,7 @@ HRESULT CPlayer::LoadMotionInfo(const std::string& fileName)
 }
 
 //=============================================================================
-//	ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³èª­ã¿è¾¼ã¿å‡¦ç†
+//	ƒ‚[ƒVƒ‡ƒ““Ç‚İ‚İˆ—
 void CPlayer::LoadMotion(bool bLoop, int nNumKey, CMotion::KEY_INFO* pKeyInfo, int nMotion)
 {
 	if (nMotion < MOTIONTYPE_MAX)
@@ -1418,7 +1432,7 @@ void CPlayer::LoadMotion(bool bLoop, int nNumKey, CMotion::KEY_INFO* pKeyInfo, i
 }
 
 //=============================================================================
-//æœ‰åŠ¹æ–‡å­—æŠœãå‡ºã—å‡¦ç†
+//—LŒø•¶š”²‚«o‚µˆ—
 void CPlayer::LoadEnableString(char* aStrCpy, char* pStart)
 {
 	while (true)

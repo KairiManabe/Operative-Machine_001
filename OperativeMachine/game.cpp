@@ -22,6 +22,7 @@
 #include "timer.h"
 #include "score.h"
 
+#include "camera.h"
 #include "player.h"
 #include "enemy.h"
 #include "textureUI.h"
@@ -161,6 +162,8 @@ void CGame::Update(void)
 
 	//フェードを取得
 	CFade* pFade = CManager::GetFade();
+
+	//カメラの取得
 
 	if (m_pPause != NULL)
 	{//ポーズのアップデート
@@ -412,13 +415,13 @@ HRESULT CGame::LoadObject(const std::string& fileName)
 void CGame::LoadPlayer(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 {
 	m_pPlayer = CPlayer::Create(pos, size);
+	CCamera* pCamera = CManager::GetCamera();
 
 	if (m_pPlayer != NULL)
 	{
-		CCamera* pCamera = CManager::GetCamera();
 		D3DXVECTOR3 cameraRot = pCamera->GetRotation();
 
-		// プレイヤーの後ろから見る向きにする
+		//プレイヤーの後ろから見る向きにする
 		cameraRot.y = m_pPlayer->GetRotation().y - D3DX_PI;
 
 		pCamera->SetRotation(cameraRot);

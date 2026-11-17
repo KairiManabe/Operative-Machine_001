@@ -1,6 +1,6 @@
 //=============================================================================
 //
-// 的(人の予定)[target.h]
+// 的(ドローンorロボットの予定or電子機器→精密機器のような？)[target.h]
 // 
 // Author : 眞鍋快陸
 // 
@@ -61,7 +61,7 @@ public:
 
 	bool CollisionPlayer(void);
 	bool CollisionCamera(void);
-	bool CollisionBomb(void); // 爆風との接触判定関数
+	bool CollisionVigilanceRange(void);		//警戒態勢範囲との接触判定関数
 private:
 	int m_nIdxTexture[100];
 	std::string m_pFileName;

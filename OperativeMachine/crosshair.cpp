@@ -15,6 +15,13 @@
 #include "color.h"
 #include "texture.h"
 
+#include "scene.h"
+#include "tutorial.h"
+#include "game.h"
+
+//静的メンバ変数宣言-----------------------------------------------------------
+bool CCrosshair::m_bDisp = false;
+
 //=============================================================================
 //コンストラクタ
 CCrosshair::CCrosshair(int nPriority) :CObject(nPriority)
@@ -22,8 +29,9 @@ CCrosshair::CCrosshair(int nPriority) :CObject(nPriority)
 	//値をクリア(初期化)
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_filename = {};
-	 m_nIdxTexture = -1;
+	m_nIdxTexture = -1;
 	m_col = COLOR_NORMAL;
+	m_bDisp = false;
 }
 
 //=============================================================================
@@ -166,4 +174,36 @@ void CCrosshair::Update(void)
 
 	//頂点バッファのアンロック
 	m_pVtxBuff->Unlock();
+}
+
+//=============================================================================
+//表示非表示の設定
+void CCrosshair::SetDisp(bool bDisp)
+{
+	CCrosshair* pCrosshair = NULL;
+
+	if (CManager::GetScene()->GetMode() == CScene::MODE_GAME)
+	{//ゲームシーンの時
+		pCrosshair = CGame::GetCrosshair();
+	}
+	else if (CManager::GetScene()->GetMode() == CScene::MODE_TUTORIAL)
+	{//チュートリアルシーンの時
+		pCrosshair = CTutorial::GetCrosshair();
+	}
+
+	if (pCrosshair == NULL)
+	{//NULLだったら無視
+		return;
+	}
+
+	m_bDisp = bDisp;
+
+	if (m_bDisp == false)
+	{//非表示
+		pCrosshair->SetColor(COLOR_NONE);
+	}
+	else if (m_bDisp == true)
+	{//表示
+		pCrosshair->SetColor(COLOR_NORMAL);
+	}
 }

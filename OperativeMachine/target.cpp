@@ -26,7 +26,7 @@
 #include "number.h"
 #include "player.h"
 #include "particle.h"
-#include "bomb.h"
+#include "vigilance.h"
 
 //マクロ定義-------------------------------------------------------------------
 #define COLLISION_MODEL_W		(15.0f)
@@ -160,7 +160,7 @@ void CTarget::Update(void)
 	}
 
 	// 爆発範囲との判定
-	if (CollisionBomb() == true)
+	if (CollisionVigilanceRange() == true)
 	{
 		DethHuman();	//人間の死亡
 		return;
@@ -362,31 +362,31 @@ void CTarget::BreakBombBox(void)
 	//	pPlayer->AddBreakBox();
 	//}
 
-	//爆風領域を生成（パーティクルやSEはCBomb側に任せる）
-	CBomb* pBomb = CBomb::Create(m_pos, 200.0f, 5.0f);
+	//爆風領域を生成（パーティクルやSEはCVigilance側に任せる）
+	CVigilance* pVigilance = CVigilance::Create(m_pos, 400.0f, 8.0f);
 }
 
 //=============================================================================
 //爆風判定処理
-bool CTarget::CollisionBomb(void)
+bool CTarget::CollisionVigilanceRange(void)
 {
 	//CBombが登録されているPriorityのリストの先頭を取得
-	CObject* pObj = CObject::GetTop(BOMB_PRIORITY);
+	CObject* pObj = CObject::GetTop(VIGILANCE_PRIORITY);
 
 	while (pObj != NULL)
 	{
 		//TYPE_BOMB→タイプ判定で識別してキャストする
 		if (pObj->GetType() == CObject::TYPE_TARGET)
 		{
-			CBomb* pBomb = static_cast<CBomb*>(pObj);
+			CVigilance* pVigilance = static_cast<CVigilance*>(pObj);
 
-			if (pBomb != NULL)
+			if (pVigilance != NULL)
 			{
 				//距離計算
-				D3DXVECTOR3 diff = m_pos - pBomb->GetPosition();
+				D3DXVECTOR3 diff = m_pos - pVigilance->GetPosition();
 				float fDistSq = D3DXVec3LengthSq(&diff);
 
-				float fRadius = pBomb->GetRadius();
+				float fRadius = pVigilance->GetRadius();
 				float fRadiusSq = fRadius * fRadius;
 
 				if (fDistSq <= fRadiusSq)

@@ -45,7 +45,6 @@
 //É}ÉNÉçíËã`-------------------------------------------------------------------
 #define SIZE_MINI		(D3DXVECTOR3(100.0f, 0.0f, 100.0f))
 #define SIZE_NORMAL		(D3DXVECTOR3(1000.0f, 0.0f, 1000.0f))
-#define CENTER_2DPOS	(D3DXVECTOR3(640.0f, 320.0f, 0.0f))
 #define MODEL_WALL		"data/MODEL/object/wall002.x"
 #define MODEL_CEILING	"data/MODEL/object/ceiling000.x"
 

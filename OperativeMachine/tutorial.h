@@ -28,6 +28,7 @@ class CMeshField;		//メッシュフィールド
 class CEnergy;			//エナジー
 class CObjectX;			//オブジェクトXの壁オブジェクト
 class CTextureUI;		//テクスチャUI
+class CCrosshair;		//クロスヘア
 
 //ゲームクラス-----------------------------------------------------------------
 class CTutorial : public CScene
@@ -60,6 +61,7 @@ public:
 	static CMeshField* GetMeshField(void) { return m_pMeshField; }
 	static CEnergy* GetEnergy(void) { return m_pEnergy; }
 	static CObjectX** GetObjectXWall(void) { return &m_apObjxWall[0]; }
+	static CCrosshair* GetCrosshair(void) { return m_pCrosshair; }
 
 	static void SetUI(bool UI) { m_tutorialUI = UI; }
 	static bool GetUI(void) { return m_tutorialUI; }
@@ -75,6 +77,7 @@ private:
 	static CEnergy* m_pEnergy;
 	static CObjectX* m_apObjxWall[MAX_WALL];
 	static CTextureUI* m_pTextureUI[UI_MAX];
+	static CCrosshair* m_pCrosshair;
 
 	static bool m_tutorialUI;
 };

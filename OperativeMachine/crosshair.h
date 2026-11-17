@@ -12,6 +12,9 @@
 #include "main.h"
 #include "object.h"
 
+//マクロ定義-------------------------------------------------------------------
+#define CENTER_2DPOS	(D3DXVECTOR3(640.0f, 320.0f, 0.0f))
+
 //プレイヤークラス-------------------------------------------------------------
 class CCrosshair :public CObject
 {
@@ -28,9 +31,12 @@ public:
 	void Draw(void);
 	void SetPosition(const D3DXVECTOR3 pos) { m_pos = pos; }
 	void SetColor(D3DXCOLOR col) { m_col = col; }
+	static void SetDisp(bool bDisp);
+
 	D3DXVECTOR3 GetPosition(void) { return m_pos; }
 	D3DXVECTOR3 GetSize(void) { return m_size; }
 	D3DXCOLOR GetColor(void) { return m_col; }
+	static bool GetDisp(void) { return m_bDisp; }
 private:
 	std::string m_filename;
 	int m_nIdxTexture;
@@ -38,6 +44,8 @@ private:
 	D3DXVECTOR3 m_pos;		//位置
 	D3DXVECTOR3 m_size;		//サイズ
 	D3DXCOLOR m_col;		//色
+
+	static bool m_bDisp;	//表示非表示
 };
 
 #endif

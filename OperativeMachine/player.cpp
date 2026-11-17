@@ -35,6 +35,7 @@
 #include "bullet.h"
 #include "effect.h"
 #include "field.h"
+#include "crosshair.h"
 
 //マクロ定義-------------------------------------------------------------------
 #define NO_USE
@@ -355,12 +356,15 @@ void CPlayer::Update(void)
 	{
 	case MODE_HUMAN:
 		fSpeed = HUMAN_SPEED;
+		if (CCrosshair::GetDisp() == true)CCrosshair::SetDisp(false);
 		break;
 	case MODE_SPIDER:
 		fSpeed = SPIDER_SPEED;
+		if (CCrosshair::GetDisp() == true)CCrosshair::SetDisp(false);
 		break;
 	case MODE_CANNON:
-		fSpeed = CANNON_SPEED; //0.0f
+		fSpeed = CANNON_SPEED; //動けないようにする
+		if (CCrosshair::GetDisp() == false)CCrosshair::SetDisp(true);
 		break;
 	}
 
@@ -461,20 +465,21 @@ void CPlayer::Update(void)
 		}
 
 		//銃形態の時弾を発射できる
-		if (m_Mode == MODE_CANNON && (pScene->GetMode() == CScene::MODE_GAME || pScene->GetMode() == CScene::MODE_TUTORIAL))
+		if (CCrosshair::GetDisp() == true)
 		{
-			CInputMouse* pInputMouse = CManager::GetInputMouse();
-			const bool bFire = (pInputMouse != NULL && pInputMouse->GetTrigger(0)) ||
-				pInputJoypad->GetTrigger(JOYKEY_RB);
-			if (bFire)
+			if (m_Mode == MODE_CANNON && (pScene->GetMode() == CScene::MODE_GAME || pScene->GetMode() == CScene::MODE_TUTORIAL))
 			{
-				D3DXVECTOR3 direction = pCamera->GetPositionR() - pCamera->GetPositionV();
-				if (D3DXVec3LengthSq(&direction) > 0.0001f)
+				CInputMouse* pInputMouse = CManager::GetInputMouse();
+				if (pInputMouse != NULL && pInputMouse->GetTrigger(0) || pInputJoypad->GetTrigger(JOYKEY_RB))
 				{
-					D3DXVec3Normalize(&direction, &direction);
-					D3DXVECTOR3 bulletPos = m_pos + direction * 35.0f;
-					bulletPos.y += 45.0f;
-					CBullet::Create(bulletPos, D3DXVECTOR3(8.0f, 8.0f, 0.0f), direction * 25.0f, 120);
+					D3DXVECTOR3 direction = pCamera->GetPositionR() - pCamera->GetPositionV();
+					if (D3DXVec3LengthSq(&direction) > 0.0001f)
+					{
+						D3DXVec3Normalize(&direction, &direction);
+						D3DXVECTOR3 bulletPos = m_pos + direction * 35.0f;
+						bulletPos.y += 45.0f;
+						CBullet::Create(bulletPos, D3DXVECTOR3(8.0f, 8.0f, 0.0f), direction * 25.0f, 120);
+					}
 				}
 			}
 		}

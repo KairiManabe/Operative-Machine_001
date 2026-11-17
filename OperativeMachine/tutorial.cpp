@@ -36,6 +36,7 @@
 #include "range.h"
 #include "particle.h"
 #include "objectX.h"
+#include "crosshair.h"
 
 //マクロ定義-------------------------------------------------------------------
 #define SIZE_MINI		(D3DXVECTOR3(100.0f, 0.0f, 100.0f))
@@ -54,6 +55,7 @@ CMeshField* CTutorial::m_pMeshField = NULL;
 CEnergy* CTutorial::m_pEnergy = NULL;
 CObjectX* CTutorial::m_apObjxWall[MAX_WALL] = {};
 CTextureUI* CTutorial::m_pTextureUI[UI_MAX] = {};
+CCrosshair* CTutorial::m_pCrosshair = NULL;
 bool CTutorial::m_tutorialUI = false;
 
 //=============================================================================
@@ -125,6 +127,9 @@ void CTutorial::Init(void)
 	//UI・タイマーの生成
 	CTextureUI::Create("data\\TEXTURE\\UI\\energy000.png", D3DXVECTOR3(19.0f, 3.0f, 0.0f), D3DXVECTOR3(322.0f, 40.0f, 0.0f), COLOR_CYAN);
 	m_pEnergy = CEnergy::Create("data\\TEXTURE\\UI\\energy001.png", D3DXVECTOR3(20.0f, 3.0f, 0.0f), D3DXVECTOR3(MAX_ENERGY, 40.0f, 0.0f), COLOR_NORMAL);
+
+	//クロスヘアUIの生成
+	m_pCrosshair = CCrosshair::Create(CENTER_2DPOS, D3DXVECTOR3(20.0f, 20.0f, 0.0f), COLOR_NONE);
 
 	//プレイヤー生成（スタート位置）
 	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 0.0f, -400.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));

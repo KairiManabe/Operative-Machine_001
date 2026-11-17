@@ -75,11 +75,11 @@ void CVigilance::Uninit(void)
 //更新
 void CVigilance::Update(void)
 {
-	//毎フレーム爆発範囲を拡大させる
+	//毎フレーム範囲を拡大させる
 	m_fCurrentRadius += m_fExpandSpeed;
 	m_bVigilanceEnd = true;
 
-	// 最大半径に達したら爆風オブジェクトを削除
+	// 最大半径に達したらオブジェクトを削除
 	if (m_fCurrentRadius >= m_fMaxRadius)
 	{
 		m_bVigilanceEnd = false;

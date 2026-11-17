@@ -8,10 +8,12 @@
 
 //インクルードファイル---------------------------------------------------------
 #include "particle.h"
+
 #include "manager.h"
 #include "renderer.h"
 #include "color.h"
 #include "debugproc.h"
+
 #include "effectmodel.h"
 
 //=============================================================================

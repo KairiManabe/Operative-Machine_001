@@ -7,14 +7,14 @@
 
 //インクルードファイル---------------------------------------------------------
 #include "timer.h"
-#include "fade.h"
-#include "manager.h"
 
-//シーン
+#include "manager.h"
+#include "fade.h"
+#include "color.h"
+
 #include "game.h"
 
 #include "number.h"
-#include "color.h"
 #include "score.h"
 
 //=============================================================================

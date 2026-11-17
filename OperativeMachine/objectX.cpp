@@ -8,21 +8,24 @@
 
 //インクルードファイル---------------------------------------------------------
 #include "objectX.h"
+
+#include "manager.h"
+#include "renderer.h"
+#include "debugproc.h"
+#include "input.h"
+#include "texture.h"
+#include "color.h"
+
+#include "scene.h"
+#include "title.h"
+#include "tutorial.h"
+#include "game.h"
+
 #include "fade.h"
 #include "player.h"
-#include "renderer.h"
-#include "manager.h"
-#include "scene.h"
-#include "game.h"
-#include "tutorial.h"
-#include "title.h"
 #include "number.h"
-#include "input.h"
-#include "debugproc.h"
 #include "camera.h"
-#include "texture.h"
 #include "particle.h"
-#include "color.h"
 
 //マクロ定義-------------------------------------------------------------------
 #define COLLISION_MODEL_W		(15.0f)

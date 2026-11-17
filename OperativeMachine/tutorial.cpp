@@ -8,15 +8,17 @@
 //インクルードファイル---------------------------------------------------------
 #include "tutorial.h"
 
-#include "color.h"
 #include "manager.h"
 #include "renderer.h"
+#include "debugproc.h"
+#include "color.h"
 #include "input.h"
-#include "camera.h"
 #include "fade.h"
 #include "pause.h"
 #include "sound.h"
+#include "load.h"
 
+#include "camera.h"
 #include "number.h"
 #include "player.h"
 #include "enemy.h"
@@ -30,7 +32,6 @@
 #include "object3D.h"
 #include "objectX.h"
 #include "meshfield.h"
-#include "load.h"
 #include "billboard.h"
 #include "range.h"
 #include "particle.h"

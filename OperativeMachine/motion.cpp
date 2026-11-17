@@ -7,9 +7,11 @@
 
 //インクルードファイル---------------------------------------------------------
 #include "motion.h"
-#include "model.h"
+
 #include "manager.h"
 #include "debugproc.h"
+
+#include "model.h"
 
 //静的メンバ変数宣言-----------------------------------------------------------
 bool CMotion::m_bFinish = false;

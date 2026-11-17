@@ -6,10 +6,10 @@
 //=============================================================================
 
 //インクルードファイル---------------------------------------------------------
-#include "main.h"
 #include "bg.h"
-#include "renderer.h"
+
 #include "manager.h"
+#include "renderer.h"
 #include "texture.h"
 
 

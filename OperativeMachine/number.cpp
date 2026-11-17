@@ -7,8 +7,9 @@
 
 //インクルードファイル---------------------------------------------------------
 #include "number.h"
-#include "renderer.h"
+
 #include "manager.h"
+#include "renderer.h"
 #include "texture.h"
 #include "color.h"
 
@@ -40,9 +41,6 @@ CNumber::~CNumber()
 //テクスチャの生成
 HRESULT CNumber::Load(void)
 {
-	//レンダラーを取得
-	
-
 	//テクスチャの読み込み
 	m_nIdxTexture = CManager::GetTexture()->Register("data\\TEXTURE\\UI\\number100.png");
 	return (m_nIdxTexture >= 0) ? S_OK : E_FAIL;

@@ -8,9 +8,10 @@
 
 //インクルードファイル---------------------------------------------------------
 #include "textureUI.h"
+
 #include "manager.h"
-#include "debugproc.h"
 #include "renderer.h"
+#include "debugproc.h"
 #include "color.h"
 #include "texture.h"
 

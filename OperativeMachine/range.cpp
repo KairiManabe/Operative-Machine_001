@@ -7,19 +7,22 @@
 //=============================================================================
 
 //インクルードファイル---------------------------------------------------------
-#include "main.h"
 #include "range.h"
+
+#include "main.h"
 #include "manager.h"
 #include "renderer.h"
 #include "texture.h"
+#include "fade.h"
+#include "color.h"
+
 #include "scene.h"
 #include "game.h"
 #include "fail.h"
+
 #include "player.h"
-#include "fade.h"
 #include "objectX.h"
 #include "particle.h"
-#include "color.h"
 
 //静的メンバ変数宣言-----------------------------------------------------------
 int CRange::m_nNumAll = 0;

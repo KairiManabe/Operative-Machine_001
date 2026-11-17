@@ -8,18 +8,21 @@
 
 //インクルードファイル---------------------------------------------------------
 #include "meshfield.h"
+
 #include "manager.h"
-#include "scene.h"
-#include "game.h"
-#include "title.h"
-#include "tutorial.h"
-#include "clear.h"
-#include "color.h"
 #include "renderer.h"
-#include "player.h"
+#include "debugproc.h"
 #include "input.h"
 #include "texture.h"
-#include "debugproc.h"
+#include "color.h"
+
+#include "title.h"
+#include "tutorial.h"
+#include "scene.h"
+#include "game.h"
+#include "clear.h"
+
+#include "player.h"
 
 //静的メンバ変数宣言-----------------------------------------------------------
 int CMeshField::m_nIdxTexture = 0;

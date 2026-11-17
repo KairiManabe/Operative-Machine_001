@@ -7,16 +7,16 @@
 
 //インクルードファイル---------------------------------------------------------
 #include "pause.h"
-#include "texture.h"
+
 #include "manager.h"
 #include "renderer.h"
 #include "input.h"
-#include "fade.h"
+#include "texture.h"
+#include "sound.h"
+
 #include "scene.h"
 #include "game.h"
 #include "fade.h"
-//#include "enemy.h"
-#include "sound.h"
 
 //=============================================================================
 //コンストラクタ

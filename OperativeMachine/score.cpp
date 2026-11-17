@@ -7,12 +7,15 @@
 
 //インクルードファイル---------------------------------------------------------
 #include "score.h"
-#include "number.h"
-#include "color.h"
+
 #include "manager.h"
+#include "color.h"
+
 #include "scene.h"
 #include "game.h"
 #include "title.h"
+
+#include "number.h"
 
 //=============================================================================
 //コンストラクタオーバーロード

@@ -8,10 +8,12 @@
 
 //インクルードファイル---------------------------------------------------------
 #include "object.h"
-#include "renderer.h"
-#include "camera.h"
+
 #include "manager.h"
+#include "renderer.h"
 #include "debugproc.h"
+
+#include "camera.h"
 
 //静的メンバ変数宣言-----------------------------------------------------------
 CObject* CObject::m_pTop[PRIORITY_MAX] = {};

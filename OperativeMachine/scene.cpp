@@ -7,6 +7,7 @@
 
 //インクルードファイル---------------------------------------------------------
 #include "scene.h"
+
 #include "title.h"
 #include "tutorial.h"
 #include "game.h"

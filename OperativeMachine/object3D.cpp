@@ -7,15 +7,15 @@
 //=============================================================================
 
 //インクルードファイル---------------------------------------------------------
-#include "player.h"
-#include "color.h"
+#include "object3D.h"
+
 #include "manager.h"
 #include "renderer.h"
 #include "debugproc.h"
 #include "input.h"
 #include "texture.h"
+#include "color.h"
 
-//シーン
 #include "scene.h"
 #include "title.h"
 #include "tutorial.h"
@@ -24,7 +24,7 @@
 #include "fail.h"
 #include "result.h"
 
-#include "object3D.h"
+#include "player.h"
 #include "number.h"
 
 //静的メンバ変数宣言-----------------------------------------------------------

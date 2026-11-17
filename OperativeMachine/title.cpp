@@ -7,20 +7,23 @@
 
 //インクルードファイル---------------------------------------------------------
 #include "title.h"
-#include "textureUI.h"
-#include "color.h"
-#include "camera.h"
-#include "debugproc.h"
-#include "game.h"
-#include "input.h"
-#include "renderer.h"
-#include "fade.h"
+
 #include "manager.h"
+#include "renderer.h"
+#include "debugproc.h"
+#include "input.h"
+#include "fade.h"
+#include "sound.h"
+#include "color.h"
+
+#include "game.h"
+
+#include "camera.h"
+#include "textureUI.h"
 #include "player.h"
 #include "object2D.h"
 #include "object3D.h"
 #include "objectX.h"
-#include "sound.h"
 
 //マクロ定義-------------------------------------------------------------------
 #define SIZE_MINI		(D3DXVECTOR3(100.0f, 0.0f, 100.0f))

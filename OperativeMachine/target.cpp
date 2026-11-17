@@ -1,6 +1,6 @@
 //=============================================================================
 //
-// Xオブジェクト[objectX.h]
+// ターゲット[target.h]
 // 
 // Author : 眞鍋快陸
 // 
@@ -8,22 +8,24 @@
 
 //インクルードファイル---------------------------------------------------------
 #include "target.h"
+
 #include "manager.h"
 #include "renderer.h"
-#include "ModelManager.h"
 #include "debugproc.h"
+#include "ModelManager.h"
+#include "input.h"
+#include "sound.h"
+#include "color.h"
+#include "texture.h"
 
-#include "field.h"
-#include "game.h"
 #include "tutorial.h"
+#include "game.h"
+
+#include "camera.h"
+#include "field.h"
 #include "number.h"
 #include "player.h"
-#include "input.h"
-#include "camera.h"
-#include "texture.h"
 #include "particle.h"
-#include "color.h"
-#include "sound.h"
 #include "bomb.h"
 
 //マクロ定義-------------------------------------------------------------------

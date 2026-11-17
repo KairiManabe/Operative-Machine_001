@@ -8,11 +8,13 @@
 
 //インクルードファイル---------------------------------------------------------
 #include "object2D.h"
-#include "renderer.h"
+
 #include "manager.h"
-#include "number.h"
-#include "input.h"
+#include "renderer.h"
 #include "debugproc.h"
+#include "input.h"
+
+#include "number.h"
 
 //=============================================================================
 //コンストラクタ

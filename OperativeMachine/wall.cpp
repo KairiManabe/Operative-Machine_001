@@ -7,20 +7,22 @@
 //=============================================================================
 
 //インクルードファイル---------------------------------------------------------
-#include "player.h"
-#include "color.h"
+#include "wall.h"
+
 #include "manager.h"   
 #include "renderer.h"
-#include "game.h"
-#include "tutorial.h"
 #include "debugproc.h"
 #include "input.h"
-#include "texture.h"
-#include "particle.h"
-
-#include "wall.h"
-#include "number.h"
+#include "color.h"
 #include "sound.h"
+#include "texture.h"
+
+#include "tutorial.h"
+#include "game.h"
+
+#include "player.h"
+#include "particle.h"
+#include "number.h"
 
 //静的メンバ変数宣言-----------------------------------------------------------
 int CWall::m_nIdxTexture = 0;

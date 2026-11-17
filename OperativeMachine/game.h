@@ -12,7 +12,7 @@
 #include "objectX.h"
 
 //マクロ定義-------------------------------------------------------------------
-#define NUM_OBJ3D			(70)	//なんちゃってメッシュの数(仮)
+#define NUM_OBJ3D			(70)
 #define VER_OUTER_WALL		(26)		//縦の最大数
 #define BESIDE_OUTER_WALL	(10)		//横の最大数
 

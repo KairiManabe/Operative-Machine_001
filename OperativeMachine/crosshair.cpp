@@ -76,7 +76,7 @@ HRESULT CCrosshair::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 	//デバイス取得
 	LPDIRECT3DDEVICE9 pDevice = renderer->GetDevice();
 
-	m_filename = "data/TEXTURE/Xhear.png";
+	m_filename = "data/TEXTURE/range000.png";
 
 	//テクスチャの読み込み
 	m_nIdxTexture = CManager::GetTexture()->Register(m_filename.c_str());
@@ -183,16 +183,9 @@ void CCrosshair::Update(void)
 //表示非表示の設定
 void CCrosshair::SetDisp(bool bDisp)
 {
-	CCrosshair* pCrosshair = NULL;
-
-	if (CManager::GetScene()->GetMode() == CScene::MODE_GAME)
-	{//ゲームシーンの時
-		pCrosshair = CGame::GetCrosshair();
-	}
-	else if (CManager::GetScene()->GetMode() == CScene::MODE_TUTORIAL)
-	{//チュートリアルシーンの時
-		pCrosshair = CTutorial::GetCrosshair();
-	}
+	//ゲームシーンかチュートリアルシーンかで取得するクラスを変える
+	CCrosshair* pCrosshair =
+		(CManager::GetScene()->GetMode() == CScene::MODE_GAME) ? CGame::GetCrosshair() : CTutorial::GetCrosshair();
 
 	if (pCrosshair == NULL)
 	{//NULLだったら無視

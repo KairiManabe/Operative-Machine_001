@@ -472,11 +472,10 @@ void CPlayer::Update(void)
 				CInputMouse* pInputMouse = CManager::GetInputMouse();
 				if (pInputMouse != NULL && pInputKeyboard->GetTrigger(DIK_SPACE) || pInputJoypad->GetTrigger(JOYKEY_RB))
 				{
-					CCrosshair* pCrosshair = (pScene->GetMode() == CScene::MODE_GAME)
-						? CGame::GetCrosshair() : CTutorial::GetCrosshair();
-					D3DXVECTOR3 crosshairPos = pCrosshair != NULL
-						? pCrosshair->GetPosition() : CENTER_2DPOS;
+					CCrosshair* pCrosshair = (pScene->GetMode() == CScene::MODE_GAME) ? CGame::GetCrosshair() : CTutorial::GetCrosshair();
+					D3DXVECTOR3 crosshairPos = pCrosshair != NULL ? pCrosshair->GetPosition() : CENTER_2DPOS;
 					D3DXVECTOR3 aimRay = pCamera->GetRayDirection(crosshairPos.x, crosshairPos.y);
+
 					if (D3DXVec3LengthSq(&aimRay) > 0.0001f)
 					{
 						D3DXVECTOR3 cameraForward = pCamera->GetPositionR() - pCamera->GetPositionV();
@@ -487,7 +486,7 @@ void CPlayer::Update(void)
 						D3DXVECTOR3 direction = aimPoint - bulletPos;
 						D3DXVec3Normalize(&direction, &direction);
 
-						CBullet::Create(bulletPos, D3DXVECTOR3(8.0f, 8.0f, 0.0f), direction * 25.0f, 120);
+						CBullet::Create(bulletPos, D3DXVECTOR3(8.0f, 8.0f, 0.0f), direction * 55.0f, 120);
 					}
 				}
 			}

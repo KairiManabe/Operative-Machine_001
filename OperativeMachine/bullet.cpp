@@ -13,12 +13,14 @@
 #include "renderer.h"
 #include "input.h"
 #include "texture.h"
+#include "color.h"
 
 #include "game.h"
 #include "tutorial.h"
 
 #include "score.h"
 #include "target.h"
+#include "effect.h"
 
 //Ã“Iƒƒ“ƒo•Ï”éŒ¾-----------------------------------------------------------
 int CBullet::m_nIdxTexture = -1;
@@ -131,7 +133,9 @@ void CBullet::Update(void)
     const D3DXVECTOR3 previousPos = m_pos;
     m_pos += m_move;
     SetPosition(m_pos);
-    --m_nLife;
+    m_nLife--;
+
+    CEffect::Create(CEffect::TEX_CIRCLE, m_pos, {}, D3DXVECTOR3(8.0f, 100.0f, 0.0f), COLOR_SKYBLUE, 40);
 
     const float radius = (m_size.x > m_size.y) ? m_size.x : m_size.y;
 

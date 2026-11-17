@@ -16,18 +16,18 @@
 #include "load.h"
 
 //マクロ定義-------------------------------------------------------------------
-#define SIZE_F1			(30)				//ポリゴンサイズ
-#define SIZE_F2			(400)				//ポリゴンサイズ
+#define SIZE_F1			(30)		//ポリゴンサイズ
+#define SIZE_F2			(400)		//ポリゴンサイズ
 #define PLAYER_POSY		(0.0f)
 #define PLAYER_HEAD		(100.0f)
-#define MAX_PLAYER_MODEL	(40)			//モデル(パーツ)の最大数
+#define MAX_PLAYER_MODEL	(40)	//モデル(パーツ)の最大数
 
-#define PLAYER_WALK		(0.35f)				//プレイヤーの速度調整
-#define PLAYER_ACTION	(0.1f)				//プレイヤーの仮アクション速度(前に転ぶから)
+#define PLAYER_WALK		(0.35f)		//プレイヤーの速度調整
+#define PLAYER_ACTION	(0.1f)		//プレイヤーの仮アクション速度(前に転ぶから)
 
-#define PLAYER_MOVEROT	(-0.3f)				//プレイヤーが進んだ時の傾き
+#define PLAYER_MOVEROT	(-0.3f)		//プレイヤーが進んだ時の傾き
 
-#define PLAYER_PRIORITY	(2)		//自分のプライオリティを持っておく
+#define PLAYER_PRIORITY	(2)			//自分のプライオリティを持っておく
 
 //プレイヤークラス-------------------------------------------------------------
 class CPlayer:public CObject

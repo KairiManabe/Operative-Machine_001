@@ -71,11 +71,11 @@ void CTitle::Init(void)
 		m_pObject3D[nCntField] = CObject3D::Create(D3DXVECTOR3(SIZE_NORMAL.x * nCntField, 0.0f, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI / 2.0f, 0.0f), SIZE_NORMAL);
 	}
 
-	CTextureUI::Create("data\\TEXTURE\\UI\\title000.png", D3DXVECTOR3(200.0f, 200.0f, 0.0f), D3DXVECTOR3(320.0f, 100.0f, 0.0f), COLOR_NONE);
+	CTextureUI::Create("data\\TEXTURE\\UI\\title000.png", D3DXVECTOR3(200.0f, 200.0f, 0.0f), D3DXVECTOR3(320.0f, 100.0f, 0.0f), COLOR_NORMAL);
 
 	//ƒƒjƒ…[‚ð¶¬
-	m_pTextureUI[MENU_TUTORIAL] = CTextureUI::Create("data\\TEXTURE\\UI\\tutorial000.png", D3DXVECTOR3(215.0f, 350.0f, 0.0f), D3DXVECTOR3(280.0f, 60.0f, 0.0f), COLOR_NONE);
-	m_pTextureUI[MENU_GAME] = CTextureUI::Create("data\\TEXTURE\\UI\\playgame000.png", D3DXVECTOR3(240.0f, 420.0f, 0.0f), D3DXVECTOR3(230.0f, 60.0f, 0.0f), COLOR_NONE);
+	m_pTextureUI[MENU_TUTORIAL] = CTextureUI::Create("data\\TEXTURE\\UI\\tutorial000.png", D3DXVECTOR3(215.0f, 350.0f, 0.0f), D3DXVECTOR3(280.0f, 60.0f, 0.0f), COLOR_NORMAL);
+	m_pTextureUI[MENU_GAME] = CTextureUI::Create("data\\TEXTURE\\UI\\playgame000.png", D3DXVECTOR3(240.0f, 420.0f, 0.0f), D3DXVECTOR3(230.0f, 60.0f, 0.0f), COLOR_NORMAL);
 
 	//¶¬
 	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
@@ -219,11 +219,11 @@ void CTitle::Update(void)
 
 	if (m_Menu == MENU_TUTORIAL)
 	{
-		m_pTextureUI[MENU_GAME]->SetColor(COLOR_NONE);
+		m_pTextureUI[MENU_GAME]->SetColor(COLOR_NORMAL);
 	}
 	else
 	{
-		m_pTextureUI[MENU_TUTORIAL]->SetColor(COLOR_NONE);
+		m_pTextureUI[MENU_TUTORIAL]->SetColor(COLOR_NORMAL);
 	}
 }
 

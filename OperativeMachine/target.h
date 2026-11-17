@@ -13,7 +13,8 @@
 #include "object.h"
 
 //マクロ定義-------------------------------------------------------------------
-#define MAX_TARGET	(100)
+#define MAX_TARGET		(100)
+#define TARGET_PRIORITY	(4)		//自分のプライオリティを持っておく
 
 //前方宣言---------------------------------------------------------------------
 class CRange;		//敵の索敵範囲
@@ -22,7 +23,7 @@ class CRange;		//敵の索敵範囲
 class CTarget :public CObject
 {
 public:
-	CTarget(int nPriority = 4);
+	CTarget(int nPriority = TARGET_PRIORITY);
 	~CTarget();
 
 	typedef enum

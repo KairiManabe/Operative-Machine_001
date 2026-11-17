@@ -63,7 +63,7 @@ void CResult::Init(void)
 	}
 
 	//クリアUI表示
-	CTextureUI::Create("data\\TEXTURE\\UI\\result000.png",D3DXVECTOR3(390.0f, 10.0f, 0.0f), D3DXVECTOR3(500.0f, 100.0f, 0.0f),COLOR_NONE);
+	CTextureUI::Create("data\\TEXTURE\\UI\\result000.png",D3DXVECTOR3(390.0f, 10.0f, 0.0f), D3DXVECTOR3(500.0f, 100.0f, 0.0f),COLOR_NORMAL);
 
 	//プレイヤーの生成
 	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));

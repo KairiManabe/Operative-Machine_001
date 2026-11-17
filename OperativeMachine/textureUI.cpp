@@ -25,7 +25,7 @@ CTextureUI::CTextureUI(int nPriority) :CObject(nPriority)
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_filename = {};
 	 m_nIdxTexture = -1;
-	m_col = COLOR_NONE;
+	m_col = COLOR_NORMAL;
 }
 
 //=============================================================================

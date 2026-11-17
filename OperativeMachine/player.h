@@ -27,11 +27,13 @@
 
 #define PLAYER_MOVEROT	(-0.3f)				//プレイヤーが進んだ時の傾き
 
+#define PLAYER_PRIORITY	(2)		//自分のプライオリティを持っておく
+
 //プレイヤークラス-------------------------------------------------------------
 class CPlayer:public CObject
 {
 public:
-	CPlayer(int nPriority = 2);
+	CPlayer(int nPriority = PLAYER_PRIORITY);
 	~CPlayer();
 
 	typedef enum

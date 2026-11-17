@@ -124,7 +124,7 @@ void CTutorial::Init(void)
 
 	//UI・タイマーの生成
 	CTextureUI::Create("data\\TEXTURE\\UI\\energy000.png", D3DXVECTOR3(19.0f, 3.0f, 0.0f), D3DXVECTOR3(322.0f, 40.0f, 0.0f), COLOR_CYAN);
-	m_pEnergy = CEnergy::Create("data\\TEXTURE\\UI\\energy001.png", D3DXVECTOR3(20.0f, 3.0f, 0.0f), D3DXVECTOR3(MAX_ENERGY, 40.0f, 0.0f), COLOR_NONE);
+	m_pEnergy = CEnergy::Create("data\\TEXTURE\\UI\\energy001.png", D3DXVECTOR3(20.0f, 3.0f, 0.0f), D3DXVECTOR3(MAX_ENERGY, 40.0f, 0.0f), COLOR_NORMAL);
 
 	//プレイヤー生成（スタート位置）
 	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 0.0f, -400.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
@@ -183,10 +183,10 @@ void CTutorial::Init(void)
 
 	if (m_pTextureUI[UI_TUTORIAL] == NULL)
 	{
-		m_pTextureUI[UI_TUTORIAL] = CTextureUI::Create("data\\TEXTURE\\UI\\tutorial001.png", D3DXVECTOR3(100.0f, 50.0f, 0.0f), D3DXVECTOR3(1000.0f, 600.0f, 0.0f), COLOR_NONE);
+		m_pTextureUI[UI_TUTORIAL] = CTextureUI::Create("data\\TEXTURE\\UI\\tutorial001.png", D3DXVECTOR3(100.0f, 50.0f, 0.0f), D3DXVECTOR3(1000.0f, 600.0f, 0.0f), COLOR_NORMAL);
 	}
 
-	m_pTextureUI[UI_BOTTUN] = CTextureUI::Create("data\\TEXTURE\\UI\\PressEnter.png", D3DXVECTOR3(490.0f, 600.0f, 0.0f), D3DXVECTOR3(300.0f, 100.0f, 0.0f), COLOR_NONE);
+	m_pTextureUI[UI_BOTTUN] = CTextureUI::Create("data\\TEXTURE\\UI\\PressEnter.png", D3DXVECTOR3(490.0f, 600.0f, 0.0f), D3DXVECTOR3(300.0f, 100.0f, 0.0f), COLOR_NORMAL);
 }
 
 //=============================================================================
@@ -252,7 +252,7 @@ void CTutorial::Update(void)
 			m_pTextureUI[UI_TUTORIAL]->SetColor(COLOR_TOUMEI);
 			m_pTextureUI[UI_BOTTUN]->SetColor(COLOR_TOUMEI);
 
-			//m_pTextureUI[UI_SPIDER]->CTextureUI::Create("data\\TEXTURE\\UI\\player_tutorial001.png", D3DXVECTOR3(390.0f, 20.0f, 0.0f), D3DXVECTOR3(500.0f, 600.0f, 0.0f), COLOR_NONE);
+			//m_pTextureUI[UI_SPIDER]->CTextureUI::Create("data\\TEXTURE\\UI\\player_tutorial001.png", D3DXVECTOR3(390.0f, 20.0f, 0.0f), D3DXVECTOR3(500.0f, 600.0f, 0.0f), COLOR_NORMAL);
 		}
 		//else if (m_pTextureUI[UI_SPIDER] != NULL && m_pTextureUI[UI_BOTTUN] != NULL)
 		//{

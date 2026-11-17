@@ -11,11 +11,14 @@
 #include "main.h"
 #include "object.h"
 
+//マクロ定義-------------------------------------------------------------------
+#define BOMB_PRIORITY	(3)		//自分のプライオリティを持っておく
+
 //ボムクラス-------------------------------------------------------------------
 class CBomb :public CObject
 {
 public:
-	CBomb(int nPriority = 3);
+	CBomb(int nPriority = BOMB_PRIORITY);
 	~CBomb();
 
 	static CBomb* Create(D3DXVECTOR3 pos, float fMaxRadius, float fExpandSpeed);

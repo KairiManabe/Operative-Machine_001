@@ -12,14 +12,15 @@
 #include "object.h"
 
 //マクロ定義-------------------------------------------------------------------
-#define SIZE_BILL		(100)				//ポリゴンサイズ
-#define SIZE_BILL_Y		(150)				//ポリゴンサイズ
+#define SIZE_BILL			(100)	//ポリゴンサイズ
+#define SIZE_BILL_Y			(150)	//ポリゴンサイズ
+#define BILLBOARD_PRIORITY	(5)		//自分のプライオリティを持っておく
 
 //ビルボードクラス-------------------------------------------------------------
 class CBillboard : public CObject
 {
 public:
-	CBillboard(int nPriority = 5);
+	CBillboard(int nPriority = BILLBOARD_PRIORITY);
 	~CBillboard();
 
 	static CBillboard* Create(D3DXVECTOR3 pos, D3DXVECTOR3 size);

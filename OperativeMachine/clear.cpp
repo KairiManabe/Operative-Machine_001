@@ -63,7 +63,7 @@ void CClear::Init(void)
 	}
 
 	//クリアUI表示
-	CTextureUI::Create("data\\TEXTURE\\UI\\clear000.png",D3DXVECTOR3(240.0f, 210.0f, 0.0f), D3DXVECTOR3(880.0f, 100.0f, 0.0f),COLOR_NONE);
+	CTextureUI::Create("data\\TEXTURE\\UI\\clear000.png",D3DXVECTOR3(240.0f, 210.0f, 0.0f), D3DXVECTOR3(880.0f, 100.0f, 0.0f),COLOR_NORMAL);
 
 	//プレイヤーの生成
 	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));

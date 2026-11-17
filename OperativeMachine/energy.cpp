@@ -32,7 +32,7 @@ CEnergy::CEnergy(int nPriority) :CObject(nPriority)
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_filename = {};
 	 m_nIdxTexture = -1;
-	m_col = COLOR_NONE;
+	m_col = COLOR_NORMAL;
 }
 
 //=============================================================================
@@ -210,7 +210,7 @@ void CEnergy::Update(void)
 	}
 	else if (m_size.x >= 40.0f && m_col == COLOR_RED)
 	{//エナジーの残量が40をきったとき赤にする
-		m_col = COLOR_NONE;
+		m_col = COLOR_NORMAL;
 	}
 
 	if (m_size.x <= 0.0f && pPlayer->GetMode() != CPlayer::MODE_HUMAN)

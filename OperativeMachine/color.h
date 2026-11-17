@@ -11,7 +11,8 @@
 #define COL_MAX				(1000)		// 色の最大数
 #define RAND_COLOR			((float)(rand() % COL_MAX) / COL_MAX)	// 配色のランダム
 
-#define COLOR_NONE			(D3DXCOLOR(1.0f,1.0f,1.0f,1.0f))
+#define COLOR_NORMAL		(D3DXCOLOR(1.0f,1.0f,1.0f,1.0f))
+#define COLOR_NONE			(D3DXCOLOR(1.0f,1.0f,1.0f,0.0f))
 #define COLOR_RED			(D3DXCOLOR(1.0f,0.0f,0.0f,1.0f))
 #define COLOR_GREEN			(D3DXCOLOR(0.0f,0.5f,0.0f,1.0f))
 #define COLOR_BLUE			(D3DXCOLOR(0.0f,0.0f,1.0f,1.0f))

@@ -1,6 +1,6 @@
 //=============================================================================
 //
-//弾bullet.cpp]
+// 弾の出力処理[bullet.cpp]
 // 
 // Author : 眞鍋快陸
 // 
@@ -147,14 +147,15 @@ void CBullet::Update(void)
 //ターゲットとの当たり判定
 bool CBullet::CollisionHuman(const D3DXVECTOR3& start, const D3DXVECTOR3& end, float radius)
 {
-    CObject* pObject = CObject::GetTop(4);
+    //TARGET_PRIORITY→ターゲットクラスのプライオリティ
+    CObject* pObject = CObject::GetTop(TARGET_PRIORITY);
     while (pObject != NULL)
     {
         CObject* pNext = pObject->GetNext();
-        CTarget* pHuman = dynamic_cast<CTarget*>(pObject);
-        if (pHuman != NULL && pHuman->CollisionBullet(start, end, radius))
+        CTarget* pTarget = dynamic_cast<CTarget*>(pObject);
+        if (pTarget != NULL && pTarget->CollisionBullet(start, end, radius))
         {
-            pHuman->DethHuman();
+            pTarget->DethHuman();
             return true;
         }
         pObject = pNext;

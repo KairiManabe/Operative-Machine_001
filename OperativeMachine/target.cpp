@@ -371,7 +371,7 @@ void CTarget::BreakBombBox(void)
 bool CTarget::CollisionBomb(void)
 {
 	//CBomb‚ª“o˜^‚³‚ê‚Ä‚¢‚éPriority‚ÌƒŠƒXƒg‚Ìæ“ª‚ğæ“¾
-	CObject* pObj = CObject::GetTop(3);
+	CObject* pObj = CObject::GetTop(BOMB_PRIORITY);
 
 	while (pObj != NULL)
 	{

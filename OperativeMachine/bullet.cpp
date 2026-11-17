@@ -135,7 +135,7 @@ void CBullet::Update(void)
     SetPosition(m_pos);
     m_nLife--;
 
-    CEffect::Create(CEffect::TEX_CIRCLE, m_pos, {}, D3DXVECTOR3(8.0f, 100.0f, 0.0f), COLOR_SKYBLUE, 40);
+    CEffect::Create(CEffect::TEX_DIAMOND, m_pos, {}, D3DXVECTOR3(10.0f, 80.0f, 0.0f), COLOR_NORMAL, 10);
 
     const float radius = (m_size.x > m_size.y) ? m_size.x : m_size.y;
 

@@ -37,6 +37,7 @@
 #include "particle.h"
 #include "objectX.h"
 #include "crosshair.h"
+#include "wall.h"
 
 //マクロ定義-------------------------------------------------------------------
 #define SIZE_MINI		(D3DXVECTOR3(100.0f, 0.0f, 100.0f))
@@ -56,6 +57,7 @@ CEnergy* CTutorial::m_pEnergy = NULL;
 CObjectX* CTutorial::m_apObjxWall[MAX_WALL] = {};
 CTextureUI* CTutorial::m_pTextureUI[UI_MAX] = {};
 CCrosshair* CTutorial::m_pCrosshair = NULL;
+CWall* CTutorial::m_pWall[10] = {};
 bool CTutorial::m_tutorialUI = false;
 
 //=============================================================================

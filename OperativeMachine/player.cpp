@@ -480,8 +480,10 @@ void CPlayer::Update(void)
 					{
 						D3DXVECTOR3 cameraForward = pCamera->GetPositionR() - pCamera->GetPositionV();
 						D3DXVec3Normalize(&cameraForward, &cameraForward);
+
 						D3DXVECTOR3 bulletPos = m_pos + cameraForward * 35.0f;
 						bulletPos.y += 45.0f;
+
 						D3DXVECTOR3 aimPoint = pCamera->GetPositionV() + aimRay * 1000.0f;
 						D3DXVECTOR3 direction = aimPoint - bulletPos;
 						D3DXVec3Normalize(&direction, &direction);

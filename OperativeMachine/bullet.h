@@ -28,6 +28,9 @@ public:
 	void Update(void);
 	void Draw(void);
 
+	D3DXVECTOR3 GetPosition(void) { return m_pos; }
+	D3DXVECTOR3 GetMove(void) { return m_move; }
+	float GetCollsionSize(void) { return m_fCollisionSize; }
 	bool CollisionHuman(const D3DXVECTOR3& start, const D3DXVECTOR3& end, float radius);
 private:
 	D3DXVECTOR3 m_pos;
@@ -35,6 +38,7 @@ private:
 	D3DXVECTOR3 m_size;		//ƒTƒCƒY
 	int m_nLife;			//‘Ì—Í
 
+	static float m_fCollisionSize;	//“–‚½‚è”»’èŽž‚Ì”¼Œa‚Ì‘å‚«‚³
 	static int m_nIdxTexture;
 };
 

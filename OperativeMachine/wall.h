@@ -16,6 +16,9 @@
 #define SIZE_F1			(30)				//ポリゴンサイズ
 #define SIZE_F2			(400)				//ポリゴンサイズ
 
+//前方宣言---------------------------------------------------------------------
+class CBullet;
+
 //オブジェクト2Dクラス---------------------------------------------------------
 class CWall :public CObject
 {
@@ -37,6 +40,7 @@ public:
 	D3DXVECTOR3 GetNor(const D3DXVECTOR3& A, const D3DXVECTOR3& B, const D3DXVECTOR3& C);
 	D3DXVECTOR3 GetPush(void) { return m_PushOut; }
 	bool CollisionPlayer(void);
+	bool CollisionBullet(CBullet* pBullet);
 	D3DXVECTOR3 CalcPush(const D3DXVECTOR3& player, const D3DXVECTOR3& A, const D3DXVECTOR3& B, const D3DXVECTOR3& C);
 	bool PointInTriangle(const D3DXVECTOR3& player, const D3DXVECTOR3& A, const D3DXVECTOR3& B, const D3DXVECTOR3& C);
 	

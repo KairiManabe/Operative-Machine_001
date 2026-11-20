@@ -29,6 +29,7 @@ class CEnergy;			//エナジー
 class CObjectX;			//オブジェクトXの壁オブジェクト
 class CTextureUI;		//テクスチャUI
 class CCrosshair;		//クロスヘア
+class CWall;
 
 //ゲームクラス-----------------------------------------------------------------
 class CTutorial : public CScene
@@ -62,6 +63,7 @@ public:
 	static CEnergy* GetEnergy(void) { return m_pEnergy; }
 	static CObjectX** GetObjectXWall(void) { return &m_apObjxWall[0]; }
 	static CCrosshair* GetCrosshair(void) { return m_pCrosshair; }
+	static CWall** GetWall(void) { return &m_pWall[0]; }
 
 	static void SetUI(bool UI) { m_tutorialUI = UI; }
 	static bool GetUI(void) { return m_tutorialUI; }
@@ -78,6 +80,7 @@ private:
 	static CObjectX* m_apObjxWall[MAX_WALL];
 	static CTextureUI* m_pTextureUI[UI_MAX];
 	static CCrosshair* m_pCrosshair;
+	static CWall* m_pWall[10];
 
 	static bool m_tutorialUI;
 };

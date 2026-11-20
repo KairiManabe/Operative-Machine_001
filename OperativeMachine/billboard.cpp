@@ -52,7 +52,7 @@ CBillboard* CBillboard::Create(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 	return pBillboard;
 }
 
-//=====================================
+//=============================================================================
 //プレイヤーの初期化処理
 HRESULT CBillboard::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 {
@@ -110,7 +110,7 @@ HRESULT CBillboard::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 	return S_OK;
 }
 
-//=====================================
+//=============================================================================
 //プレイヤーの描画
 void CBillboard::Draw(void)
 {
@@ -124,8 +124,12 @@ void CBillboard::Draw(void)
 	D3DXMATRIX mtxTrans;		//計算用マトリックス
 	D3DXMATRIX mtxView;			//ビューマトリックス取得用
 
-	//Zテストを無効にする
-	pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
+	// Keep billboard fragments behind opaque geometry occluded.
+	DWORD oldZFunc = D3DCMP_LESSEQUAL;
+	DWORD oldZWriteEnable = TRUE;
+	pDevice->GetRenderState(D3DRS_ZFUNC, &oldZFunc);
+	pDevice->GetRenderState(D3DRS_ZWRITEENABLE, &oldZWriteEnable);
+	pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
 	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 
 	//ワールドマトリックスの初期化
@@ -162,11 +166,11 @@ void CBillboard::Draw(void)
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
 
 	//Zテストを有効にする
-	pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
-	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+	pDevice->SetRenderState(D3DRS_ZFUNC, oldZFunc);
+	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, oldZWriteEnable);
 }
 
-//=====================================
+//=============================================================================
 //プレイヤーの終了処理
 void CBillboard::Uninit(void)
 {
@@ -181,7 +185,7 @@ void CBillboard::Uninit(void)
 	CObject::Release();
 }
 
-//=====================================
+//=============================================================================
 //ビルボードの更新処理
 void CBillboard::Update(void)
 {

@@ -11,6 +11,7 @@
 
 #include "manager.h"
 #include "renderer.h"
+#include "debugproc.h"
 #include "input.h"
 #include "texture.h"
 #include "color.h"
@@ -21,9 +22,11 @@
 #include "score.h"
 #include "target.h"
 #include "effect.h"
+#include "wall.h"
 
 //静的メンバ変数宣言-----------------------------------------------------------
 int CBullet::m_nIdxTexture = -1;
+float CBullet::m_fCollisionSize = 10.0f;
 
 //=============================================================================
 //コンストラクタ
@@ -130,21 +133,28 @@ void CBullet::Update(void)
         return;
     }
 
+    CWall **pWall = (CManager::GetScene()->GetMode() == CScene::MODE_GAME) ? CGame::GetWall() : CTutorial::GetWall();
+    
     const D3DXVECTOR3 previousPos = m_pos;
-    m_pos += m_move;
+    m_pos.x += m_move.x;
+    m_pos.z += m_move.z;
     SetPosition(m_pos);
     m_nLife--;
 
     CEffect::Create(CEffect::TEX_DIAMOND, m_pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(7.0f, 50.0f, 0.0f), COLOR_NORMAL, 10);
 
     const float radius = (m_size.x > m_size.y) ? m_size.x : m_size.y;
-
     CollisionHuman(previousPos, m_pos, radius);
 
-    if (m_nLife <= 0)
-    {//ライフがないときに消す
-        Uninit();
+    for (int nCntWall = 0; nCntWall < CWall::GetNumAll(); nCntWall++)
+    {
+        if (pWall[nCntWall]->CollisionBullet(this) == true)
+        {
+            Uninit();
+        }
     }
+
+    CManager::GetDebugproc()->PrintDebugProc("\n弾のpos[X:%.2f | Y:%.2f | Z:%.2f]\n", m_pos.x, m_pos.y, m_pos.z);
 }
 
 //=============================================================================

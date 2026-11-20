@@ -23,6 +23,7 @@
 #include "player.h"
 #include "particle.h"
 #include "number.h"
+#include "bullet.h"
 
 //静的メンバ変数宣言-----------------------------------------------------------
 int CWall::m_nIdxTexture = 0;
@@ -251,7 +252,7 @@ void CWall::Draw(void)
 }
 
 //=============================================================================
-//プレイヤーとの当たり判定	****(斜めの時当たり判定が逆向きになってるかも)****
+//プレイヤーとの当たり判定
 bool CWall::CollisionPlayer(void)
 {
 	//プレイヤーの取得
@@ -371,6 +372,117 @@ bool CWall::CollisionPlayer(void)
 
 		//押し戻した位置を確定
 		pPlayer->SetPosition(pos);
+
+		return true;
+	}
+	return false;
+}
+
+//=============================================================================
+//弾との当たり判定
+bool CWall::CollisionBullet(CBullet* pBullet)
+{
+	if (pBullet == NULL)
+	{//NULLたったらfalseを返す
+		return false;
+	}
+
+	//シーン取得
+	CScene* pScene = CManager::GetScene();
+
+	//弾の座標
+	D3DXVECTOR3 pos = pBullet->GetPosition();
+
+	//弾が壁の高さの範囲内にいるか
+	float wallMinY = m_pos.y + m_MinPos.y;
+	float wallMaxY = m_pos.y + m_MaxPos.y;
+	if (pos.y < wallMinY || pos.y > wallMaxY)
+	{
+		return false;
+	}
+
+	//弾の半径
+	float BulletRadius = pBullet->GetCollsionSize();
+
+	//オブジェクトの中心を原点とした、弾の相対座標
+	float relativeX = pos.x - m_Center.x;
+	float relativeZ = pos.z - m_Center.z;
+
+	//弾の座標を、オブジェクトの向きの逆に回転させて計算
+	float localBulletX = relativeX * cosf(-m_rot.y) - relativeZ * sinf(-m_rot.y);
+	float localBulletZ = relativeX * sinf(-m_rot.y) + relativeZ * cosf(-m_rot.y);
+
+	//最小・最大幅
+	float halfWidthX = (m_MaxPos.x - m_MinPos.x) * 0.5f;
+	float halfWidthZ = (m_MaxPos.z - m_MinPos.z) * 0.5f;
+
+	float minX = -halfWidthX;
+	float maxX = halfWidthX;
+	float minZ = -halfWidthZ;
+	float maxZ = halfWidthZ;
+
+	//四角形上で、弾に一番近い「最近傍点」を求める
+	float closestX = max(minX, min(localBulletX, maxX));
+	float closestZ = max(minZ, min(localBulletZ, maxZ));
+
+	//弾と最近傍点の距離を計算する
+	float diffX = localBulletX - closestX;
+	float diffZ = localBulletZ - closestZ;
+	float distanceSq = (diffX * diffX) + (diffZ * diffZ);
+
+	//当たり判定
+	if (distanceSq <= (BulletRadius * BulletRadius))
+	{
+		float distance = sqrtf(distanceSq);
+
+		if (distance == 0.0f)
+		{
+			diffX = 0.0f;
+			diffZ = 1.0f;
+			distance = 1.0f;
+		}
+
+		//押し戻しベクトルの計算
+		float dirX = diffX / distance;
+		float dirZ = diffZ / distance;
+
+		//めり込んでいる長さ
+		float overlap = BulletRadius - distance;
+
+		////-----------------------------------------------------------------
+		////壁に向かって進んでいるかチェック
+		//D3DXVECTOR3 BulletMove = pBullet->GetMove();
+
+		////XZ平面(水平方向)での移動量
+		//float moveSpeedXZSq = BulletMove.x * BulletMove.x + BulletMove.z * BulletMove.z;
+		//bool bIsMovingTowardsWall = false;
+
+		////水平方向に少しでも移動していれば判定を行う
+		//if (moveSpeedXZSq > 0.0001f)
+		//{
+		//	//弾の移動ベクトルを壁のローカル空間に変換
+		//	float localMoveX = BulletMove.x * cosf(-m_rot.y) - BulletMove.z * sinf(-m_rot.y);
+		//	float localMoveZ = BulletMove.x * sinf(-m_rot.y) + BulletMove.z * cosf(-m_rot.y);
+
+		//	//壁の最近傍点に向かうベクトルと移動ベクトルの内積
+		//	float dot = (diffX * localMoveX) + (diffZ * localMoveZ);
+
+		//	//内積がマイナス→壁に向かって進んでいる
+		//	if (dot < 0.0f)
+		//	{
+		//		bIsMovingTowardsWall = true;
+		//	}
+		//}
+
+		//壁の表面(XZ軸)への押し戻し
+		localBulletX += dirX * overlap;
+		localBulletZ += dirZ * overlap;
+
+		float worldCorrectedX = localBulletX * cosf(m_rot.y) - localBulletZ * sinf(m_rot.y);
+		float worldCorrectedZ = localBulletX * sinf(m_rot.y) + localBulletZ * cosf(m_rot.y);
+
+		pos.x = m_Center.x + worldCorrectedX;
+		pos.z = m_Center.z + worldCorrectedZ;
 
 		return true;
 	}

@@ -71,7 +71,7 @@ void CTitle::Init(void)
 		m_pObject3D[nCntField] = CObject3D::Create(D3DXVECTOR3(SIZE_NORMAL.x * nCntField, 0.0f, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI / 2.0f, 0.0f), SIZE_NORMAL);
 	}
 
-	CTextureUI::Create("data\\TEXTURE\\UI\\title000.png", D3DXVECTOR3(200.0f, 200.0f, 0.0f), D3DXVECTOR3(320.0f, 100.0f, 0.0f), COLOR_NORMAL);
+	CTextureUI::Create("data\\TEXTURE\\UI\\title100.png", D3DXVECTOR3(200.0f, 200.0f, 0.0f), D3DXVECTOR3(320.0f, 100.0f, 0.0f), COLOR_NORMAL);
 
 	//ÉÅÉjÉÖÅ[Çê∂ê¨
 	m_pTextureUI[MENU_TUTORIAL] = CTextureUI::Create("data\\TEXTURE\\UI\\tutorial000.png", D3DXVECTOR3(215.0f, 350.0f, 0.0f), D3DXVECTOR3(280.0f, 60.0f, 0.0f), COLOR_NORMAL);

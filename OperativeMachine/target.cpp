@@ -186,7 +186,7 @@ void CTarget::Update(void)
 	// 爆発範囲との判定
 	if (CollisionVigilanceRange() == true)
 	{
-		DethHuman();	//人間の死亡
+		DethTarget();	//ターゲットの死亡
 		return;
 	}
 
@@ -266,7 +266,7 @@ void CTarget::Update(void)
 
 	if (CollisionPlayer() == true && m_bCollisionOld != true)
 	{
-		DethHuman();
+		DethTarget();
 	}
 
 }
@@ -396,8 +396,8 @@ bool CTarget::CollisionVigilanceRange(void)
 }
 
 //=============================================================================
-//人間の死亡時処理
-void CTarget::DethHuman(void)
+//ターゲットの死亡時処理
+void CTarget::DethTarget(void)
 {
 	//既に無効化されている場合はスキップ
 	if (!m_bEnable)
@@ -418,19 +418,19 @@ void CTarget::DethHuman(void)
 		if (pScene->GetMode() == CScene::MODE_GAME)
 		{
 			pPlayer = CGame::GetPlayer();
-			CGame::SubTarget(this);			//ゲーム内で記録している人間の数を減らす
+			CGame::SubTarget(this);			//ゲーム内で記録しているターゲットの数を減らす
 		}
 		else if (pScene->GetMode() == CScene::MODE_TUTORIAL)
 		{
 			pPlayer = CTutorial::GetPlayer();
-			//CTutorial::SubTarget(this);		//チュートリアル内で記録している人間の数を減らす
+			//CTutorial::SubTarget(this);		//チュートリアル内で記録しているターゲットの数を減らす
 		}
 
 		if (pPlayer != NULL)
 		{
 			//pPlayer->AddDethHuman();
 
-			//人間が爆発に巻き込まれたらコンボリセット
+			//ターゲットが爆発に巻き込まれたらコンボリセット
 			//pPlayer->PenaltyDethHuman();
 		}
 	}

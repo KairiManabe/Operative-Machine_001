@@ -53,7 +53,7 @@ public:
 
 	void BreakBox(void);
 	void BreakBombBox(void);
-	void DethHuman(void);
+	void DethTarget(void);
 	bool CollisionBullet(const D3DXVECTOR3& start, const D3DXVECTOR3& end, float radius) const;
 
 	void SetPosition(const D3DXVECTOR3 pos) { m_pos = pos; }

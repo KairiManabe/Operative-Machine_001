@@ -34,6 +34,9 @@ CBullet::CBullet(void)
 {
 	//値をクリア(初期化)
 	m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_straightMove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_fDistanceToStraight = 0.0f;
+	m_bHasStraightMove = false;
 	m_nLife = 0;
 }
 
@@ -66,7 +69,7 @@ void CBullet::Unload(void)
 
 //=============================================================================
 //弾の生成処理
-CBullet* CBullet::Create(D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 move, const int nLife)
+CBullet* CBullet::Create(D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 move, const int nLife, const D3DXVECTOR3& straightMove, float distanceToStraight)
 {
     CBullet* pBullet = new CBullet;
     if (pBullet == NULL)
@@ -77,6 +80,9 @@ CBullet* CBullet::Create(D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 move, co
     pBullet->m_pos = pos;
     pBullet->m_size = size;
     pBullet->m_move = move;
+    pBullet->m_straightMove = straightMove;
+    pBullet->m_fDistanceToStraight = distanceToStraight;
+    pBullet->m_bHasStraightMove = distanceToStraight > 0.0f && D3DXVec3LengthSq(&straightMove) > 0.0001f;
     pBullet->m_nLife = nLife;
 
     if (FAILED(pBullet->Init(pos, size)))
@@ -135,16 +141,38 @@ void CBullet::Update(void)
 
     CWall **pWall = (CManager::GetScene()->GetMode() == CScene::MODE_GAME) ? CGame::GetWall() : CTutorial::GetWall();
     
+    //発射位置から照準レイ上の点まで飛ばし、到達後は照準レイに沿って直進させる
+    //-----------------------------------------------------------------------------------
+    //クロスヘアからまっすぐ飛ばす処理
     const D3DXVECTOR3 previousPos = m_pos;
-    m_pos.x += m_move.x;
-    m_pos.z += m_move.z;
+    D3DXVECTOR3 frameMove = m_move;
+    const float speed = D3DXVec3Length(&m_move);
+    if (m_bHasStraightMove && speed > 0.0001f)
+    {
+        if (m_fDistanceToStraight <= speed)
+        {//合流点に到達したら、残りの移動量を照準レイ方向へ進める
+            D3DXVECTOR3 approachDirection = m_move / speed;
+            D3DXVECTOR3 straightDirection = m_straightMove;
+            D3DXVec3Normalize(&straightDirection, &straightDirection);
+            const float approachDistance = m_fDistanceToStraight;
+            frameMove = approachDirection * approachDistance
+                + straightDirection * (speed - approachDistance);
+            m_move = m_straightMove;
+            m_bHasStraightMove = false;
+        }
+        else
+        {
+            m_fDistanceToStraight -= speed;
+        }
+    }
+    m_pos += frameMove;
     SetPosition(m_pos);
     m_nLife--;
 
     CEffect::Create(CEffect::TEX_DIAMOND, m_pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(7.0f, 50.0f, 0.0f), COLOR_NORMAL, 10);
 
     const float radius = (m_size.x > m_size.y) ? m_size.x : m_size.y;
-    CollisionHuman(previousPos, m_pos, radius);
+    CollisionTarget(previousPos, m_pos, radius);
 
     for (int nCntWall = 0; nCntWall < CWall::GetNumAll(); nCntWall++)
     {
@@ -159,7 +187,7 @@ void CBullet::Update(void)
 
 //=============================================================================
 //ターゲットとの当たり判定
-bool CBullet::CollisionHuman(const D3DXVECTOR3& start, const D3DXVECTOR3& end, float radius)
+bool CBullet::CollisionTarget(const D3DXVECTOR3& start, const D3DXVECTOR3& end, float radius)
 {
     //TARGET_PRIORITY→ターゲットクラスのプライオリティ
     CObject* pObject = CObject::GetTop(TARGET_PRIORITY);
@@ -169,7 +197,7 @@ bool CBullet::CollisionHuman(const D3DXVECTOR3& start, const D3DXVECTOR3& end, f
         CTarget* pTarget = dynamic_cast<CTarget*>(pObject);
         if (pTarget != NULL && pTarget->CollisionBullet(start, end, radius))
         {
-            pTarget->DethHuman();
+            pTarget->DethTarget();
             return true;
         }
         pObject = pNext;

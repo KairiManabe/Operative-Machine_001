@@ -469,10 +469,12 @@ void CPlayer::Update(void)
 		{
 			if (m_Mode == MODE_CANNON && (pScene->GetMode() == CScene::MODE_GAME || pScene->GetMode() == CScene::MODE_TUTORIAL))
 			{
-				CInputMouse* pInputMouse = CManager::GetInputMouse();
-				if (pInputMouse != NULL && pInputKeyboard->GetTrigger(DIK_SPACE) || pInputJoypad->GetTrigger(JOYKEY_RB))
+				if (pInputKeyboard != NULL && pInputKeyboard->GetTrigger(DIK_SPACE) || pInputJoypad->GetTrigger(JOYKEY_RB))
 				{
+					//シーンがゲームかチュートリアルかによってGetするシーンを適応する
 					CCrosshair* pCrosshair = (pScene->GetMode() == CScene::MODE_GAME) ? CGame::GetCrosshair() : CTutorial::GetCrosshair();
+
+					//クロスヘアがないときは[CENTER_2DPOS]の値にする
 					D3DXVECTOR3 crosshairPos = pCrosshair != NULL ? pCrosshair->GetPosition() : CENTER_2DPOS;
 					D3DXVECTOR3 aimRay = pCamera->GetRayDirection(crosshairPos.x, crosshairPos.y);
 
@@ -484,11 +486,12 @@ void CPlayer::Update(void)
 						D3DXVECTOR3 bulletPos = m_pos + cameraForward * 35.0f;
 						bulletPos.y += 45.0f;
 
-						D3DXVECTOR3 aimPoint = pCamera->GetPositionV() + aimRay * 1000.0f;
+						D3DXVECTOR3 aimPoint = pCamera->GetPositionV() + aimRay * BULLET_AIM_DISTANCE;
 						D3DXVECTOR3 direction = aimPoint - bulletPos;
-						D3DXVec3Normalize(&direction, &direction);
-
-						CBullet::Create(bulletPos, D3DXVECTOR3(8.0f, 8.0f, 0.0f), direction * 55.0f, 120);
+                        const float distanceToStraight = D3DXVec3Length(&direction);
+                        D3DXVec3Normalize(&direction, &direction);
+                        CBullet::Create(bulletPos, D3DXVECTOR3(8.0f, 8.0f, 0.0f),
+                            direction * 55.0f, 120, aimRay * 55.0f, distanceToStraight);
 					}
 				}
 			}
@@ -653,12 +656,13 @@ void CPlayer::Update(void)
 			}
 		}
 
-		// 左スティックはデジタル方向キーと重ねず、強さを保ってカメラ基準で移動する。
+		// 左スティックは十字キーとWASDキーと重ねない
 		const bool bDigitalMove =
 			pInputKeyboard->GetPress(DIK_W) || pInputKeyboard->GetPress(DIK_A) ||
 			pInputKeyboard->GetPress(DIK_S) || pInputKeyboard->GetPress(DIK_D) ||
 			pInputJoypad->GetPress(JOYKEY_UP) || pInputJoypad->GetPress(JOYKEY_DOWN) ||
 			pInputJoypad->GetPress(JOYKEY_LEFT) || pInputJoypad->GetPress(JOYKEY_RIGHT);
+
 		if (!bDigitalMove && m_Mode != MODE_CANNON &&
 			(pScene->GetMode() == CScene::MODE_GAME || pScene->GetMode() == CScene::MODE_TUTORIAL))
 		{
@@ -669,11 +673,10 @@ void CPlayer::Update(void)
 				const float axisX = static_cast<float>(stickX) / 32767.0f;
 				const float axisY = static_cast<float>(stickY) / 32767.0f;
 				const float magnitude = sqrtf(axisX * axisX + axisY * axisY);
-				const float deadZone = 0.2f;
-				if (magnitude > deadZone)
+				if (magnitude > 0.2f)
 				{
 					const float clampedMagnitude = (magnitude > 1.0f) ? 1.0f : magnitude;
-					const float scaledMagnitude = (clampedMagnitude - deadZone) / (1.0f - deadZone);
+					const float scaledMagnitude = (clampedMagnitude - 0.2f) / (1.0f - 0.2f);
 					const float moveX = axisX * (scaledMagnitude / magnitude);
 					const float moveY = axisY * (scaledMagnitude / magnitude);
 
@@ -763,7 +766,7 @@ void CPlayer::Update(void)
 
 	if (m_Mode == MODE_CANNON)
 	{
-		m_rot = pCamera->GetRotation();
+		m_rot.y = pCamera->GetRotation().y;
 	}
 
 	if (pInputKeyboard->GetPress(DIK_W) == false &&

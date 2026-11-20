@@ -21,7 +21,7 @@ public:
 
 	static HRESULT Load(void);
 	static void Unload(void);
-	static CBullet* Create(D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 move, const int nLife);
+	static CBullet* Create(D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 move, const int nLife, const D3DXVECTOR3& straightMove = D3DXVECTOR3(0.0f, 0.0f, 0.0f), float distanceToStraight = 0.0f);
 
 	HRESULT Init(D3DXVECTOR3 pos, D3DXVECTOR3 size);
 	void Uninit(void);
@@ -31,10 +31,13 @@ public:
 	D3DXVECTOR3 GetPosition(void) { return m_pos; }
 	D3DXVECTOR3 GetMove(void) { return m_move; }
 	float GetCollsionSize(void) { return m_fCollisionSize; }
-	bool CollisionHuman(const D3DXVECTOR3& start, const D3DXVECTOR3& end, float radius);
+	bool CollisionTarget(const D3DXVECTOR3& start, const D3DXVECTOR3& end, float radius);
 private:
 	D3DXVECTOR3 m_pos;
 	D3DXVECTOR3 m_move;
+	D3DXVECTOR3 m_straightMove;
+	float m_fDistanceToStraight;
+	bool m_bHasStraightMove;
 	D3DXVECTOR3 m_size;		//ƒTƒCƒY
 	int m_nLife;			//‘Ì—Í
 

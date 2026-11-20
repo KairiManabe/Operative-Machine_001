@@ -16,6 +16,7 @@
 #define CENTER_2DPOS	(D3DXVECTOR3(640.0f, 420.0f, 0.0f))
 #define CROSSHAIR_OFFSET_X (0.0f)
 #define CROSSHAIR_OFFSET_Y (0.0f)
+#define BULLET_AIM_DISTANCE (400.0f)
 
 //プレイヤークラス-------------------------------------------------------------
 class CCrosshair :public CObject

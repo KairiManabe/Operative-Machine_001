@@ -208,7 +208,7 @@ void CEnemy::Uninit(void)
 //プレイヤーの描画
 void CEnemy::Draw(void)
 {
-	D3DXMATRIX mtxRot, mtxTrans;			//計算用マトリックス
+	D3DXMATRIX mtxRot, mtxTrans;		//計算用マトリックス
 
 	//デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
@@ -239,14 +239,6 @@ void CEnemy::Draw(void)
 			m_apModel[nCntModel]->Draw();
 		}
 	}
-
-#ifndef NO_USE
-	//レンダリングターゲット用のテクスチャを元に戻す
-	pDevice->SetRenderTarget(0, pRenderDef);
-
-	//Zバッファを元に戻す
-	pDevice->SetDepthStencilSurface(pZBuffDef);
-#endif
 }
 
 //=============================================================================
@@ -315,9 +307,6 @@ void CEnemy::Update(void)
 			m_pRange->SetPosition(rangePos);
 		}
 	}
-
-	//pDebug->PrintDebugProc("敵の数:%d\n", m_nNumAll);
-	//pDebug->PrintDebugProc("敵の座標[X:%.1f,|Y:%.1f|%.1f]\n", m_pos.x, m_pos.y, m_pos.z);
 }
 
 //=============================================================================
@@ -327,47 +316,47 @@ HRESULT CEnemy::LoadParentModel(const std::string& fileName)
 	FILE* pFile = fopen(fileName.c_str(), "r");
 
 	if (pFile == NULL)
-	{// 読み込み失敗
+	{//読み込み失敗
 		return E_FAIL;
 	}
 
-	static char aStr[MAX_STRING] = {};		    // 文字列読み込み
-	static char aStrCpy[MAX_STRING] = {};	    // 文字列複製(整理)
-	static char* pStart = NULL;				    // 文字列開始位置
-	static char aModelPath[FILE_MAX] = {};		// モデルのファイル名読み込み
-	int nIdx = 0;								// モデルのインデックス読み込み
-	int nParent = 0;							// モデルの親インデックス読み込み
-	D3DXVECTOR3 pos = {};						// 位置読み込み
-	D3DXVECTOR3 rot = {};						// 向き読み込み
-	int nCntParts = 0;							// パーツ数カウント
-	int nCntFileName = 0;						// ファイル名カウント
-	int nCntModel = 0;							// モデル数
+	static char aStr[MAX_STRING] = {};		    //文字列読み込み
+	static char aStrCpy[MAX_STRING] = {};	    //文字列複製(整理)
+	static char* pStart = NULL;				    //文字列開始位置
+	static char aModelPath[FILE_MAX] = {};		//モデルのファイル名読み込み
+	int nIdx = 0;								//モデルのインデックス読み込み
+	int nParent = 0;							//モデルの親インデックス読み込み
+	D3DXVECTOR3 pos = {};						//位置読み込み
+	D3DXVECTOR3 rot = {};						//向き読み込み
+	int nCntParts = 0;							//パーツ数カウント
+	int nCntFileName = 0;						//ファイル名カウント
+	int nCntModel = 0;							//モデル数
 
 	while (true)
 	{
-		memset(aStr, 0, sizeof(aStr));			// 文字列クリア
-		(void)fgets(aStr, sizeof(aStr), pFile);	// 一列読み込み
+		memset(aStr, 0, sizeof(aStr));			//文字列クリア
+		(void)fgets(aStr, sizeof(aStr), pFile);	//一列読み込み
 
 		if (strstr(aStr, LOAD_START) != NULL)
-		{// LOAD_STARTを読み込めば読み込み開始
+		{//LOAD_STARTを読み込めば読み込み開始
 			break;
 		}
 
 		if (feof(pFile) != NULL)
-		{// 読み込み失敗
+		{//読み込み失敗
 			return E_FAIL;
 		}
 	}
 
 	while (true)
 	{
-		memset(aStr, 0, sizeof(aStr));				// 文字列クリア
-		memset(aStrCpy, 0, sizeof(aStrCpy));		// コピーもクリア
-		(void)fgets(aStr, sizeof(aStr), pFile);		// 一列読み込み
-		LoadEnableString(&aStrCpy[0], &aStr[0]);	// 有効文字だけ抜き取って複製
+		memset(aStr, 0, sizeof(aStr));				//文字列クリア
+		memset(aStrCpy, 0, sizeof(aStrCpy));		//コピーもクリア
+		(void)fgets(aStr, sizeof(aStr), pFile);		//一列読み込み
+		LoadEnableString(&aStrCpy[0], &aStr[0]);	//有効文字だけ抜き取って複製
 
 		if (strstr(aStr, LOAD_NUMMODEL))
-		{// NUM_MODELを読み込んだ
+		{//NUM_MODELを読み込んだ
 			if ((pStart = strchr(aStr, '=')) == NULL)
 			{
 				continue;
@@ -377,7 +366,7 @@ HRESULT CEnemy::LoadParentModel(const std::string& fileName)
 		}
 
 		if (strstr(aStr, LOAD_MODEL))
-		{// MODEL_FILENAMEを読み込んだ
+		{//MODEL_FILENAMEを読み込んだ
 
 			if ((pStart = strchr(aStr, '=')) == NULL)
 			{
@@ -391,16 +380,16 @@ HRESULT CEnemy::LoadParentModel(const std::string& fileName)
 		}
 
 		if (strstr(aStr, LOAD_PLAYER))
-		{// CHARACTERSETを読み込んだ
+		{//CHARACTERSETを読み込んだ
 			while (true)
 			{
-				memset(aStr, 0, sizeof(aStr));				// 文字列クリア
-				memset(aStrCpy, 0, sizeof(aStrCpy));		// コピーもクリア
-				(void)fgets(aStr, sizeof(aStr), pFile);		// 一列読み込み
-				LoadEnableString(&aStrCpy[0], &aStr[0]);	// 有効文字だけ抜き取って複製
+				memset(aStr, 0, sizeof(aStr));				//文字列クリア
+				memset(aStrCpy, 0, sizeof(aStrCpy));		//コピーもクリア
+				(void)fgets(aStr, sizeof(aStr), pFile);		//一列読み込み
+				LoadEnableString(&aStrCpy[0], &aStr[0]);	//有効文字だけ抜き取って複製
 
 				if (strcmp(aStrCpy, LOAD_PARTS) == 0)
-				{// PARTSSETを読み込んだ
+				{//PARTSSETを読み込んだ
 					while (true)
 					{
 						memset(aStr, 0, sizeof(aStr));
@@ -409,7 +398,7 @@ HRESULT CEnemy::LoadParentModel(const std::string& fileName)
 						LoadEnableString(&aStrCpy[0], &aStr[0]);
 
 						if (strstr(aStr, LOAD_INDEX))
-						{// INDEXを読み込んだ
+						{//INDEXを読み込んだ
 							if ((pStart = strchr(aStr, '=')) == NULL)
 							{
 								continue;
@@ -420,7 +409,7 @@ HRESULT CEnemy::LoadParentModel(const std::string& fileName)
 						}
 
 						if (strstr(aStr, LOAD_PARENT))
-						{// PARENTを読み込んだ
+						{//PARENTを読み込んだ
 							if ((pStart = strchr(aStr, '=')) == NULL)
 							{
 								continue;
@@ -431,7 +420,7 @@ HRESULT CEnemy::LoadParentModel(const std::string& fileName)
 						}
 
 						if (strstr(aStr, LOAD_POS))
-						{// POSを読み込んだ
+						{//POSを読み込んだ
 							if ((pStart = strchr(aStr, '=')) == NULL)
 							{
 								continue;
@@ -442,7 +431,7 @@ HRESULT CEnemy::LoadParentModel(const std::string& fileName)
 						}
 
 						if (strstr(aStr, LOAD_ROT))
-						{// ROTを読み込んだ
+						{//ROTを読み込んだ
 							if ((pStart = strchr(aStr, '=')) == NULL)
 							{
 								continue;
@@ -453,7 +442,7 @@ HRESULT CEnemy::LoadParentModel(const std::string& fileName)
 						}
 
 						if (strcmp(aStrCpy, LOAD_ENDPARTS) == 0)
-						{// END_PARTSSETを読み込んだ
+						{//END_PARTSSETを読み込んだ
 							LoadOffSet(pos, rot, nParent, nIdx);
 							nCntParts++;
 
@@ -468,7 +457,7 @@ HRESULT CEnemy::LoadParentModel(const std::string& fileName)
 				}
 
 				if (strcmp(aStrCpy, LOAD_ENDPLAYER) == 0)
-				{// END_CHARACTERSETを読み込んだ
+				{//END_CHARACTERSETを読み込んだ
 					nCntParts = 0;
 					break;
 				}

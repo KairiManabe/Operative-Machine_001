@@ -381,7 +381,7 @@ HRESULT CGame::LoadObject(const std::string& fileName)
 						LoadWall(aTexPath, pos, size, rot);
 						break;
 					case OBJECT_TYPE_TARGET:
-						LoadTarget(aObjPath, pos, rot);
+						LoadTarget(pos, rot);
 						break;
 					}
 
@@ -444,9 +444,9 @@ void CGame::LoadWall(const char* texPath, D3DXVECTOR3 pos, D3DXVECTOR3 size, D3D
 
 //=============================================================================
 //ターゲット情報読み込み
-void CGame::LoadTarget(const char* ModelPath, const D3DXVECTOR3 pos, const D3DXVECTOR3 rot)
+void CGame::LoadTarget(const D3DXVECTOR3 pos, const D3DXVECTOR3 rot)
 {
-	m_pTarget[m_nCntTraget++] = CTarget::Create(CTarget::TYPE_NORMAL, ModelPath, pos, rot);
+	m_pTarget[m_nCntTraget++] = CTarget::Create(CTarget::TYPE_NORMAL, pos, rot);
 }
 
 //=============================================================================

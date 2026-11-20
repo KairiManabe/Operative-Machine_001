@@ -378,7 +378,7 @@ void CPlayer::Update(void)
 		{
 			pCamera->SetAngle(CameraAngle);
 			m_fModelChange = 0.9f;
-			m_fCollisionSize = 15.0f;
+			m_fCollisionSize = 13.0f;
 			m_bChangeMode = false;
 		}
 	}
@@ -392,7 +392,7 @@ void CPlayer::Update(void)
 		{
 			pCamera->SetAngle(CameraAngle);
 			m_fModelChange = 0.9f;
-			m_fCollisionSize = 15.0f;
+			m_fCollisionSize = 13.0f;
 			m_bChangeMode = false;
 		}
 	}
@@ -674,9 +674,8 @@ void CPlayer::Update(void)
 				{
 					const float clampedMagnitude = (magnitude > 1.0f) ? 1.0f : magnitude;
 					const float scaledMagnitude = (clampedMagnitude - deadZone) / (1.0f - deadZone);
-					const float scale = scaledMagnitude / magnitude;
-					const float moveX = axisX * scale;
-					const float moveY = axisY * scale;
+					const float moveX = axisX * (scaledMagnitude / magnitude);
+					const float moveY = axisY * (scaledMagnitude / magnitude);
 
 					m_move.x += fSpeed * (moveX * cosf(rotCamera.y) + moveY * sinf(rotCamera.y));
 					m_move.z += fSpeed * (moveY * cosf(rotCamera.y) - moveX * sinf(rotCamera.y));
@@ -1005,6 +1004,11 @@ void CPlayer::DrawShadow(void)
 //•Ç“o‚è’†‚ÌY²ˆÚ“®‘¬“x‚ğİ’è‚·‚éŠÖ”
 void CPlayer::ClimbUp(float speed)
 {
+	if (m_Mode != MODE_SPIDER)
+	{
+		return;
+	}
+
 	if (m_pos.y <= 560.0f)
 	{
 		m_bClimbingWall = true;		//•Ç“o‚èó‘Ô‚É‚·‚é

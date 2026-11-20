@@ -11,6 +11,9 @@
 //インクルードファイル---------------------------------------------------------
 #include "main.h"
 #include "object.h"
+#include "model.h"
+#include "motion.h"
+#include "load.h"
 
 //マクロ定義-------------------------------------------------------------------
 #define MAX_TARGET		(100)
@@ -23,6 +26,14 @@ class CRange;		//敵の索敵範囲
 class CTarget :public CObject
 {
 public:
+	struct MODEL_INFO
+	{
+		std::string FileName;
+		D3DXVECTOR3 pos;
+		D3DXVECTOR3 rot;
+		int nIdxParent;
+		int nIdxModel;
+	};
 	CTarget(int nPriority = TARGET_PRIORITY);
 	~CTarget();
 
@@ -33,7 +44,7 @@ public:
 		TYPE_MAX,		
 	}TYPE;
 
-	static CTarget* Create(TYPE type, const std::string& fileName, D3DXVECTOR3 pos, D3DXVECTOR3 rot);
+	static CTarget* Create(TYPE type, D3DXVECTOR3 pos, D3DXVECTOR3 rot);
 
 	HRESULT Init(D3DXVECTOR3 pos, D3DXVECTOR3 size);
 	void Uninit(void);
@@ -46,6 +57,7 @@ public:
 	bool CollisionBullet(const D3DXVECTOR3& start, const D3DXVECTOR3& end, float radius) const;
 
 	void SetPosition(const D3DXVECTOR3 pos) { m_pos = pos; }
+void SetCollisionBounds(const D3DXVECTOR3& minBounds, const D3DXVECTOR3& maxBounds) { m_vtxMin = minBounds; m_vtxMax = maxBounds; }
 	void SetColor(const D3DXCOLOR col) { m_col = col; }
 	D3DXVECTOR3 GetPosition(void) { return m_pos; }
 	D3DXVECTOR3 GetRotation(void) { return m_rot; }
@@ -61,10 +73,16 @@ public:
 
 	bool CollisionPlayer(void);
 	bool CollisionCamera(void);
-	bool CollisionVigilanceRange(void);		//警戒態勢範囲との接触判定関数
+	bool CollisionVigilanceRange(void);
+
+	HRESULT LoadParentModel(const std::string& fileName);
+	void LoadParentFile(const std::string& fileName, int nIdxFile, int nMaxModel);
+	void LoadOffSet(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int nIdxParent, int nIdxModel);
+	HRESULT LoadMotionInfo(const std::string& fileName);
+	void LoadMotion(bool bLoop, int nNumKey, CMotion::KEY_INFO* pKeyInfo, int nMotion);
+	void LoadEnableString(char* aStrCpy, char* pStart);		//警戒態勢範囲との接触判定関数
 private:
 	int m_nIdxTexture[100];
-	std::string m_pFileName;
 	LPD3DXMESH m_pMesh;
 	LPD3DXBUFFER m_pBuffMat;
 	DWORD m_dwNumMat;
@@ -85,8 +103,12 @@ private:
 	bool m_bCollisionOld;		//当たっていたか
 	int m_nCollisionCounter;	//コリジョン用カウンター
 	bool m_bEnable;				//有効フラグ
-	int m_nIdxModel;
+	CModel* m_apModel[30];
+	CMotion* m_pMotion;
+	int m_nNumModel;
 	int m_nWalkTimer;
+	static MODEL_INFO m_aModelInfo[30];
+	static CMotion::INFO m_aMotionInfo[MOTIONTYPE_MAX];
 };
 
 #endif

@@ -72,7 +72,6 @@ CWall* CWall::Create(std::string fileName, D3DXVECTOR3 pos, D3DXVECTOR3 size, D3
 			m_nIdxTexture = pTexture->Register(fileName.c_str());
 
 			pWall->Init(pos, size);
-			//pWall->BindTexture(m_pTexture);
 		}
 	}
 	return pWall;
@@ -448,31 +447,6 @@ bool CWall::CollisionBullet(CBullet* pBullet)
 
 		//めり込んでいる長さ
 		float overlap = BulletRadius - distance;
-
-		////-----------------------------------------------------------------
-		////壁に向かって進んでいるかチェック
-		//D3DXVECTOR3 BulletMove = pBullet->GetMove();
-
-		////XZ平面(水平方向)での移動量
-		//float moveSpeedXZSq = BulletMove.x * BulletMove.x + BulletMove.z * BulletMove.z;
-		//bool bIsMovingTowardsWall = false;
-
-		////水平方向に少しでも移動していれば判定を行う
-		//if (moveSpeedXZSq > 0.0001f)
-		//{
-		//	//弾の移動ベクトルを壁のローカル空間に変換
-		//	float localMoveX = BulletMove.x * cosf(-m_rot.y) - BulletMove.z * sinf(-m_rot.y);
-		//	float localMoveZ = BulletMove.x * sinf(-m_rot.y) + BulletMove.z * cosf(-m_rot.y);
-
-		//	//壁の最近傍点に向かうベクトルと移動ベクトルの内積
-		//	float dot = (diffX * localMoveX) + (diffZ * localMoveZ);
-
-		//	//内積がマイナス→壁に向かって進んでいる
-		//	if (dot < 0.0f)
-		//	{
-		//		bIsMovingTowardsWall = true;
-		//	}
-		//}
 
 		//壁の表面(XZ軸)への押し戻し
 		localBulletX += dirX * overlap;

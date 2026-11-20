@@ -69,7 +69,7 @@ public:
 	void LoadPlayer(D3DXVECTOR3 pos, D3DXVECTOR3 size);
 	void LoadField(const char* texPath, const D3DXVECTOR3 pos, const D3DXVECTOR3 size, const D3DXVECTOR3 rot);
 	void LoadWall(const char* texPath, const D3DXVECTOR3 pos, const D3DXVECTOR3 size, const D3DXVECTOR3 rot);
-	void LoadTarget(const char* ModelPath, const D3DXVECTOR3 pos, const D3DXVECTOR3 rot);
+	void LoadTarget(const D3DXVECTOR3 pos, const D3DXVECTOR3 rot);
 	void LoadObjectX(const char* modelType, const char* objPath, const D3DXVECTOR3 pos, const D3DXVECTOR3 rot);
 private:
 	static CPause* m_pPause;

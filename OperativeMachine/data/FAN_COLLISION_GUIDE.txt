@@ -1,0 +1,125 @@
+ターゲット TYPE_FAN の扇形当たり判定ガイド
+========================================
+
+目的
+----
+TYPE_FAN のターゲットについて、見た目の fan_shape.png に合わせて「ターゲットの前方・指定距離・指定角度」に入ったプレイヤーを判定する。
+
+参考にした考え方
+----------------
+参考サイトは、扇形と点の衝突を次の2条件で判定している。
+
+1. 点が扇の中心から扇の長さ以内にある。
+2. 扇の中心線と「中心から点へのベクトル」の角度が、扇の半角以内にある。
+
+方向ベクトルと中心から点へのベクトルの内積を使う。内積を使えば、角度を毎回 acos で求めずに判定できる。
+参考: https://yttm-work.jp/collision/collision_0008.html
+
+このプロジェクトでの対応箇所
+----------------------------
+・ターゲットの種類: target.h の CTarget::TYPE_FAN
+・プレイヤーとの接触判定: target.cpp の CTarget::CollisionPlayer()
+・判定結果でターゲットを処理する箇所: target.cpp の CTarget::Update()
+・扇形の見た目とサイズ: range.cpp の CRange::Load(), CRange::Draw(), CRange::SetSize()
+・扇形テクスチャ: data/TEXTURE/fan_shape.png
+
+TYPE_FAN の見た目は CRange が描画する四角形に扇形画像を貼ったもの。画像の透明部分は当たり判定にならないので、衝突判定は別途、数式で行う。
+
+判定に使う値
+------------
+中心:        ターゲットの m_pos の XZ 座標
+方向:        ターゲットの m_rot.y
+長さ:        m_pRange->GetSize().x (現在の生成値は100)
+全角度:      例として120度。ゲーム上の見た目に合わせて調整する
+判定対象:    プレイヤーの座標の XZ 成分
+
+このプロジェクトのターゲットは、移動時に X -= sin(yaw)、Z -= cos(yaw) としている。そのため前方単位ベクトルは次のとおり。
+
+forward = (-sin(yaw), -cos(yaw))
+
+range.cpp の fan 描画はテクスチャ向きを合わせるため Y 回転に180度を足している。衝突判定では、その描画用補正をもう一度加えず、ターゲットの移動方向と同じ上記 forward を使う。
+
+判定の計算
+----------
+プレイヤーとターゲットの水平差分を求める。
+
+toPlayer = (player.x - target.x, player.z - target.z)
+distance = sqrt(toPlayer.x * toPlayer.x + toPlayer.z * toPlayer.z)
+
+1. distance が fan の長さより大きければ範囲外。
+2. distance がほぼ0なら中心にいるため範囲内。
+3. forward と toPlayer の内積を求める。
+4. 内積が「distance * cos(全角度 / 2)」以上なら範囲内。
+
+内積は以下の値になる。
+
+dot = forward.x * toPlayer.x + forward.z * toPlayer.z
+
+判定式:
+
+distance <= fanLength
+かつ
+dot >= distance * cosf(D3DXToRadian(fanAngleDegrees / 2.0f))
+
+forward は単位ベクトルなので、この比較で中心からの距離と角度を同時に確認できる。全角度を120度にする場合、比較する角度は半分の60度。
+
+C++ にした場合の擬似コード
+--------------------------
+// TYPE_FAN の時だけ使う水平面上の扇形判定
+bool IsPlayerInsideFan(const D3DXVECTOR3& targetPos,
+                       float targetYaw,
+                       const D3DXVECTOR3& playerPos,
+                       float fanLength,
+                       float fanAngleDegrees)
+{
+    const float dx = playerPos.x - targetPos.x;
+    const float dz = playerPos.z - targetPos.z;
+    const float distanceSq = dx * dx + dz * dz;
+    const float lengthSq = fanLength * fanLength;
+
+    if (distanceSq > lengthSq)
+    {
+        return false;
+    }
+
+    if (distanceSq < 0.000001f)
+    {
+        return true;
+    }
+
+    const float distance = sqrtf(distanceSq);
+    const float forwardX = -sinf(targetYaw);
+    const float forwardZ = -cosf(targetYaw);
+    const float dot = forwardX * dx + forwardZ * dz;
+    const float cosHalfAngle = cosf(D3DXToRadian(fanAngleDegrees * 0.5f));
+
+    return dot >= distance * cosHalfAngle;
+}
+
+既存処理への組み込み方
+----------------------
+1. CTarget::CollisionPlayer() の先頭で、TYPE_FAN かを確認する。
+2. TYPE_FAN なら上記扇形判定を行い、その結果を返す。
+3. TYPE_RANGE なら現在の矩形判定をそのまま続ける。
+4. CollisionPlayer() が true のときの CTarget::Update() の既存処理は維持する。
+
+注意: 現在の CollisionPlayer() は矩形衝突後にプレイヤーを押し戻す処理も行う。扇形は攻撃・視野のような範囲判定なので、TYPE_FAN の分岐では矩形の押し戻し処理に入らず、扇形の真偽値だけを返す設計にする。
+
+高さを考慮したい場合
+--------------------
+上記はXZ平面の判定で、プレイヤーのY座標は見ない。上下の高さも限定するなら、既存の wallMinY / wallMaxY と同様に、ターゲットからの高さが設定範囲内かを別条件として追加する。
+
+プレイヤーの大きさを含めたい場合
+--------------------------------
+基本形はプレイヤー中心を「点」として扱う。プレイヤーの半径まで含めると判定は少し広がる。最初は点判定で向き・距離・角度を調整し、必要なら後から半径分の余裕を加える。
+
+確認項目
+--------
+・ターゲット正面の扇形内で判定される。
+・ターゲット背面では判定されない。
+・扇の境界線付近で角度を確認する。
+・fanLength の境界より外側で判定されない。
+・ターゲットを回転させても、見た目の扇と判定方向が一致する。
+・TYPE_RANGE の従来の矩形判定に影響しない。
+
+参考サイトの座標例は2DのXY平面だが、このプロジェクトでは高さをひとまず無視し、XZ平面に置き換えている。

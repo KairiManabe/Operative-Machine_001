@@ -276,8 +276,14 @@ void CRange::Draw(void)
 	D3DXMatrixIdentity(&m_mtxWorld);
 
 	//Œü‚«‚ð”½‰f
+	float rotationY = m_rot.y;
+	if (m_type == CTarget::TYPE_FAN)
+	{
+	 rotationY += D3DX_PI;
+	}
+
 	D3DXMatrixRotationYawPitchRoll(&mtxRot,
-		m_rot.y, m_rot.x, m_rot.z);
+	 rotationY, m_rot.x, m_rot.z);
 
 	D3DXMatrixMultiply(&m_mtxWorld, &m_mtxWorld, &mtxRot);
 

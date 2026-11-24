@@ -76,6 +76,7 @@ void SetCollisionBounds(const D3DXVECTOR3& minBounds, const D3DXVECTOR3& maxBoun
 	bool CollisionPlayer(void);
 	bool CollisionCamera(void);
 	bool CollisionVigilanceRange(void);
+	bool IsPlayerInsideFan(const D3DXVECTOR3& targetPos, float targetYaw, const D3DXVECTOR3& playerPos, float fanLength, float fanAngleDegrees);
 
 	HRESULT LoadParentModel(const std::string& fileName);
 	void LoadParentFile(const std::string& fileName, int nIdxFile, int nMaxModel);

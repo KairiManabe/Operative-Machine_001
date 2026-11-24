@@ -273,8 +273,8 @@ void CTarget::Update(void)
 		{
 			//障害物・ステージ端・壁モデルがなければ前進
 			float fSpeed = 1.2f;
-			m_pos.x -= sinf(m_rot.y) * fSpeed;
-			m_pos.z -= cosf(m_rot.y) * fSpeed;
+			/*m_pos.x -= sinf(m_rot.y) * fSpeed;
+			m_pos.z -= cosf(m_rot.y) * fSpeed;*/
 		}
 	}
 

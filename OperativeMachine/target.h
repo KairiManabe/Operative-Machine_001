@@ -40,7 +40,8 @@ public:
 	typedef enum
 	{
 		TYPE_NONE = -1,
-		TYPE_NORMAL,
+		TYPE_RANGE,		//â~å`
+		TYPE_FAN,		//êÓå`
 		TYPE_MAX,		
 	}TYPE;
 
@@ -65,6 +66,7 @@ void SetCollisionBounds(const D3DXVECTOR3& minBounds, const D3DXVECTOR3& maxBoun
 	LPD3DXMESH GetMesh(void) const { return m_pMesh; }
 	D3DXMATRIX GetWorldMatrix(void) const { return m_mtxWorld; }
 	TYPE GetType(void) const { return m_type; }
+	CRange* GetRange(void) { return m_pRange; }
 
 	void DrawShadow(void);
 
@@ -109,6 +111,8 @@ private:
 	int m_nWalkTimer;
 	static MODEL_INFO m_aModelInfo[30];
 	static CMotion::INFO m_aMotionInfo[MOTIONTYPE_MAX];
+
+	CRange* m_pRange;
 };
 
 #endif

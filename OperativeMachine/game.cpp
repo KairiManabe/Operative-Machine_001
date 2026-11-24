@@ -446,7 +446,7 @@ void CGame::LoadWall(const char* texPath, D3DXVECTOR3 pos, D3DXVECTOR3 size, D3D
 //ターゲット情報読み込み
 void CGame::LoadTarget(const D3DXVECTOR3 pos, const D3DXVECTOR3 rot)
 {
-	m_pTarget[m_nCntTraget++] = CTarget::Create(CTarget::TYPE_NORMAL, pos, rot);
+	m_pTarget[m_nCntTraget++] = CTarget::Create(CTarget::TYPE_FAN, pos, rot);
 }
 
 //=============================================================================

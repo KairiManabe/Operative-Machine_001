@@ -307,10 +307,8 @@ void CCamera::Update(void)
 	m_posV.z += (m_posVDest.z - m_posV.z) * 0.3f;
 
 	//壁判定・遮蔽物回避(レイキャスト)
-	D3DXVECTOR3 rayStart = m_posR; //レイの始点(注視点)
-	D3DXVECTOR3 rayEnd = m_posV;   //レイの終点(カメラ視点)
-	D3DXVECTOR3 rayDir = rayEnd - rayStart;
-	float fullDist = D3DXVec3Length(&rayDir);
+	D3DXVECTOR3 rayDir = m_posV - m_posR;
+	float fullDist = D3DXVec3Length(&rayDir);	//D3DXVec3Length→ベクトルの長さ
 
 	if (fullDist > 0.0001f)
 	{
@@ -331,7 +329,7 @@ void CCamera::Update(void)
 					D3DXMATRIX mtxWorld = pObjX->GetWorldMatrix();
 
 					float hitDist = 0.0f;
-					if (CheckRayToCamera(pMesh, mtxWorld, rayStart, rayEnd, &hitDist))
+					if (CheckRayToCamera(pMesh, mtxWorld, m_posR, m_posV, &hitDist))
 					{//レイを使った判定
 						if (hitDist < closestHitDist)
 						{
@@ -353,7 +351,7 @@ void CCamera::Update(void)
 			//壁とカメラの間のマージンを小さくして、極端に近づきすぎるのを防止
 			float margin = 5.0f;
 			float adjustedDist = max(20.0f, closestHitDist - margin); //最低距離を20.0fに保持
-			m_posV = rayStart + rayDir * adjustedDist;
+			m_posV = m_posR + rayDir * adjustedDist;
 		}
 	}
 
@@ -407,12 +405,6 @@ void CCamera::SetCamera(void)
 		10.0f,			//Z値の最小値
 		5000.0f);		//Z値の最大値
 
-	/*D3DXMatrixOrthoLH(&m_mtxProjection,
-		(float)SCREEN_WIDTH,
-		(float)SCREEN_HEIGHT,
-		10.0f,
-		2200.0f);*/
-
 	//プロジェクションマトリックスの設定
 	pDevice->SetTransform(D3DTS_PROJECTION, &m_mtxProjection);
 
@@ -452,6 +444,9 @@ D3DXVECTOR3 CCamera::GetRayDirection(float screenX, float screenY)
     }
     return direction;
 }
+
+//=============================================================================
+//カメラ値設定(初期位置に戻したいとき)
 void CCamera::SetAll(D3DXVECTOR3 posV, D3DXVECTOR3 posR, D3DXVECTOR3 posU, D3DXVECTOR3 rot)
 {
 	m_posV = posV;
@@ -501,8 +496,7 @@ bool CCamera::CheckRayToCamera(LPD3DXMESH pMesh, const D3DXMATRIX& mtxWorld, con
 		&V,
 		&distance,
 		NULL,
-		NULL
-	);
+		NULL);
 
 	if (SUCCEEDED(hr) && hit)
 	{//正常に通っていたら
@@ -519,12 +513,6 @@ bool CCamera::CheckRayToCamera(LPD3DXMESH pMesh, const D3DXMATRIX& mtxWorld, con
 
 	return false;
 }
-
-//縦視点移動っぽい
-/*m_posV.x -= sinf(D3DX_PI - m_rot.y) * 2;
-		m_posR.x = sinf(D3DX_PI - m_rot.y) * 2;
-		m_posV.z -= cosf(D3DX_PI - m_rot.y) * 2;
-		m_posR.z += cosf(D3DX_PI - m_rot.y) * 2;*/
 
 #if 0
 //レイとメッシュの交差判定関数

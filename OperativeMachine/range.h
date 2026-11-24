@@ -11,7 +11,8 @@
 //インクルードファイル---------------------------------------------------------
 #include "main.h"
 #include "object.h"
-#include "enemy.h"
+//#include "enemy.h"
+#include "target.h"
 
 //マクロ定義-------------------------------------------------------------------
 
@@ -26,7 +27,7 @@ public:
 	static HRESULT Load(void);
 	static void Unload(void);
 
-	static CRange* Create(D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 rot,CEnemy::TYPE type);
+	static CRange* Create(const D3DXVECTOR3 pos, const D3DXVECTOR3 size, const D3DXVECTOR3 rot, const CTarget::TYPE type);
 	HRESULT Init(D3DXVECTOR3 pos, D3DXVECTOR3 size);
 	void Uninit(void);
 	void Update(void);
@@ -35,7 +36,7 @@ public:
 	void SetPosition(const D3DXVECTOR3 pos) { m_pos = pos; }
 	void SetRotation(const D3DXVECTOR3 rot) { m_rot = rot; }
 	void SetSize(const D3DXVECTOR3 size);
-	void SetType(const CEnemy::TYPE type) { m_Type = type; }
+	void SetType(const CTarget::TYPE type) { m_type = type; }
 
 	D3DXVECTOR3 GetPosition(void) { return m_pos; }
 	D3DXVECTOR3 GetPosOld(void) { return m_posOld; }
@@ -53,12 +54,14 @@ private:
 	D3DXCOLOR m_col;		//色
 	D3DXVECTOR3 m_rot;		//向き
 	D3DXMATRIX m_mtxWorld;
-	CEnemy::TYPE m_Type;	//自分が足元にある敵のタイプ
+	//CEnemy::TYPE m_Type;
 	int m_nTurnCounter;		//方向転換のクールダウン(方向転換後にクールダウンがないと動かなくなる)	
 	bool m_bTurn;			//壁に当たったときの方向転換状態
 	int nBoom;
 
-	static int m_nIdxTexture;
+	CTarget::TYPE m_type;
+
+	static int m_nIdxTexture[CTarget::TYPE_MAX];
 	static int m_nNumAll;	//敵の総数
 };
 

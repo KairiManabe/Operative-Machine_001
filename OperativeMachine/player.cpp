@@ -478,6 +478,7 @@ void CPlayer::Update(void)
 					D3DXVECTOR3 crosshairPos = pCrosshair != NULL ? pCrosshair->GetPosition() : CENTER_2DPOS;
 					D3DXVECTOR3 aimRay = pCamera->GetRayDirection(crosshairPos.x, crosshairPos.y);
 
+					//D3DXVec3LengthSq→ベクトルの二乗
 					if (D3DXVec3LengthSq(&aimRay) > 0.0001f)
 					{
 						D3DXVECTOR3 cameraForward = pCamera->GetPositionR() - pCamera->GetPositionV();
@@ -488,10 +489,10 @@ void CPlayer::Update(void)
 
 						D3DXVECTOR3 aimPoint = pCamera->GetPositionV() + aimRay * BULLET_AIM_DISTANCE;
 						D3DXVECTOR3 direction = aimPoint - bulletPos;
-                        const float distanceToStraight = D3DXVec3Length(&direction);
+                        const float distanceToStraight = D3DXVec3Length(&direction);	//D3DXVec3Length→ベクトルの長さ
                         D3DXVec3Normalize(&direction, &direction);
-                        CBullet::Create(bulletPos, D3DXVECTOR3(8.0f, 8.0f, 0.0f),
-                            direction * 55.0f, 120, aimRay * 55.0f, distanceToStraight);
+
+						CBullet::Create(bulletPos, D3DXVECTOR3(8.0f, 8.0f, 0.0f), direction * 55.0f, 120, aimRay * 55.0f, distanceToStraight);
 					}
 				}
 			}
@@ -514,7 +515,7 @@ void CPlayer::Update(void)
 				if (m_Mode == MODE_HUMAN)
 				{
 					//毎フレームまたはジャンプ/移動時に呼び出し
-					D3DXVECTOR3 footPos = m_pos; // プレイヤーの位置
+					D3DXVECTOR3 footPos = m_pos; //プレイヤーの位置
 
 					//足元からジェットを噴射
 					CParticle::Create(CEffect::TEX_CIRCLE, CParticle::TYPE_JETT,
@@ -656,7 +657,7 @@ void CPlayer::Update(void)
 			}
 		}
 
-		// 左スティックは十字キーとWASDキーと重ねない
+		//左スティックは十字キーとWASDキーと重ねない
 		const bool bDigitalMove =
 			pInputKeyboard->GetPress(DIK_W) || pInputKeyboard->GetPress(DIK_A) ||
 			pInputKeyboard->GetPress(DIK_S) || pInputKeyboard->GetPress(DIK_D) ||

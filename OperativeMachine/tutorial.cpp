@@ -21,7 +21,6 @@
 #include "camera.h"
 #include "number.h"
 #include "player.h"
-#include "enemy.h"
 #include "textureUI.h"
 #include "energy.h"
 #include "score.h"
@@ -182,7 +181,7 @@ void CTutorial::Init(void)
 	}
 
 	//敵
-	CEnemy::Create(D3DXVECTOR3(300.0f, 100.0f, 10.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 3.14f, 0.0f), CEnemy::TYPE_NONE);
+	//CEnemy::Create(D3DXVECTOR3(300.0f, 100.0f, 10.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 3.14f, 0.0f), CEnemy::TYPE_NONE);
 
 	//=========================================================================
 	// ゴール

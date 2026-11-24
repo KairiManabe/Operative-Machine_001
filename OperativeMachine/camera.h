@@ -44,7 +44,7 @@ public:
 	void SetAll(D3DXVECTOR3 posV, D3DXVECTOR3 posR, D3DXVECTOR3 posU, D3DXVECTOR3 rot);
 	bool CheckRayToCamera(LPD3DXMESH pMesh, const D3DXMATRIX& mtxWorld, const D3DXVECTOR3& rayStart, const D3DXVECTOR3& rayEnd, float* pOutHitDist);
 private:
-	D3DXVECTOR3 m_posV;				//始点
+	D3DXVECTOR3 m_posV;				//視点
 	D3DXVECTOR3 m_posR;				//注視点
 	D3DXVECTOR3 m_posU;				//上方向ベクトル
 	D3DXVECTOR3 m_angle;			//上方向ベクトル

@@ -159,7 +159,6 @@
     <ClCompile Include="debugproc.cpp" />
     <ClCompile Include="effect.cpp" />
     <ClCompile Include="effectmodel.cpp" />
-    <ClCompile Include="enemy.cpp" />
     <ClCompile Include="energy.cpp" />
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="fail.cpp" />
@@ -208,7 +207,6 @@
     <ClInclude Include="debugproc.h" />
     <ClInclude Include="effect.h" />
     <ClInclude Include="effectmodel.h" />
-    <ClInclude Include="enemy.h" />
     <ClInclude Include="energy.h" />
     <ClInclude Include="fade.h" />
     <ClInclude Include="fail.h" />

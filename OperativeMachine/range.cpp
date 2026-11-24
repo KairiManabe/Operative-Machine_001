@@ -26,7 +26,7 @@
 
 //静的メンバ変数宣言-----------------------------------------------------------
 int CRange::m_nNumAll = 0;
-int CRange::m_nIdxTexture = 0;
+int CRange::m_nIdxTexture[CTarget::TYPE_MAX] = { -1 };
 
 //=============================================================================
 //コンストラクタ
@@ -38,7 +38,8 @@ CRange::CRange(int nPriority) :CObject(nPriority)
 	m_size = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_col = D3DCOLOR_RGBA(255, 255, 255, 255);
-	m_Type = CEnemy::TYPE_NONE;
+	//m_Type = CEnemy::TYPE_NONE;
+	m_type = CTarget::TYPE_NONE;
 
 	m_nTurnCounter = 0;
 	m_bTurn = false;
@@ -59,7 +60,8 @@ HRESULT CRange::Load(void)
 {
 	//テクスチャインデックスの取得
 	CTexture* pTexture = CManager::GetTexture();
-	m_nIdxTexture = pTexture->Register("data/TEXTURE/range000.png");
+	m_nIdxTexture[CTarget::TYPE_RANGE] = pTexture->Register("data/TEXTURE/range000.png");
+	m_nIdxTexture[CTarget::TYPE_FAN] = pTexture->Register("data/TEXTURE/fan_shape.png");
 
 	return S_OK;
 }
@@ -72,7 +74,7 @@ void CRange::Unload(void)
 
 //=============================================================================
 //生成処理
-CRange* CRange::Create(D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 rot, CEnemy::TYPE type)
+CRange* CRange::Create(const D3DXVECTOR3 pos, const D3DXVECTOR3 size, const D3DXVECTOR3 rot, const CTarget::TYPE type)
 {
 	//生成
 	CRange* pRange = new CRange;
@@ -188,6 +190,7 @@ void CRange::Update(void)
 			//当たり判定が起きている間は、常に壁の外へ押し戻す
 			m_pos = pWall[nCntWall]->GetEnemyPos();
 
+#if 0
 			//まだクールダウン中でなければ方向転換を行う
 			if (m_bTurn == false)
 			{
@@ -213,6 +216,8 @@ void CRange::Update(void)
 				while (m_rot.y > D3DX_PI)  m_rot.y -= (D3DX_PI * 2.0f);
 				while (m_rot.y < -D3DX_PI) m_rot.y += (D3DX_PI * 2.0f);
 			}
+
+#endif
 		}
 	}
 
@@ -292,7 +297,7 @@ void CRange::Draw(void)
 	pDevice->SetFVF(FVF_VERTEX_3D);
 
 	//テクスチャの設定
-	pDevice->SetTexture(0, CManager::GetTexture()->GetAddres(m_nIdxTexture));
+	pDevice->SetTexture(0, CManager::GetTexture()->GetAddres(m_nIdxTexture[m_type]));
 
 	//ポリゴンの描画
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);

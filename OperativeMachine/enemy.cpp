@@ -165,7 +165,7 @@ HRESULT CEnemy::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 	//ìGÇÃë´å≥Ç…ÉTÅ[ÉNÉãÇê∂ê¨Ç∑ÇÈ
 	if (m_pRange == NULL)
 	{
-		m_pRange = CRange::Create(m_pos, D3DXVECTOR3(100.0f, 1.0f, 100.0f), m_rot, m_type);
+		//m_pRange = CRange::Create(m_pos, D3DXVECTOR3(100.0f, 1.0f, 100.0f), m_rot, m_type);
 	}
 
 	return S_OK;

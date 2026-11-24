@@ -38,8 +38,8 @@ private:
 	D3DXVECTOR3 m_straightMove;
 	float m_fDistanceToStraight;
 	bool m_bHasStraightMove;
-	D3DXVECTOR3 m_size;		//サイズ
-	int m_nLife;			//体力
+	D3DXVECTOR3 m_size;				//サイズ
+	int m_nLife;					//体力
 
 	static float m_fCollisionSize;	//当たり判定時の半径の大きさ
 	static int m_nIdxTexture;

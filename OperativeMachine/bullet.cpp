@@ -82,7 +82,12 @@ CBullet* CBullet::Create(D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 move, co
     pBullet->m_move = move;
     pBullet->m_straightMove = straightMove;
     pBullet->m_fDistanceToStraight = distanceToStraight;
-    pBullet->m_bHasStraightMove = distanceToStraight > 0.0f && D3DXVec3LengthSq(&straightMove) > 0.0001f;
+
+    if (distanceToStraight > 0.0f && D3DXVec3LengthSq(&straightMove) > 0.0001f)
+    {
+        pBullet->m_bHasStraightMove = true;
+    }
+
     pBullet->m_nLife = nLife;
 
     if (FAILED(pBullet->Init(pos, size)))
@@ -141,12 +146,15 @@ void CBullet::Update(void)
 
     CWall **pWall = (CManager::GetScene()->GetMode() == CScene::MODE_GAME) ? CGame::GetWall() : CTutorial::GetWall();
     
+    //-----------------------------------------------------------------------------------
     //発射位置から照準レイ上の点まで飛ばし、到達後は照準レイに沿って直進させる
     //-----------------------------------------------------------------------------------
+ 
     //クロスヘアからまっすぐ飛ばす処理
     const D3DXVECTOR3 previousPos = m_pos;
     D3DXVECTOR3 frameMove = m_move;
     const float speed = D3DXVec3Length(&m_move);
+
     if (m_bHasStraightMove && speed > 0.0001f)
     {
         if (m_fDistanceToStraight <= speed)
@@ -155,8 +163,7 @@ void CBullet::Update(void)
             D3DXVECTOR3 straightDirection = m_straightMove;
             D3DXVec3Normalize(&straightDirection, &straightDirection);
             const float approachDistance = m_fDistanceToStraight;
-            frameMove = approachDirection * approachDistance
-                + straightDirection * (speed - approachDistance);
+            frameMove = approachDirection * approachDistance + straightDirection * (speed - approachDistance);
             m_move = m_straightMove;
             m_bHasStraightMove = false;
         }
@@ -171,13 +178,15 @@ void CBullet::Update(void)
 
     CEffect::Create(CEffect::TEX_DIAMOND, m_pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(7.0f, 50.0f, 0.0f), COLOR_NORMAL, 10);
 
+    //サイズが大きい方をradiusに代入
     const float radius = (m_size.x > m_size.y) ? m_size.x : m_size.y;
+
     CollisionTarget(previousPos, m_pos, radius);
 
     for (int nCntWall = 0; nCntWall < CWall::GetNumAll(); nCntWall++)
     {
         if (pWall[nCntWall]->CollisionBullet(this) == true)
-        {
+        {//壁に当たっていたら終了するy
             Uninit();
         }
     }

@@ -26,10 +26,11 @@
 #include "player.h"
 #include "particle.h"
 #include "vigilance.h"
+#include "range.h"
 
 //マクロ定義-------------------------------------------------------------------
 #define COLLISION_MODEL_W		(15.0f)
-#define COLLISION_MODEL_H		(30.0f)
+#define COLLISION_MODEL_H		(15.0f)
 
 //静的メンバ変数宣言-----------------------------------------------------------
 int CTarget::m_wallnum = 0;
@@ -64,6 +65,8 @@ CTarget::CTarget(int nPriority) :CObject(nPriority)
 	m_pMotion = NULL;
 	memset(&m_apModel[0], NULL, sizeof(m_apModel));
 	m_nNumModel = 0;
+
+	m_pRange = NULL;
 }
 
 //=============================================================================
@@ -129,8 +132,13 @@ HRESULT CTarget::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 
 	m_pMotion->Set(MOTIONTYPE_NEUTRAL, 15);
 
+	m_pRange = CRange::Create(m_pos, D3DXVECTOR3(100.0f, 0.0f, 100.0f), m_rot, m_type);
+
 	return S_OK;
 }
+
+//=============================================================================
+//終了
 void CTarget::Uninit(void)
 {
 	if (!m_bEnable)
@@ -167,6 +175,12 @@ void CTarget::Uninit(void)
 		m_pBuffMat = NULL;
 	}
 
+	if (m_pRange != NULL)
+	{
+		m_pRange->Uninit();
+		m_pRange = NULL;
+	}
+
 	//破棄
 	CObject::Release();
 }
@@ -176,21 +190,21 @@ void CTarget::Uninit(void)
 void CTarget::Update(void)
 {
 	if (!m_bEnable)
-	{
+	{//使用状態だったら
 		return;
 	}
 
 	m_pMotion->Update();
 	if (m_type != TYPE_NONE) m_pMotion->Set(MOTIONTYPE_MOVE, 3);
 
-	// 爆発範囲との判定
+	//爆発範囲との判定
 	if (CollisionVigilanceRange() == true)
 	{
 		DethTarget();	//ターゲットの死亡
 		return;
 	}
 
-	// オブジェクトの中心座標を計算する
+	//オブジェクトの中心座標を計算する
 	m_Center.x = m_pos.x + (m_vtxMax.x + m_vtxMin.x) * 0.5f;
 	m_Center.z = m_pos.z + (m_vtxMax.z + m_vtxMin.z) * 0.5f;
 
@@ -269,6 +283,8 @@ void CTarget::Update(void)
 		DethTarget();
 	}
 
+	m_pRange->SetPosition(m_pos);
+	m_pRange->SetRotation(D3DXVECTOR3(m_rot.x, m_rot.y, m_rot.z));
 }
 
 //=============================================================================
@@ -276,19 +292,30 @@ void CTarget::Update(void)
 void CTarget::Draw(void)
 {
 	DrawShadow();
+
 	D3DXMATRIX mtxRot, mtxTrans;
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
+
 	D3DXMatrixIdentity(&m_mtxWorld);
+
 	D3DXMatrixRotationYawPitchRoll(&mtxRot, m_rot.y, m_rot.x, m_rot.z);
+
 	D3DXMatrixMultiply(&m_mtxWorld, &m_mtxWorld, &mtxRot);
+
 	D3DXMatrixTranslation(&mtxTrans, m_pos.x, m_pos.y, m_pos.z);
+
 	D3DXMatrixMultiply(&m_mtxWorld, &m_mtxWorld, &mtxTrans);
+
 	pDevice->SetTransform(D3DTS_WORLD, &m_mtxWorld);
+
 	for (int nCntModel = 0; nCntModel < m_nNumModel; nCntModel++)
 	{
 		if (m_apModel[nCntModel] != NULL) m_apModel[nCntModel]->Draw();
 	}
 }
+
+//=============================================================================
+//
 void CTarget::BreakBox(void)
 {
 	//プレイヤーの取得
@@ -384,12 +411,12 @@ bool CTarget::CollisionVigilanceRange(void)
 
 				if (fDistSq <= fRadiusSq)
 				{
-					return true; //爆発の範囲内に入っている
+					return true;	//爆発の範囲内に入っている
 				}
 			}
 		}
 
-		pObj = pObj->GetNext(); //次のオブジェクトへ
+		pObj = pObj->GetNext();		//次のオブジェクトへ
 	}
 
 	return false;

@@ -133,6 +133,14 @@ HRESULT CTarget::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 	m_pMotion->Set(MOTIONTYPE_NEUTRAL, 15);
 
 	m_pRange = CRange::Create(m_pos, D3DXVECTOR3(100.0f, 0.0f, 100.0f), m_rot, m_type);
+	if (m_pRange != NULL && m_type == TYPE_FAN)
+	{
+		// Place the fan range ahead immediately, before the first update.
+		D3DXVECTOR3 rangePos = m_pos;
+		rangePos.x -= sinf(m_rot.y) * TARGET_FAN_FORWARD_OFFSET;
+		rangePos.z -= cosf(m_rot.y) * TARGET_FAN_FORWARD_OFFSET;
+		m_pRange->SetPosition(rangePos);
+	}
 
 	return S_OK;
 }
@@ -143,12 +151,11 @@ void CTarget::Uninit(void)
 {
 	if (!m_bEnable)
 	{
-		return; //すでに無効化されていればスキップ
+		return;
 	}
 
-	m_bEnable = false; //フラグをオフにする
+	m_bEnable = false;
 
-	//メッシュの破棄
 	for (int nCntModel = 0; nCntModel < m_nNumModel; nCntModel++)
 	{
 		if (m_apModel[nCntModel] != NULL)
@@ -160,90 +167,76 @@ void CTarget::Uninit(void)
 		}
 	}
 	m_nNumModel = 0;
-	if (m_pMotion != NULL) { delete m_pMotion; m_pMotion = NULL; }
 
+	if (m_pMotion != NULL)
+	{
+		delete m_pMotion;
+		m_pMotion = NULL;
+	}
 	if (m_pMesh != NULL)
 	{
 		m_pMesh->Release();
 		m_pMesh = NULL;
 	}
-
-	//マテリアルの破棄
 	if (m_pBuffMat != NULL)
 	{
 		m_pBuffMat->Release();
 		m_pBuffMat = NULL;
 	}
-
 	if (m_pRange != NULL)
 	{
 		m_pRange->Uninit();
 		m_pRange = NULL;
 	}
 
-	//破棄
 	CObject::Release();
 }
 
-//=============================================================================
-//オブジェクトの更新
 void CTarget::Update(void)
 {
 	if (!m_bEnable)
-	{//使用状態だったら
-		return;
-	}
-
-	m_pMotion->Update();
-	if (m_type != TYPE_NONE) m_pMotion->Set(MOTIONTYPE_MOVE, 3);
-
-	//爆発範囲との判定
-	if (CollisionVigilanceRange() == true)
 	{
-		DethTarget();	//ターゲットの死亡
 		return;
 	}
 
-	//オブジェクトの中心座標を計算する
+	if (m_pMotion != NULL)
+	{
+		m_pMotion->Update();
+		if (m_type != TYPE_NONE) m_pMotion->Set(MOTIONTYPE_MOVE, 3);
+	}
+
+	if (CollisionVigilanceRange())
+	{
+		DethTarget();
+		return;
+	}
+
 	m_Center.x = m_pos.x + (m_vtxMax.x + m_vtxMin.x) * 0.5f;
 	m_Center.z = m_pos.z + (m_vtxMax.z + m_vtxMin.z) * 0.5f;
 
-	//プレイヤーの取得
 	CScene* pScene = CManager::GetScene();
 	CPlayer* pPlayer = NULL;
-
 	if (pScene->GetMode() == CScene::MODE_GAME)
-	{//ゲームのプレイヤー取得
+	{
 		pPlayer = CGame::GetPlayer();
 	}
 	else if (pScene->GetMode() == CScene::MODE_TUTORIAL)
-	{//チュートリアルのプレイヤー取得
+	{
 		pPlayer = CTutorial::GetPlayer();
 	}
 
 	if (this != NULL)
 	{
 		m_nWalkTimer++;
-
-		//進行方向の先読み座標
-		float fCheckDist = 20.0f;
+		const float fCheckDist = 20.0f;
 		D3DXVECTOR3 nextPos = m_pos;
 		nextPos.x -= sinf(m_rot.y) * fCheckDist;
 		nextPos.z -= cosf(m_rot.y) * fCheckDist;
 
-		//-----------------------------------------------------------------
-		//ステージの上限設定(humanが行ける範囲)
 		bool bHitStageEdge = false;
 		float fStageLimit = 0.0f;
-
-		if (pScene->GetMode() == CScene::MODE_GAME)
-		{//ゲーム中の時
-			fStageLimit = 800.0f; //壁の直前で手前ターンさせるため少し余裕を持たせる
-		}
-		else if (pScene->GetMode() == CScene::MODE_TUTORIAL)
-		{//チュートリアル中
-			fStageLimit = 400.0f; //壁の直前で手前ターンさせるため少し余裕を持たせる
-		}
+		if (pScene->GetMode() == CScene::MODE_GAME) fStageLimit = 800.0f;
+		else if (pScene->GetMode() == CScene::MODE_TUTORIAL) fStageLimit = 400.0f;
 
 		if (nextPos.x > fStageLimit || nextPos.x < -fStageLimit ||
 			nextPos.z > fStageLimit || nextPos.z < -fStageLimit)
@@ -251,44 +244,40 @@ void CTarget::Update(void)
 			bHitStageEdge = true;
 		}
 
-		//-----------------------------------------------------------------
-		//箱・爆弾の障害物チェック
 		bool bHitObstacle = false;
-
-		//-----------------------------------------------------------------
-		//方向転換と前進処理
 		if (m_nWalkTimer >= 360 || bHitObstacle || bHitStageEdge)
 		{
 			m_nWalkTimer = 0;
-
-			// 180度反転 ＋ ±45度のランダムな揺らぎ
-			float fRandomOffset = ((float)(rand() % 90) - 45.0f) * (D3DX_PI / 180.0f);
-			m_rot.y += (D3DX_PI + fRandomOffset);
-
-			// 角度の正規化
+			const float fRandomOffset = ((float)(rand() % 90) - 45.0f) * (D3DX_PI / 180.0f);
+			m_rot.y += D3DX_PI + fRandomOffset;
 			if (m_rot.y > D3DX_PI) m_rot.y -= D3DX_PI * 2.0f;
 			else if (m_rot.y < -D3DX_PI) m_rot.y += D3DX_PI * 2.0f;
 		}
 		else
 		{
-			//障害物・ステージ端・壁モデルがなければ前進
-			float fSpeed = 1.2f;
-			/*m_pos.x -= sinf(m_rot.y) * fSpeed;
-			m_pos.z -= cosf(m_rot.y) * fSpeed;*/
+			// Keep the existing target movement disabled.
 		}
+	}
+
+	if (m_pRange != NULL)
+	{
+		// Fan display and collision are both placed ahead in the target's forward direction.
+		D3DXVECTOR3 rangePos = m_pos;
+		if (m_type == TYPE_FAN)
+		{
+			rangePos.x -= sinf(m_rot.y) * TARGET_FAN_FORWARD_OFFSET;
+			rangePos.z -= cosf(m_rot.y) * TARGET_FAN_FORWARD_OFFSET;
+		}
+		m_pRange->SetPosition(rangePos);
+		m_pRange->SetRotation(D3DXVECTOR3(m_rot.x, m_rot.y, m_rot.z));
 	}
 
 	if (CollisionPlayer() == true && m_bCollisionOld != true)
 	{
 		DethTarget();
+		return;
 	}
-
-	m_pRange->SetPosition(m_pos);
-	m_pRange->SetRotation(D3DXVECTOR3(m_rot.x, m_rot.y, m_rot.z));
 }
-
-//=============================================================================
-//オブジェクトの描画
 void CTarget::Draw(void)
 {
 	DrawShadow();
@@ -1061,8 +1050,15 @@ bool CTarget::CollisionPlayer(void)
 
 	//プレイヤーの座標
 	D3DXVECTOR3 pos = pPlayer->GetPosition();
-
+	
 	//プレイヤーが高さの範囲内にいるか
+	if (m_type == TYPE_FAN)
+	{
+		// Fan collision follows the ground-level cutoff used by the range trigger.
+		if (pos.y > 50.0f) return false;
+		return CollisionFan(pos);
+	}
+
 	float wallMinY = m_pos.y + m_vtxMin.y;
 	float wallMaxY = m_pos.y + m_vtxMax.y;
 	if (pos.y < wallMinY || pos.y > wallMaxY)
@@ -1162,6 +1158,46 @@ bool CTarget::CollisionPlayer(void)
 
 //=============================================================================
 //カメラとの当たり判定	(プレイヤーの判定とほぼ同じ)
+// 点がターゲット前方の扇形内にあるかを判定する。
+bool CTarget::CollisionFan(const D3DXVECTOR3& point) const
+{
+	const D3DXVECTOR3 fanPos = (m_pRange != NULL) ? m_pRange->GetPosition() : m_pos;
+	const float fanLength = (m_pRange != NULL) ? m_pRange->GetSize().x : 100.0f;
+
+	// 扇形の中心からプレイヤーまでのXZ方向ベクトルを求める。
+	const float dx = point.x - fanPos.x;
+	const float dz = point.z - fanPos.z;
+	const float distanceSq = dx * dx + dz * dz;
+
+	// 扇形の長さを超えた点は範囲外とする。
+	if (distanceSq > fanLength * fanLength)
+	{
+		return false;
+	}
+
+	// 中心点では方向を定義できないため、範囲内として扱う。
+	if (distanceSq < 0.000001f)
+	{
+		return true;
+	}
+
+	const float distance = sqrtf(distanceSq);
+
+	// このプロジェクトでは前方を -sin(yaw), -cos(yaw) とする。
+	const float forwardX = -sinf(m_rot.y);
+	const float forwardZ = -cosf(m_rot.y);
+
+	// 内積でターゲットの前方とプレイヤー方向の角度を比べる。
+	const float dot = forwardX * dx + forwardZ * dz;
+
+	// TARGET_FAN_ANGLE_DEGREES は扇全体の角度なので、半分の角度で比較する。
+	const float cosHalfAngle = cosf(D3DXToRadian(TARGET_FAN_ANGLE_DEGREES * 0.5f));
+
+	// 内積が境界値を下回れば扇の角度外とする。
+	return dot >= distance * cosHalfAngle;
+}
+
+
 bool CTarget::CollisionCamera(void)
 {
 	//カメラの取得posの取得

@@ -17,6 +17,8 @@
 
 //マクロ定義-------------------------------------------------------------------
 #define MAX_TARGET		(100)
+#define TARGET_FAN_ANGLE_DEGREES (90.0f)
+#define TARGET_FAN_FORWARD_OFFSET (20.0f)
 #define TARGET_PRIORITY	(4)		//自分のプライオリティを持っておく
 
 //前方宣言---------------------------------------------------------------------
@@ -74,6 +76,7 @@ void SetCollisionBounds(const D3DXVECTOR3& minBounds, const D3DXVECTOR3& maxBoun
 	void SetEnable(bool bEnable) { m_bEnable = bEnable; }
 
 	bool CollisionPlayer(void);
+bool CollisionFan(const D3DXVECTOR3& point) const;
 	bool CollisionCamera(void);
 	bool CollisionVigilanceRange(void);
 	bool IsPlayerInsideFan(const D3DXVECTOR3& targetPos, float targetYaw, const D3DXVECTOR3& playerPos, float fanLength, float fanAngleDegrees);

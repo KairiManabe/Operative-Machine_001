@@ -248,8 +248,26 @@ void CRange::Update(void)
 			float fDispX = playerPos.x - m_pos.x;
 			float fDispZ = playerPos.z - m_pos.z;
 			float fDistSq = (fDispX * fDispX) + (fDispZ * fDispZ);
+			bool bPlayerInRange = (fDistSq <= (m_size.x * m_size.z));
 
-			if (fDistSq <= (m_size.x * m_size.z) && playerPos.y <= 50.0f)
+			if (m_type == CTarget::TYPE_FAN)
+			{
+				// TYPE_FAN はターゲット側の衝突判定と同じ長さ・前方方向で判定する。
+				const float fFanLengthSq = m_size.x * m_size.x;
+				bPlayerInRange = (fDistSq <= fFanLengthSq);
+
+				if (bPlayerInRange && fDistSq > 0.000001f)
+				{
+					const float fDistance = sqrtf(fDistSq);
+					const float fForwardX = -sinf(m_rot.y);
+					const float fForwardZ = -cosf(m_rot.y);
+					const float fDot = fForwardX * fDispX + fForwardZ * fDispZ;
+					const float fCosHalfAngle = cosf(D3DXToRadian(TARGET_FAN_ANGLE_DEGREES * 0.5f));
+					bPlayerInRange = (fDot >= fDistance * fCosHalfAngle);
+				}
+			}
+
+			if (bPlayerInRange && playerPos.y <= 50.0f)
 			{
 				pFade->SetFade(CScene::MODE_FAIL);
 			}

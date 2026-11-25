@@ -179,7 +179,8 @@ void CRange::Update(void)
 	//壁との判定処理
 	for (int nCntWall = 0; nCntWall < MAX_WALL; nCntWall++)
 	{
-		if (pWall[nCntWall] == NULL)
+		// TYPE_FAN の位置は親ターゲットが管理するため、壁との押し戻しをしない。
+		if (m_type == CTarget::TYPE_FAN || pWall[nCntWall] == NULL)
 		{
 			continue;
 		}

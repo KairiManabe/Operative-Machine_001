@@ -192,6 +192,8 @@ void CTarget::Uninit(void)
 	CObject::Release();
 }
 
+//=============================================================================
+//çXêV
 void CTarget::Update(void)
 {
 	if (!m_bEnable)
@@ -278,6 +280,9 @@ void CTarget::Update(void)
 		return;
 	}
 }
+
+//=============================================================================
+//ï`âÊ
 void CTarget::Draw(void)
 {
 	DrawShadow();

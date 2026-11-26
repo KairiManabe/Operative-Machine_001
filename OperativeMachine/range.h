@@ -43,6 +43,7 @@ public:
 	D3DXVECTOR3 GetRotation(void) { return m_rot; }
 	D3DXVECTOR3 GetSize(void) { return m_size; }
 
+	bool CollisionFan(const D3DXVECTOR3& point, CTarget* pTarget) const;
 	// •Ç‚Æ‚Ì“–‚½‚è”»’è
 	//bool CollisionWall(void);
 private:

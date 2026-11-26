@@ -17,8 +17,8 @@
 
 //マクロ定義-------------------------------------------------------------------
 #define MAX_TARGET		(100)
-#define TARGET_FAN_ANGLE_DEGREES (90.0f)
-#define TARGET_FAN_FORWARD_OFFSET (20.0f)
+#define TARGET_FAN_ANGLE_DEGREES (30.0f)
+#define TARGET_FAN_FORWARD_OFFSET (100.0f)
 #define TARGET_PRIORITY	(4)		//自分のプライオリティを持っておく
 
 //前方宣言---------------------------------------------------------------------

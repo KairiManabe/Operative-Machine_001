@@ -253,18 +253,15 @@ void CRange::Update(void)
 
 			if (m_type == CTarget::TYPE_FAN)
 			{
-				// TYPE_FAN はターゲット側の衝突判定と同じ長さ・前方方向で判定する。
+				//TYPE_FAN はターゲット側の衝突判定と同じ長さ・前方方向で判定する。
 				const float fFanLengthSq = m_size.x * m_size.x;
 				bPlayerInRange = (fDistSq <= fFanLengthSq);
 
 				if (bPlayerInRange && fDistSq > 0.000001f)
 				{
-					const float fDistance = sqrtf(fDistSq);
-					const float fForwardX = -sinf(m_rot.y);
-					const float fForwardZ = -cosf(m_rot.y);
-					const float fDot = fForwardX * fDispX + fForwardZ * fDispZ;
+					const float fDot = -sinf(m_rot.y) * sqrtf(fDistSq) + -cosf(m_rot.y) * sqrtf(fDistSq);
 					const float fCosHalfAngle = cosf(D3DXToRadian(TARGET_FAN_ANGLE_DEGREES * 0.5f));
-					bPlayerInRange = (fDot >= fDistance * fCosHalfAngle);
+					bPlayerInRange = (fDot >= sqrtf(fDistSq) * fCosHalfAngle);
 				}
 			}
 
@@ -349,6 +346,46 @@ void CRange::SetSize(const D3DXVECTOR3 size)
 	
 	//頂点バッファのアンロック
 	m_pVtxBuff->Unlock();
+}
+
+//=============================================================================
+//点がターゲット前方の扇形内にあるかを判定する。
+bool CRange::CollisionFan(const D3DXVECTOR3& point, CTarget* pTarget) const
+{
+	const D3DXVECTOR3 fanPos = m_pos;
+	const float fanLength = m_size.x;
+
+	//扇形の中心からプレイヤーまでのXZ方向ベクトルを求める。
+	const float dx = point.x - fanPos.x;
+	const float dz = point.z - fanPos.z;
+	const float distanceSq = dx * dx + dz * dz;
+
+	//扇形の長さを超えた点は範囲外とする。
+	if (distanceSq > fanLength * fanLength)
+	{
+		return false;
+	}
+
+	//中心点では方向を定義できないため、範囲内として扱う。
+	if (distanceSq < 0.000001f)
+	{
+		return true;
+	}
+
+	const float distance = sqrtf(distanceSq);
+
+	//前方を -sin(yaw), -cos(yaw) とする。
+	const float forwardX = -sinf(pTarget->GetRotation().y);
+	const float forwardZ = -cosf(pTarget->GetRotation().y);
+
+	//内積でターゲットの前方とプレイヤー方向の角度を比べる。
+	const float dot = forwardX * dx + forwardZ * dz;
+
+	//TARGET_FAN_ANGLE_DEGREES は扇全体の角度だから、半分の角度で比較する。
+	const float cosHalfAngle = cosf(D3DXToRadian(TARGET_FAN_ANGLE_DEGREES * 0.5f));
+
+	//内積が境界値を下回れば扇の角度外とする。
+	return dot >= distance * cosHalfAngle;
 }
 
 #if 0

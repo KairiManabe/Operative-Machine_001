@@ -257,13 +257,12 @@ void CTarget::Update(void)
 		}
 		else
 		{
-			// Keep the existing target movement disabled.
+			
 		}
 	}
 
 	if (m_pRange != NULL)
 	{
-		// Fan display and collision are both placed ahead in the target's forward direction.
 		D3DXVECTOR3 rangePos = m_pos;
 		if (m_type == TYPE_FAN)
 		{
@@ -276,7 +275,7 @@ void CTarget::Update(void)
 
 	if (CollisionPlayer() == true && m_bCollisionOld != true)
 	{
-		DethTarget();
+		//DethTarget();
 		return;
 	}
 }
@@ -534,6 +533,292 @@ bool CTarget::CollisionBullet(const D3DXVECTOR3& start, const D3DXVECTOR3& end, 
     }
 
     return true;
+}
+
+//=============================================================================
+//シャドウマップ
+void CTarget::DrawShadow(void)
+{
+	if (!m_bEnable)
+	{
+		return;
+	}
+
+	CRenderer* pRenderer = CManager::GetRenderer();
+	LPDIRECT3DDEVICE9 pDevice = pRenderer->GetDevice();
+
+	//光源方向の設定
+	D3DXVECTOR4 lightDir(-10.0f, 20.0f, 10.0f, 0.0f);
+
+	//CFieldから平面情報（位置と法線）を取得
+	D3DXVECTOR3 planePoint(0.0f, 0.0f, 0.0f);
+	D3DXVECTOR3 planeNormal(0.0f, 1.0f, 0.0f);
+
+	CField* pField = CGame::GetField(); //ゲーム管理クラスからフィールドを取得
+
+	if (pField != NULL)
+	{
+		planePoint = pField->GetPlanePoint();
+		planePoint.y += 1.0f;
+		planeNormal = pField->GetPlaneNormal();
+	}
+
+	//影行列の生成(※webサイト:〇×の深度バッファシャドウ。忘れたら見る)
+	D3DXPLANE plane;
+	D3DXPlaneFromPointNormal(&plane, &planePoint, &planeNormal);
+
+	//マトリックスシャドウ
+	D3DXMATRIX mtxShadow;
+	D3DXMatrixShadow(&mtxShadow, &lightDir, &plane);
+
+	//ワールド行列の計算と合成
+	D3DXMATRIX mtxRot, mtxTrans, mtxWorld;
+	D3DXMatrixIdentity(&mtxWorld);
+	D3DXMatrixRotationYawPitchRoll(&mtxRot, m_rot.y, m_rot.x, m_rot.z);
+	D3DXMatrixTranslation(&mtxTrans, m_pos.x, m_pos.y, m_pos.z);
+	mtxWorld = mtxRot * mtxTrans;
+
+	D3DXMATRIX mtxShadowWorld = mtxWorld * mtxShadow;
+	pDevice->SetTransform(D3DTS_WORLD, &mtxShadowWorld);
+
+	//チラつき防止設定
+	float fSlopeBias = 1.0f;
+	float fDepthBias = -0.0001f;
+	float fZeroBias = 0.0f;
+
+	pDevice->SetRenderState(D3DRS_SLOPESCALEDEPTHBIAS, *reinterpret_cast<DWORD*>(&fSlopeBias));
+	pDevice->SetRenderState(D3DRS_DEPTHBIAS, *reinterpret_cast<DWORD*>(&fDepthBias));
+
+	//減算合成(大事)
+	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_REVSUBTRACT);
+	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+
+	//テクスチャはいらない
+	pDevice->SetTexture(0, NULL);
+
+	D3DMATERIAL9 matShadow;
+	ZeroMemory(&matShadow, sizeof(matShadow));
+	matShadow.Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.5f); //アルファ値0.5で半透明
+	pDevice->SetMaterial(&matShadow);
+
+	for (int nCntModel = 0; nCntModel < m_nNumModel; nCntModel++)
+	{
+		if (m_apModel[nCntModel] != NULL) m_apModel[nCntModel]->Draw();
+	}
+
+	//減算合成をリセット
+	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+	//ステートの復元
+	pDevice->SetRenderState(D3DRS_SLOPESCALEDEPTHBIAS, *reinterpret_cast<DWORD*>(&fZeroBias));
+	pDevice->SetRenderState(D3DRS_DEPTHBIAS, *reinterpret_cast<DWORD*>(&fZeroBias));
+}
+
+//=============================================================================
+//プレイヤーとの当たり判定
+bool CTarget::CollisionPlayer(void)
+{
+	//プレイヤーとシーンの取得
+	CScene* pScene = CManager::GetScene();
+	CPlayer* pPlayer = NULL;
+
+	if (pScene->GetMode() == CScene::MODE_GAME)
+	{
+		pPlayer = CGame::GetPlayer();
+	}
+	else if (pScene->GetMode() == CScene::MODE_TUTORIAL)
+	{
+		pPlayer = CTutorial::GetPlayer();
+	}
+
+	if (pPlayer == NULL)
+	{//NULLたったらfalseを返す
+		return false;
+	}
+
+	//プレイヤーの座標
+	D3DXVECTOR3 pos = pPlayer->GetPosition();
+
+	//プレイヤーが高さの範囲内にいるか
+	if (m_type == TYPE_FAN)
+	{//FANタイプの時は扇形の当たり判定にする
+		if (pos.y > 50.0f) return false;
+		return m_pRange->CollisionFan(pos, this);
+	}
+
+	float wallMinY = m_pos.y + m_vtxMin.y;
+	float wallMaxY = m_pos.y + m_vtxMax.y;
+	if (pos.y < wallMinY || pos.y > wallMaxY)
+	{
+		return false;
+	}
+
+	//プレイヤーの半径
+	float playerRadius = pPlayer->GetCollsionSize();
+
+	//オブジェクトの中心を原点とした、プレイヤーの相対座標
+	float relativeX = pos.x - m_Center.x;
+	float relativeZ = pos.z - m_Center.z;
+
+	//プレイヤーの座標を、オブジェクトの向きの逆に回転させて計算
+	float localPlayerX = relativeX * cosf(-m_rot.y) - relativeZ * sinf(-m_rot.y);
+	float localPlayerZ = relativeX * sinf(-m_rot.y) + relativeZ * cosf(-m_rot.y);
+
+	//最小・最大幅
+	float halfWidthX = (m_vtxMax.x - m_vtxMin.x) * 0.5f;
+	float halfWidthZ = (m_vtxMax.z - m_vtxMin.z) * 0.5f;
+
+	float minX = -halfWidthX;
+	float maxX = halfWidthX;
+	float minZ = -halfWidthZ;
+	float maxZ = halfWidthZ;
+
+	//四角形上で、プレイヤーに一番近い「最近傍点」を求める
+	float closestX = max(minX, min(localPlayerX, maxX));
+	float closestZ = max(minZ, min(localPlayerZ, maxZ));
+
+	//プレイヤーと最近傍点の距離を計算する
+	float diffX = localPlayerX - closestX;
+	float diffZ = localPlayerZ - closestZ;
+	float distanceSq = (diffX * diffX) + (diffZ * diffZ);
+
+	//当たり判定
+	if (distanceSq <= (playerRadius * playerRadius))
+	{
+		float distance = sqrtf(distanceSq);
+
+		if (distance == 0.0f)
+		{
+			diffX = 0.0f;
+			diffZ = 1.0f;
+			distance = 1.0f;
+		}
+
+		//めり込んでいる長さ
+		float overlap = playerRadius - distance;
+
+		//-----------------------------------------------------------------
+		//壁に向かって進んでいるかチェック
+		D3DXVECTOR3 playerMove = pPlayer->GetMove();
+
+		//XZ平面(水平方向)での移動量
+		float moveSpeedXZSq = playerMove.x * playerMove.x + playerMove.z * playerMove.z;
+		bool bIsMovingTowardsWall = false;
+
+		//水平方向に少しでも移動していれば判定を行う
+		if (moveSpeedXZSq > 0.0001f)
+		{
+			//プレイヤーの移動ベクトルを壁のローカル空間に変換
+			float localMoveX = playerMove.x * cosf(-m_rot.y) - playerMove.z * sinf(-m_rot.y);
+			float localMoveZ = playerMove.x * sinf(-m_rot.y) + playerMove.z * cosf(-m_rot.y);
+
+			//壁の最近傍点に向かうベクトルと移動ベクトルの内積
+			float dot = (diffX * localMoveX) + (diffZ * localMoveZ);
+
+			//内積がマイナス→壁に向かって進んでいる
+			if (dot < 0.0f)
+			{
+				bIsMovingTowardsWall = true;
+			}
+		}
+
+		//壁の表面(XZ軸)への押し戻し
+		//押し戻しベクトルの計算(diffX or Y / distance)
+		localPlayerX += diffX / distance * overlap;
+		localPlayerZ += diffZ / distance * overlap;
+
+		float origCos = cosf(m_rot.y);
+		float origSin = sinf(m_rot.y);
+
+		float worldCorrectedX = localPlayerX * origCos - localPlayerZ * origSin;
+		float worldCorrectedZ = localPlayerX * origSin + localPlayerZ * origCos;
+
+		pos.x = m_Center.x + worldCorrectedX;
+		pos.z = m_Center.z + worldCorrectedZ;
+
+		//押し戻した位置を確定
+		pPlayer->SetPosition(pos);
+		return true;
+	}
+	return false;
+}
+
+//=============================================================================
+//カメラとの当たり判定	(プレイヤーの判定とほぼ同じ)
+bool CTarget::CollisionCamera(void)
+{
+	//カメラの取得posの取得
+	CCamera* pCamera = CManager::GetCamera();
+	D3DXVECTOR3 pos = pCamera->GetPositionV();
+
+	//カメラの半径
+	float cameraRadius = 20.0f;
+
+	//オブジェクトの中心を原点とした、カメラの相対座標(relative→相対座標の英語)
+	float relativeX = pos.x - m_Center.x;
+	float relativeZ = pos.z - m_Center.z;
+
+	//カメラの座標を、オブジェクトの向き(m_rot.y)の逆に回転させて計算
+	float localCameraX = relativeX * cosf(-m_rot.y) - relativeZ * sinf(-m_rot.y);
+	float localCameraZ = relativeX * sinf(-m_rot.y) + relativeZ * cosf(-m_rot.y);
+
+	//シンプルに計算したいからローカル空間（回転していないもの）として、最小・最大幅を定義
+	float halfWidthX = (m_vtxMax.x - m_vtxMin.x) * 0.5f;
+	float halfWidthZ = (m_vtxMax.z - m_vtxMin.z) * 0.5f;
+
+	//わかりやすく変換。オブジェクトのAABB範囲
+	float minX = -halfWidthX;
+	float maxX = halfWidthX;
+	float minZ = -halfWidthZ;
+	float maxZ = halfWidthZ;
+
+	//四角形上で、カメラに一番近い「最近傍点」を求める
+	float closestX = max(minX, min(localCameraX, maxX));
+	float closestZ = max(minZ, min(localCameraZ, maxZ));
+
+	//カメラと最近傍点の距離を計算する
+	float diffX = localCameraX - closestX;
+	float diffZ = localCameraZ - closestZ;
+	float distanceSq = (diffX * diffX) + (diffZ * diffZ);
+
+	//当たり判定とローカル空間での押し戻し
+	if (distanceSq <= (cameraRadius * cameraRadius))
+	{
+		float distance = sqrtf(distanceSq);
+
+		if (distance == 0.0f)
+		{//distanceが0
+			return false;
+		}
+
+		//めり込んでいる長さ
+		float overlap = cameraRadius - distance;
+
+		//ローカル空間側で、カメラの位置をめり込んだ分だけ押し戻す(押し戻しベクトルの計算（ローカル空間))
+		localCameraX += (diffX / distance) * overlap;
+		localCameraZ += (diffZ / distance) * overlap;
+
+		//補正したローカル座標を、元のワールド空間（回転した世界）に逆翻訳して戻す
+		float origCos = cosf(m_rot.y);
+		float origSin = sinf(m_rot.y);
+
+		//本来の向き（m_rot.y）に回転を戻す
+		float worldCorrectedX = localCameraX * origCos - localCameraZ * origSin;
+		float worldCorrectedZ = localCameraX * origSin + localCameraZ * origCos;
+
+		//オブジェクトの中心座標を足して、最終的なカメラのワールド座標を決定
+		pos.x = m_Center.x + worldCorrectedX;
+		pos.z = m_Center.z + worldCorrectedZ;
+
+		//座標をカメラに渡す
+		pCamera->SetPositionV(pos);
+
+		return true;
+	}
+	return false;
 }
 
 //=============================================================================
@@ -949,329 +1234,4 @@ void CTarget::LoadEnableString(char* aStrCpy, char* pStart)
 			pStart++;
 		}
 	}
-}
-
-void CTarget::DrawShadow(void)
-{
-	if (!m_bEnable)
-	{
-		return;
-	}
-
-	CRenderer* pRenderer = CManager::GetRenderer();
-	LPDIRECT3DDEVICE9 pDevice = pRenderer->GetDevice();
-
-	//光源方向の設定
-	D3DXVECTOR4 lightDir(-10.0f, 20.0f, 10.0f, 0.0f);
-
-	//CFieldから平面情報（位置と法線）を取得
-	D3DXVECTOR3 planePoint(0.0f, 0.0f, 0.0f);
-	D3DXVECTOR3 planeNormal(0.0f, 1.0f, 0.0f);
-
-	CField* pField = CGame::GetField(); //ゲーム管理クラスからフィールドを取得
-
-	if (pField != NULL)
-	{
-		planePoint = pField->GetPlanePoint();
-		planePoint.y += 1.0f;
-		planeNormal = pField->GetPlaneNormal();
-	}
-
-	//影行列の生成(※webサイト:〇×の深度バッファシャドウ。忘れたら見る)
-	D3DXPLANE plane;
-	D3DXPlaneFromPointNormal(&plane, &planePoint, &planeNormal);
-
-	//マトリックスシャドウ
-	D3DXMATRIX mtxShadow;
-	D3DXMatrixShadow(&mtxShadow, &lightDir, &plane);
-
-	//ワールド行列の計算と合成
-	D3DXMATRIX mtxRot, mtxTrans, mtxWorld;
-	D3DXMatrixIdentity(&mtxWorld);
-	D3DXMatrixRotationYawPitchRoll(&mtxRot, m_rot.y, m_rot.x, m_rot.z);
-	D3DXMatrixTranslation(&mtxTrans, m_pos.x, m_pos.y, m_pos.z);
-	mtxWorld = mtxRot * mtxTrans;
-
-	D3DXMATRIX mtxShadowWorld = mtxWorld * mtxShadow;
-	pDevice->SetTransform(D3DTS_WORLD, &mtxShadowWorld);
-
-	//チラつき防止設定
-	float fSlopeBias = 1.0f;
-	float fDepthBias = -0.0001f;
-	float fZeroBias = 0.0f;
-
-	pDevice->SetRenderState(D3DRS_SLOPESCALEDEPTHBIAS, *reinterpret_cast<DWORD*>(&fSlopeBias));
-	pDevice->SetRenderState(D3DRS_DEPTHBIAS, *reinterpret_cast<DWORD*>(&fDepthBias));
-
-	//減算合成(大事)
-	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_REVSUBTRACT);
-	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
-
-	//テクスチャはいらない
-	pDevice->SetTexture(0, NULL);
-
-	D3DMATERIAL9 matShadow;
-	ZeroMemory(&matShadow, sizeof(matShadow));
-	matShadow.Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.5f); //アルファ値0.5で半透明
-	pDevice->SetMaterial(&matShadow);
-
-		for (int nCntModel = 0; nCntModel < m_nNumModel; nCntModel++)
-	{
-		if (m_apModel[nCntModel] != NULL) m_apModel[nCntModel]->Draw();
-	}
-
-	//減算合成をリセット
-	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-
-	//ステートの復元
-	pDevice->SetRenderState(D3DRS_SLOPESCALEDEPTHBIAS, *reinterpret_cast<DWORD*>(&fZeroBias));
-	pDevice->SetRenderState(D3DRS_DEPTHBIAS, *reinterpret_cast<DWORD*>(&fZeroBias));
-}
-
-//=============================================================================
-//プレイヤーとの当たり判定
-bool CTarget::CollisionPlayer(void)
-{
-	//プレイヤーとシーンの取得
-	CScene* pScene = CManager::GetScene();
-	CPlayer* pPlayer = NULL;
-
-	if (pScene->GetMode() == CScene::MODE_GAME)
-	{
-		pPlayer = CGame::GetPlayer();
-	}
-	else if (pScene->GetMode() == CScene::MODE_TUTORIAL)
-	{
-		pPlayer = CTutorial::GetPlayer();
-	}
-
-	if (pPlayer == NULL)
-	{//NULLたったらfalseを返す
-		return false;
-	}
-
-	//プレイヤーの座標
-	D3DXVECTOR3 pos = pPlayer->GetPosition();
-	
-	//プレイヤーが高さの範囲内にいるか
-	if (m_type == TYPE_FAN)
-	{
-		// Fan collision follows the ground-level cutoff used by the range trigger.
-		if (pos.y > 50.0f) return false;
-		return CollisionFan(pos);
-	}
-
-	float wallMinY = m_pos.y + m_vtxMin.y;
-	float wallMaxY = m_pos.y + m_vtxMax.y;
-	if (pos.y < wallMinY || pos.y > wallMaxY)
-	{
-		return false;
-	}
-
-	//プレイヤーの半径
-	float playerRadius = pPlayer->GetCollsionSize();
-
-	//オブジェクトの中心を原点とした、プレイヤーの相対座標
-	float relativeX = pos.x - m_Center.x;
-	float relativeZ = pos.z - m_Center.z;
-
-	//プレイヤーの座標を、オブジェクトの向きの逆に回転させて計算
-	float localPlayerX = relativeX * cosf(-m_rot.y) - relativeZ * sinf(-m_rot.y);
-	float localPlayerZ = relativeX * sinf(-m_rot.y) + relativeZ * cosf(-m_rot.y);
-
-	//最小・最大幅
-	float halfWidthX = (m_vtxMax.x - m_vtxMin.x) * 0.5f;
-	float halfWidthZ = (m_vtxMax.z - m_vtxMin.z) * 0.5f;
-
-	float minX = -halfWidthX;
-	float maxX = halfWidthX;
-	float minZ = -halfWidthZ;
-	float maxZ = halfWidthZ;
-
-	//四角形上で、プレイヤーに一番近い「最近傍点」を求める
-	float closestX = max(minX, min(localPlayerX, maxX));
-	float closestZ = max(minZ, min(localPlayerZ, maxZ));
-
-	//プレイヤーと最近傍点の距離を計算する
-	float diffX = localPlayerX - closestX;
-	float diffZ = localPlayerZ - closestZ;
-	float distanceSq = (diffX * diffX) + (diffZ * diffZ);
-
-	//当たり判定
-	if (distanceSq <= (playerRadius * playerRadius))
-	{
-		float distance = sqrtf(distanceSq);
-
-		if (distance == 0.0f)
-		{
-			diffX = 0.0f;
-			diffZ = 1.0f;
-			distance = 1.0f;
-		}
-
-		//めり込んでいる長さ
-		float overlap = playerRadius - distance;
-
-		//-----------------------------------------------------------------
-		//壁に向かって進んでいるかチェック
-		D3DXVECTOR3 playerMove = pPlayer->GetMove();
-
-		//XZ平面(水平方向)での移動量
-		float moveSpeedXZSq = playerMove.x * playerMove.x + playerMove.z * playerMove.z;
-		bool bIsMovingTowardsWall = false;
-
-		//水平方向に少しでも移動していれば判定を行う
-		if (moveSpeedXZSq > 0.0001f)
-		{
-			//プレイヤーの移動ベクトルを壁のローカル空間に変換
-			float localMoveX = playerMove.x * cosf(-m_rot.y) - playerMove.z * sinf(-m_rot.y);
-			float localMoveZ = playerMove.x * sinf(-m_rot.y) + playerMove.z * cosf(-m_rot.y);
-
-			//壁の最近傍点に向かうベクトルと移動ベクトルの内積
-			float dot = (diffX * localMoveX) + (diffZ * localMoveZ);
-
-			//内積がマイナス→壁に向かって進んでいる
-			if (dot < 0.0f)
-			{
-				bIsMovingTowardsWall = true;
-			}
-		}
-
-		//壁の表面(XZ軸)への押し戻し
-		//押し戻しベクトルの計算(diffX or Y / distance)
-		localPlayerX += diffX / distance * overlap;
-		localPlayerZ += diffZ / distance * overlap;
-
-		float origCos = cosf(m_rot.y);
-		float origSin = sinf(m_rot.y);
-
-		float worldCorrectedX = localPlayerX * origCos - localPlayerZ * origSin;
-		float worldCorrectedZ = localPlayerX * origSin + localPlayerZ * origCos;
-
-		pos.x = m_Center.x + worldCorrectedX;
-		pos.z = m_Center.z + worldCorrectedZ;
-
-		//押し戻した位置を確定
-		pPlayer->SetPosition(pos);
-		return true;
-	}
-	return false;
-}
-
-//=============================================================================
-//カメラとの当たり判定	(プレイヤーの判定とほぼ同じ)
-// 点がターゲット前方の扇形内にあるかを判定する。
-bool CTarget::CollisionFan(const D3DXVECTOR3& point) const
-{
-	const D3DXVECTOR3 fanPos = (m_pRange != NULL) ? m_pRange->GetPosition() : m_pos;
-	const float fanLength = (m_pRange != NULL) ? m_pRange->GetSize().x : 100.0f;
-
-	// 扇形の中心からプレイヤーまでのXZ方向ベクトルを求める。
-	const float dx = point.x - fanPos.x;
-	const float dz = point.z - fanPos.z;
-	const float distanceSq = dx * dx + dz * dz;
-
-	// 扇形の長さを超えた点は範囲外とする。
-	if (distanceSq > fanLength * fanLength)
-	{
-		return false;
-	}
-
-	// 中心点では方向を定義できないため、範囲内として扱う。
-	if (distanceSq < 0.000001f)
-	{
-		return true;
-	}
-
-	const float distance = sqrtf(distanceSq);
-
-	// このプロジェクトでは前方を -sin(yaw), -cos(yaw) とする。
-	const float forwardX = -sinf(m_rot.y);
-	const float forwardZ = -cosf(m_rot.y);
-
-	// 内積でターゲットの前方とプレイヤー方向の角度を比べる。
-	const float dot = forwardX * dx + forwardZ * dz;
-
-	// TARGET_FAN_ANGLE_DEGREES は扇全体の角度なので、半分の角度で比較する。
-	const float cosHalfAngle = cosf(D3DXToRadian(TARGET_FAN_ANGLE_DEGREES * 0.5f));
-
-	// 内積が境界値を下回れば扇の角度外とする。
-	return dot >= distance * cosHalfAngle;
-}
-
-
-bool CTarget::CollisionCamera(void)
-{
-	//カメラの取得posの取得
-	CCamera* pCamera = CManager::GetCamera();
-	D3DXVECTOR3 pos = pCamera->GetPositionV();
-
-	//カメラの半径
-	float cameraRadius = 20.0f;
-
-	//オブジェクトの中心を原点とした、カメラの相対座標(relative→相対座標の英語)
-	float relativeX = pos.x - m_Center.x;
-	float relativeZ = pos.z - m_Center.z;
-
-	//カメラの座標を、オブジェクトの向き(m_rot.y)の逆に回転させて計算
-	float localCameraX = relativeX * cosf(-m_rot.y) - relativeZ * sinf(-m_rot.y);
-	float localCameraZ = relativeX * sinf(-m_rot.y) + relativeZ * cosf(-m_rot.y);
-
-	//シンプルに計算したいからローカル空間（回転していないもの）として、最小・最大幅を定義
-	float halfWidthX = (m_vtxMax.x - m_vtxMin.x) * 0.5f;
-	float halfWidthZ = (m_vtxMax.z - m_vtxMin.z) * 0.5f;
-
-	//わかりやすく変換。オブジェクトのAABB範囲
-	float minX = -halfWidthX;
-	float maxX = halfWidthX;
-	float minZ = -halfWidthZ;
-	float maxZ = halfWidthZ;
-
-	//四角形上で、カメラに一番近い「最近傍点」を求める
-	float closestX = max(minX, min(localCameraX, maxX));
-	float closestZ = max(minZ, min(localCameraZ, maxZ));
-
-	//カメラと最近傍点の距離を計算する
-	float diffX = localCameraX - closestX;
-	float diffZ = localCameraZ - closestZ;
-	float distanceSq = (diffX * diffX) + (diffZ * diffZ);
-
-	//当たり判定とローカル空間での押し戻し
-	if (distanceSq <= (cameraRadius * cameraRadius))
-	{
-		float distance = sqrtf(distanceSq);
-
-		if (distance == 0.0f)
-		{//distanceが0
-			return false;
-		}
-
-		//めり込んでいる長さ
-		float overlap = cameraRadius - distance;
-
-		//ローカル空間側で、カメラの位置をめり込んだ分だけ押し戻す(押し戻しベクトルの計算（ローカル空間))
-		localCameraX += (diffX / distance) * overlap;
-		localCameraZ += (diffZ / distance) * overlap;
-
-		//補正したローカル座標を、元のワールド空間（回転した世界）に逆翻訳して戻す
-		float origCos = cosf(m_rot.y);
-		float origSin = sinf(m_rot.y);
-
-		//本来の向き（m_rot.y）に回転を戻す
-		float worldCorrectedX = localCameraX * origCos - localCameraZ * origSin;
-		float worldCorrectedZ = localCameraX * origSin + localCameraZ * origCos;
-
-		//オブジェクトの中心座標を足して、最終的なカメラのワールド座標を決定
-		pos.x = m_Center.x + worldCorrectedX;
-		pos.z = m_Center.z + worldCorrectedZ;
-
-		//座標をカメラに渡す
-		pCamera->SetPositionV(pos);
-
-		return true;
-	}
-	return false;
 }

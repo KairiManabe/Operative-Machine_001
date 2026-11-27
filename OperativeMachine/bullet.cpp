@@ -196,20 +196,27 @@ void CBullet::Update(void)
 
 //=============================================================================
 //ターゲットとの当たり判定
-bool CBullet::CollisionTarget(const D3DXVECTOR3& start, const D3DXVECTOR3& end, float radius)
+bool CBullet::CollisionTarget(
+    const D3DXVECTOR3& start,
+    const D3DXVECTOR3& end,
+    float radius)
 {
-    //TARGET_PRIORITY→ターゲットクラスのプライオリティ
-    CObject* pObject = CObject::GetTop(TARGET_PRIORITY);
-    while (pObject != NULL)
+    // ターゲットを順番に調べ、最初に当たったものを破壊する
+    for (CObject* pObject = CObject::GetTop(TARGET_PRIORITY);
+         pObject != NULL; )
     {
         CObject* pNext = pObject->GetNext();
         CTarget* pTarget = dynamic_cast<CTarget*>(pObject);
-        if (pTarget != NULL && pTarget->CollisionBullet(start, end, radius))
+
+        if (pTarget != NULL &&
+            pTarget->CollisionBullet(start, end, radius))
         {
             pTarget->DethTarget();
             return true;
         }
+
         pObject = pNext;
     }
+
     return false;
 }

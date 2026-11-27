@@ -477,13 +477,17 @@ void CTarget::DethTarget(void)
 
 //=============================================================================
 //弾との当たり判定
-bool CTarget::CollisionBullet(const D3DXVECTOR3& start, const D3DXVECTOR3& end, float radius) const
+bool CTarget::CollisionBullet(
+    const D3DXVECTOR3& start,
+    const D3DXVECTOR3& end,
+    float radius) const
 {
     if (!m_bEnable || radius < 0.0f)
     {
         return false;
     }
 
+    //ターゲットの回転と位置から、ワールド行列と逆行列を作る
     D3DXMATRIX rotation, translation, world, inverseWorld;
     D3DXMatrixRotationYawPitchRoll(&rotation, m_rot.y, m_rot.x, m_rot.z);
     D3DXMatrixTranslation(&translation, m_pos.x, m_pos.y, m_pos.z);
@@ -494,40 +498,51 @@ bool CTarget::CollisionBullet(const D3DXVECTOR3& start, const D3DXVECTOR3& end, 
         return false;
     }
 
+    //弾の移動区間を、ターゲット基準の座標に変換する
     D3DXVECTOR3 localStart, localEnd;
     D3DXVec3TransformCoord(&localStart, &start, &inverseWorld);
     D3DXVec3TransformCoord(&localEnd, &end, &inverseWorld);
 
-    const float minBounds[3] = { m_vtxMin.x - radius, m_vtxMin.y - radius, m_vtxMin.z - radius };
-    const float maxBounds[3] = { m_vtxMax.x + radius, m_vtxMax.y + radius, m_vtxMax.z + radius };
-    const float startValues[3] = { localStart.x, localStart.y, localStart.z };
-    const float endValues[3] = { localEnd.x, localEnd.y, localEnd.z };
+    //弾の半径分だけターゲットの箱を広げる
+	const float minBounds[3] = { m_vtxMin.x - radius, m_vtxMin.y - radius, m_vtxMin.z - radius };
+	const float maxBounds[3] = { m_vtxMax.x + radius, m_vtxMax.y + radius, m_vtxMax.z + radius };
+	const float from[3] = { localStart.x, localStart.y, localStart.z };
+	const float to[3] = { localEnd.x, localEnd.y, localEnd.z };
+
+    //線分が箱に入る時刻と、箱から出る時刻
     float enter = 0.0f;
     float leave = 1.0f;
 
     for (int axis = 0; axis < 3; ++axis)
     {
-        const float delta = endValues[axis] - startValues[axis];
+        const float delta = to[axis] - from[axis];
+
+        //この軸に移動していなければ、箱の外にある時点で衝突しない
         if (fabsf(delta) < 0.000001f)
         {
-            if (startValues[axis] < minBounds[axis] || startValues[axis] > maxBounds[axis])
+            if (from[axis] < minBounds[axis] ||
+                from[axis] > maxBounds[axis])
             {
                 return false;
             }
             continue;
         }
 
-        float t1 = (minBounds[axis] - startValues[axis]) / delta;
-        float t2 = (maxBounds[axis] - startValues[axis]) / delta;
-        if (t1 > t2)
+        //この軸で箱に入る時刻と出る時刻を求める
+        float time1 = (minBounds[axis] - from[axis]) / delta;
+        float time2 = (maxBounds[axis] - from[axis]) / delta;
+
+        if (time1 > time2)
         {
-            const float temp = t1;
-            t1 = t2;
-            t2 = temp;
+            const float temp = time1;
+            time1 = time2;
+            time2 = temp;
         }
 
-        if (t1 > enter) enter = t1;
-        if (t2 < leave) leave = t2;
+        if (time1 > enter) enter = time1;
+        if (time2 < leave) leave = time2;
+
+        //3軸に共通する通過時間がなければ衝突しない
         if (enter > leave)
         {
             return false;
@@ -536,7 +551,6 @@ bool CTarget::CollisionBullet(const D3DXVECTOR3& start, const D3DXVECTOR3& end, 
 
     return true;
 }
-
 //=============================================================================
 //シャドウマップ
 void CTarget::DrawShadow(void)

@@ -10,6 +10,7 @@
 
 #include "manager.h"
 #include "renderer.h"
+#include "debugproc.h"
 #include "input.h"
 #include "color.h"
 #include "fade.h"
@@ -169,6 +170,8 @@ void CGame::Update(void)
 	{//ポーズのアップデート
 		m_pPause->Update();
 	}
+
+	CManager::GetDebugproc()->PrintDebugProc("\nターゲットの数:%d\n", m_nCntTraget);
 }
 
 //=============================================================================
@@ -187,10 +190,10 @@ void CGame::SubTarget(CTarget* pTarget)
 	{
 		if (m_pTarget[nCntIdx] == pTarget)
 		{
-			// 削除対象の場所に配列の「最後尾の要素」を上書きして詰める
+			//削除対象の場所に配列の「最後尾の要素」を上書きして詰める
 			m_pTarget[nCntIdx] = m_pTarget[m_nCntTraget - 1];
-			m_pTarget[m_nCntTraget - 1] = NULL; // 旧末尾をNULL化
-			m_nCntTraget--;                          // 要素数を減らす
+			m_pTarget[m_nCntTraget - 1] = NULL;		//旧末尾をNULL化
+			m_nCntTraget--;                         //要素数を減らす
 			break;
 		}
 	}

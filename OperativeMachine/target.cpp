@@ -101,6 +101,7 @@ HRESULT CTarget::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 		return E_FAIL;
 	}
 
+	//ターゲットのモデルファイル、モーションファイルの読み込み
 	LoadParentModel("data/SCRIPT/drone.txt");
 	LoadMotionInfo("data/Motion/motion_drone.txt");
 
@@ -132,14 +133,15 @@ HRESULT CTarget::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
 
 	m_pMotion->Set(MOTIONTYPE_NEUTRAL, 15);
 
-	m_pRange = CRange::Create(m_pos, D3DXVECTOR3(100.0f, 0.0f, 100.0f), m_rot, m_type);
-	if (m_pRange != NULL && m_type == TYPE_FAN)
-	{
-		// Place the fan range ahead immediately, before the first update.
+	if (m_pRange == NULL && m_type == TYPE_FAN)
+	{//FANタイプの時
+
+		//敵の座標から少し前へずらす
 		D3DXVECTOR3 rangePos = m_pos;
 		rangePos.x -= sinf(m_rot.y) * TARGET_FAN_FORWARD_OFFSET;
 		rangePos.z -= cosf(m_rot.y) * TARGET_FAN_FORWARD_OFFSET;
-		m_pRange->SetPosition(rangePos);
+
+		m_pRange = CRange::Create(rangePos, D3DXVECTOR3(100.0f, 0.0f, 100.0f), m_rot, m_type);
 	}
 
 	return S_OK;
@@ -208,7 +210,7 @@ void CTarget::Update(void)
 	}
 
 	if (CollisionVigilanceRange())
-	{
+	{//警戒モードに入るときの当たり判定(今はdethのエフェクトを出してる)
 		DethTarget();
 		return;
 	}
@@ -645,8 +647,8 @@ bool CTarget::CollisionPlayer(void)
 	//プレイヤーが高さの範囲内にいるか
 	if (m_type == TYPE_FAN)
 	{//FANタイプの時は扇形の当たり判定にする
-		if (pos.y > 50.0f) return false;
-		return m_pRange->CollisionFan(pos, this);
+		if (pos.y > 30.0f) return false;
+		return m_pRange->CollisionFan(pos, m_rot.y);
 	}
 
 	float wallMinY = m_pos.y + m_vtxMin.y;

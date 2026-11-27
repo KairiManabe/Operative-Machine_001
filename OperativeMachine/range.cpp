@@ -12,6 +12,7 @@
 #include "main.h"
 #include "manager.h"
 #include "renderer.h"
+#include "debugproc.h"
 #include "texture.h"
 #include "fade.h"
 #include "color.h"
@@ -246,31 +247,27 @@ void CRange::Update(void)
 		{
 			D3DXVECTOR3 playerPos = pPlayer->GetPosition();
 
-			float fDispX = playerPos.x - m_pos.x;
-			float fDispZ = playerPos.z - m_pos.z;
-			float fDistSq = (fDispX * fDispX) + (fDispZ * fDispZ);
-			bool bPlayerInRange = (fDistSq <= (m_size.x * m_size.z));
+			bool bPlayerInRange = false;
 
 			if (m_type == CTarget::TYPE_FAN)
 			{
-				//TYPE_FAN はターゲット側の衝突判定と同じ長さ・前方方向で判定する。
-				const float fFanLengthSq = m_size.x * m_size.x;
-				bPlayerInRange = (fDistSq <= fFanLengthSq);
-
-				if (bPlayerInRange && fDistSq > 0.000001f)
-				{
-					const float fDot = -sinf(m_rot.y) * sqrtf(fDistSq) + -cosf(m_rot.y) * sqrtf(fDistSq);
-					const float fCosHalfAngle = cosf(D3DXToRadian(TARGET_FAN_ANGLE_DEGREES * 0.5f));
-					bPlayerInRange = (fDot >= sqrtf(fDistSq) * fCosHalfAngle);
-				}
+				bPlayerInRange = CollisionFan(playerPos, m_rot.y);
 			}
-
-			if (bPlayerInRange && playerPos.y <= 50.0f)
+			else
+			{
+				const float fDispX = playerPos.x - m_pos.x;
+				const float fDispZ = playerPos.z - m_pos.z;
+				const float fDistSq = (fDispX * fDispX) + (fDispZ * fDispZ);
+				bPlayerInRange = (fDistSq <= (m_size.x * m_size.z));
+			}
+			if (bPlayerInRange && playerPos.y <= 30.0f)
 			{
 				pFade->SetFade(CScene::MODE_FAIL);
 			}
 		}
 	}
+
+	CManager::GetDebugproc()->PrintDebugProc("索敵範囲の向き Y[%.2f]\n", m_rot.y);
 }
 
 //=============================================================================
@@ -350,17 +347,21 @@ void CRange::SetSize(const D3DXVECTOR3 size)
 
 //=============================================================================
 //点がターゲット前方の扇形内にあるかを判定する。
-bool CRange::CollisionFan(const D3DXVECTOR3& point, CTarget* pTarget) const
+bool CRange::CollisionFan(const D3DXVECTOR3& point, float yaw) const
 {
-	const D3DXVECTOR3 fanPos = m_pos;
-	const float fanLength = m_size.x;
+	//前方を -sin(yaw), -cos(yaw) とする。
+	const float forwardX = -sinf(yaw);
+	const float forwardZ = -cosf(yaw);
+
+	const float fanOriginX = m_pos.x - forwardX * TARGET_FAN_FORWARD_OFFSET;
+	const float fanOriginZ = m_pos.z - forwardZ * TARGET_FAN_FORWARD_OFFSET;
+	const float fanLength = m_size.x + TARGET_FAN_FORWARD_OFFSET;
 
 	//扇形の中心からプレイヤーまでのXZ方向ベクトルを求める。
-	const float dx = point.x - fanPos.x;
-	const float dz = point.z - fanPos.z;
-	const float distanceSq = dx * dx + dz * dz;
+	const float dirX = point.x - fanOriginX;
+	const float dirZ = point.z - fanOriginZ;
+	const float distanceSq = dirX * dirX + dirZ * dirZ;
 
-	//扇形の長さを超えた点は範囲外とする。
 	if (distanceSq > fanLength * fanLength)
 	{
 		return false;
@@ -372,22 +373,14 @@ bool CRange::CollisionFan(const D3DXVECTOR3& point, CTarget* pTarget) const
 		return true;
 	}
 
-	const float distance = sqrtf(distanceSq);
-
-	//前方を -sin(yaw), -cos(yaw) とする。
-	const float forwardX = -sinf(pTarget->GetRotation().y);
-	const float forwardZ = -cosf(pTarget->GetRotation().y);
-
 	//内積でターゲットの前方とプレイヤー方向の角度を比べる。
-	const float dot = forwardX * dx + forwardZ * dz;
-
-	//TARGET_FAN_ANGLE_DEGREES は扇全体の角度だから、半分の角度で比較する。
+	const float distance = sqrtf(distanceSq);
+	const float dot = forwardX * dirX + forwardZ * dirZ;
 	const float cosHalfAngle = cosf(D3DXToRadian(TARGET_FAN_ANGLE_DEGREES * 0.5f));
 
 	//内積が境界値を下回れば扇の角度外とする。
 	return dot >= distance * cosHalfAngle;
 }
-
 #if 0
 //=============================================================================
 // 壁との当たり判定処理

@@ -130,16 +130,16 @@ void CMotion::Update(void)
 	fRotY = 0.0f;
 	fRotZ = 0.0f;
 
-	// ------------------------------------------------------------------------
-	// ブレンド処理判定
-	// ------------------------------------------------------------------------
+	//------------------------------------------------------------------------
+	//ブレンド処理判定
+	//------------------------------------------------------------------------
 	if (m_bBlending)
 	{
 		float fBlendRate = (float)m_nBlendCounter / (float)m_nBlendFrame;
 
 		for (int nCntModel = 0; nCntModel < m_nNumModel; nCntModel++)
 		{
-			// 遷移先のキーフレーム0の目標値
+			//遷移先のキーフレーム0の目標値
 			float fTargetPosX = m_aInfo[m_nType].aKeyInfo[0].aKey[nCntModel].fPosX;
 			float fTargetPosY = m_aInfo[m_nType].aKeyInfo[0].aKey[nCntModel].fPosY;
 			float fTargetPosZ = m_aInfo[m_nType].aKeyInfo[0].aKey[nCntModel].fPosZ;
@@ -147,12 +147,12 @@ void CMotion::Update(void)
 			float fTargetRotY = m_aInfo[m_nType].aKeyInfo[0].aKey[nCntModel].fRotY;
 			float fTargetRotZ = m_aInfo[m_nType].aKeyInfo[0].aKey[nCntModel].fRotZ;
 
-			// 位置の補間
+			//位置の補間
 			fPosX = m_aBlendStartPos[nCntModel].x + (fTargetPosX - m_aBlendStartPos[nCntModel].x) * fBlendRate;
 			fPosY = m_aBlendStartPos[nCntModel].y + (fTargetPosY - m_aBlendStartPos[nCntModel].y) * fBlendRate;
 			fPosZ = m_aBlendStartPos[nCntModel].z + (fTargetPosZ - m_aBlendStartPos[nCntModel].z) * fBlendRate;
 
-			// 回転の補間（最短距離の差分を取る）
+			//回転の補間（最短距離の差分を取る）
 			float fDiffRotX = Normalize(fTargetRotX - m_aBlendStartRot[nCntModel].x);
 			float fDiffRotY = Normalize(fTargetRotY - m_aBlendStartRot[nCntModel].y);
 			float fDiffRotZ = Normalize(fTargetRotZ - m_aBlendStartRot[nCntModel].z);
@@ -161,32 +161,32 @@ void CMotion::Update(void)
 			fRotY = m_aBlendStartRot[nCntModel].y + (fDiffRotY * fBlendRate);
 			fRotZ = m_aBlendStartRot[nCntModel].z + (fDiffRotZ * fBlendRate);
 
-			// 角度の正規化修正
+			//角度の正規化修正
 			fRotX = Normalize(fRotX);
 			fRotY = Normalize(fRotY);
 			fRotZ = Normalize(fRotZ);
 
-			// 位置・向きを設定
+			//位置・向きを設定
 			m_ppModel[nCntModel]->SetPosition(D3DXVECTOR3(fPosX, fPosY, fPosZ));
 			m_ppModel[nCntModel]->SetRotation(D3DXVECTOR3(fRotX, fRotY, fRotZ));
 
-			// モデルの更新処理
+			//モデルの更新処理
 			m_ppModel[nCntModel]->Update();
 		}
 
 		m_nBlendCounter++;
 
-		// ブレンド終了チェック
+		//ブレンド終了チェック
 		if (m_nBlendCounter >= m_nBlendFrame)
 		{
 			m_bBlending = false;
 			m_nCounter = 0;
 		}
-		return; // ブレンド期間中は通常のキーフレーム進行をスキップ
+		return; //ブレンド期間中は通常のキーフレーム進行をスキップ
 	}
 
-	// ------------------------------------------------------------------------
-	// 普通のアニメーション
+	//------------------------------------------------------------------------
+	//普通のアニメーション
 	fRateKey = ((float)m_nCounter) / ((float)m_aInfo[m_nType].aKeyInfo[m_nKey].nFrame);
 	int Next = (m_nKey + 1) % m_nNumKey;
 
@@ -252,7 +252,7 @@ void CMotion::Update(void)
 		m_nCounter = 0;
 	}
 
-	pDebug->PrintDebugProc("キー数:%d\n", m_nKey);
+	//pDebug->PrintDebugProc("キー数:%d\n", m_nKey);
 }
 
 //=============================================================================
